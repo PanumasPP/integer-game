@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมพิชิตยอดเขาจำนวนเต็ม V12.11 (Complete Fix)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            color: #374151;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('BG.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        #heartbeatOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.2);
+            z-index: 99;
+            pointer-events: none; 
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+
+        .welcome-screen-modal {
+            display: flex;
+            position: fixed;
+            z-index: 150;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.75);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-content {
+            background-color: #fff;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            animation: modalAppear 0.5s ease-out;
+        }
+
+
+        .game-setup-screen, .board-container {
+            background-color: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        .board-container {
+             max-width: 1200px;
+        }
+        .board-square {
+            width: 78px;
+            height: 78px;
+            border: 2px solid #a5b4fc;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 4px;
+            font-weight: bold;
+            overflow: visible;
+        }
+        .board-square:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .square-number { font-size: 0.8rem; color: #4B5563; align-self: flex-start; padding: 1px 4px; background-color: rgba(255,255,255,0.9); border-radius: 4px; }
+        .square-icon { font-size: 1.6rem; }
+        .square-text { font-size: 0.65rem; line-height: 1.15; color: #1F2937; }
+
+        .player-slots-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1px; }
+        .player-piece {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.35);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            color: white;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 10;
+            background-color: transparent !important;
+        }
+
+        @keyframes pieceLandAnimation {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.4) translateY(-6px); opacity: 1; box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .player-piece-landed {
+            animation: pieceLandAnimation 0.7s ease-out;
+        }
+
+        .modal, .emoji-picker-modal, .victory-overlay, .central-message-overlay, .card-selection-modal, .prank-modal, .dice-animation-overlay {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center;
+        }
+        .modal-content, .emoji-picker-content, .central-message-content, .card-selection-content, .prank-modal-content, .dice-animation-content {
+            background-color: #ffffff; margin: auto; padding: 25px; border: none; width: 90%; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); animation: modalAppear 0.4s ease-out;
+        }
+        .modal-content { max-width: 580px; padding:35px; }
+        .emoji-picker-content { max-width: 340px; padding: 20px; }
+        .central-message-content { max-width: 500px; padding: 30px; text-align: center; }
+        .card-selection-content { max-width: 650px; padding: 30px; text-align: center; }
+        .prank-modal-content { max-width: 500px; padding: 30px; text-align: center; }
+        .dice-animation-content {
+            max-width: 350px;
+            padding: 40px;
+            text-align: center;
+            background-color: #374151;
+            color: white;
+            border-radius: 20px;
+        }
+        .dice-animation-value {
+            font-size: 6rem;
+            font-weight: bold;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            color: #fcd34d;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+
+        @keyframes modalAppear { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 12px; margin-top: 20px; }
+        .emoji-btn { font-size: 26px; padding: 6px; border-radius: 10px; cursor: pointer; transition: background-color 0.2s, transform 0.2s; border: 1px solid #d1d5db; }
+        .emoji-btn:hover { background-color: #e0f2fe; transform: scale(1.1); }
+
+        .dice-area div p { border: 1px solid #90cdf4; padding: 12px; margin: 6px 0; border-radius: 10px; background-color: #e0f2fe; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+        .dice-value { font-size: 2rem; font-weight: bold; color: #1d4ed8; }
+        .dice-label { color: #1e3a8a; }
+
+        .start-square { background-color: #64748b; color: white; border-color: #475569;} .start-square .square-icon { color: #f59e0b; }
+        .finish-square { background-color: #f59e0b; color: #475569; border-color: #d97706;} .finish-square .square-icon { color: #b91c1c; }
+        .power-up-square { background-color: #22c55e; color: white; border-color: #16a34a;} .power-up-square .square-icon { color: #ecfdf5; }
+        .setback-square { background-color: #ef4444; color: white; border-color: #dc2626;} .setback-square .square-icon { color: #fee2e2; }
+        .puzzle-square { background-color: #3b82f6; color: white; border-color: #2563eb;} .puzzle-square .square-icon { color: #dbeafe; }
+        .bonus-square { background-color: #ec4899; color: white; border-color: #db2777;} .bonus-square .square-icon { color: #fce7f3; }
+        .normal-square { background-color: #e0f2fe; border-color: #7dd3fc;} .normal-square .square-icon { color: #0284c7; }
+        
+        .event-square { background-color: #a855f7; color: white; border-color: #9333ea;} 
+        .event-square .square-icon { color: #f5d0fe; }
+
+        .game-board-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 75px);
+            grid-template-rows: repeat(5, 75px);
+            gap: 6px;
+            margin: 0 auto;
+        }
+
+        .control-panel-item { background-color: rgba(255, 255, 255, 0.95); padding: 1.25rem; border-radius: 12px; box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.08), 0 3px 7px -1px rgba(0, 0, 0, 0.05); }
+        .main-action-button { background: linear-gradient(to right, #fb923c, #f97316); color: white; font-weight: bold; padding: 0.85rem 1.75rem; border-radius: 0.5rem; font-size: 1.125rem; box-shadow: 0 5px 12px rgba(249, 115, 22, 0.45); transition: all 0.3s ease; border: none; }
+        .main-action-button:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 7px 18px rgba(249, 115, 22, 0.55); }
+        .main-action-button:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
+
+        .modal-button { padding: 0.6rem 1.2rem; border-radius: 0.375rem; font-weight: bold; transition: background-color 0.2s ease, transform 0.2s; }
+        .modal-submit-button { background-color: #10b981; color: white; }
+        .modal-submit-button:hover { background-color: #059669; transform: translateY(-1px); }
+        .modal-close-button { background-color: #e5e7eb; color: #374151; }
+        .modal-close-button:hover { background-color: #cbd5e1; transform: translateY(-1px); }
+
+        .difficulty-badge { display: none; }
+
+        .setup-input { border: 1px solid #60a5fa; padding: 0.5rem; border-radius: 0.375rem; margin-top: 0.25rem; width: 100%; }
+        .player-emoji-select-btn {
+            font-size: 1.5rem;
+            text-align: center;
+            width: 60px;
+            height: 50px;
+            padding: 0.25rem;
+            border: 1px solid #60a5fa;
+            border-radius: 0.375rem;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .player-emoji-select-btn:hover { background-color: #dbeafe; }
+        .player-config-entry { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .creator-credit { text-align: center; font-size: 0.875rem; color: #4b5563; margin-top: 1.5rem; }
+
+        .victory-overlay { /* ... existing styles ... */ }
+        #fireworksContainer { /* ... existing styles ... */ }
+        .firework-particle { /* ... existing styles ... */ }
+        @keyframes fireworks-explode { /* ... existing styles ... */ }
+        #winnerNameDisplay { /* ... existing styles ... */ }
+        @keyframes winnerAppear { /* ... existing styles ... */ }
+
+        .card-selection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+        .card-back {
+            width: 100px; height: 140px; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 10px; display: flex; justify-content: center; align-items: center;
+            font-size: 3rem; color: white; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); border: 2px solid white;
+        }
+        .card-back:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+        .card-back i { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+        .prank-target-btn, .prank-effect-btn, .punishment-btn, .setback-choice-btn {
+            background-color: #f0abfc; color: #701a75; padding: 0.75rem 1rem; border-radius: 8px;
+            font-weight: bold; margin: 0.5rem; transition: background-color 0.2s, transform 0.2s;
+        }
+        .punishment-btn { background-color: #fca5a5; color: #991b1b; }
+        .setback-choice-btn { background-color: #fca5a5; color: #991b1b; }
+
+
+        .prank-target-btn:hover, .prank-effect-btn:hover { background-color: #e879f9; transform: translateY(-2px); }
+        .punishment-btn:hover, .setback-choice-btn:hover { background-color: #f87171; transform: translateY(-2px); }
+
+        .prank-target-btn:disabled, .prank-effect-btn:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #questionTimerDisplay {
+            /* Styles for the timer will be applied by JavaScript */
+        }
+        
+        #modalChoicesContainer {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="heartbeatOverlay"></div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="sounds/background_music.mp3" type="audio/mpeg">
+        เบราว์เซอร์ของคุณไม่รองรับการเล่นเสียงค่ะ
+    </audio>
+
+    <div id="welcomeScreenModal" class="welcome-screen-modal"> <div class="welcome-content"> <h1 class="text-4xl font-bold text-purple-700 mb-4">ยินดีต้อนรับสู่</h1>
+            <h2 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-8">
+                🏔️ เกมพิชิตยอดเขาจำนวนเต็ม 🎲
+            </h2>
+            <p class="creator-credit text-lg mb-10">ผู้จัดทำ: ครูภาณุมาศ แป้นเดช<br>โรงเรียนส่วนป่าอุปถัมภ์</p>
+            <button id="readyButton" class="main-action-button w-full md:w-1/2 lg:w-1/3 py-3 text-xl"><i class="fas fa-check-circle mr-2"></i>พร้อมแล้ว เริ่มเลย!</button>
+        </div>
+    </div>
+
+
+    <div id="gameSetupScreen" class="game-setup-screen hidden"> <h1 class="text-3xl font-bold text-center mb-6 text-purple-700">ตั้งค่าเกมพิชิตยอดเขา</h1>
+        <div class="mb-4">
+            <label for="numPlayersSelect" class="block text-lg font-medium text-gray-700">จำนวนผู้เล่น:</label>
+            <select id="numPlayersSelect" class="setup-input mt-1 block w-full">
+                <option value="2" selected>2 คน</option>
+                <option value="3">3 คน</option>
+                <option value="4">4 คน</option>
+                <option value="5">5 คน</option>
+                <option value="6">6 คน</option>
+                <option value="7">7 คน</option>
+                <option value="8">8 คน</option>
+                <option value="9">9 คน</option>
+                <option value="10">10 คน</option>
+            </select>
+        </div>
+        <div id="playerConfigArea" class="mb-6 space-y-4"></div>
+        <p class="creator-credit">ผู้จัดทำ: ครูภาณุมาศ แป้นเดช โรงเรียนส่วนป่าอุปถัมภ์</p>
+        <button id="startGameBtn" class="main-action-button w-full py-3 mt-4"><i class="fas fa-play mr-2"></i>เริ่มเกม!</button>
+    </div>
+
+    <div id="boardContainer" class="board-container hidden">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                🏔️ พิชิตยอดเขาจำนวนเต็ม 🎲
+            </h1>
+        </header>
+
+        <div class="flex flex-col lg:flex-row lg:space-x-6 items-start">
+            <div id="playersInfoPanelContainer" class="w-full lg:w-1/5 control-panel-item mb-6 lg:mb-0 order-2 lg:order-1">
+                <h2 class="text-2xl font-semibold mb-3 text-gray-800">ข้อมูลผู้เล่น</h2>
+                <div id="playersInfoPanel" class="space-y-2"></div>
+                <p id="roundDisplay" class="mt-4 text-lg font-bold text-gray-600">รอบที่: <span id="currentRoundCounter">1</span></p>
+                <p class="mt-2 text-xl font-bold text-indigo-700">ตาของ: <span id="currentPlayerTurn"></span></p>
+            </div>
+
+            <div id="gameBoardOuterContainer" class="w-full lg:flex-grow order-1 lg:order-2 flex justify-center mb-6 lg:mb-0">
+                 <div id="gameBoard" class="game-board-grid p-4 bg-blue-50 rounded-xl"></div>
+            </div>
+
+            <div id="rightControlPanel" class="w-full lg:w-1/5 space-y-6 order-3">
+                <div class="control-panel-item dice-area">
+                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">ผลการทอยลูกเต๋า</h2>
+                    <div id="diceRollDisplay" class="text-center space-y-1">
+                        <p><span class="dice-label">ลูกเต๋าเดินทาง:</span> <span id="movementDieValue" class="dice-value">-</span></p>
+                        </div>
+                </div>
+                <div class="control-panel-item flex flex-col justify-center items-center">
+                     <button id="rollDiceButton" class="main-action-button w-full">
+                        <i class="fas fa-dice-d6 mr-2"></i> ทอยลูกเต๋า!
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="messageArea" class="mt-6 p-5 bg-white text-gray-700 rounded-xl shadow-lg text-center text-lg min-h-[60px]"></div>
+    </div>
+
+    <div id="centralMessageOverlay" class="central-message-overlay">
+        <div id="centralMessageContent" class="central-message-content"></div>
+    </div>
+
+    <div id="diceAnimationOverlay" class="dice-animation-overlay">
+        <div class="dice-animation-content">
+            <p id="diceAnimationText" class="text-2xl mb-4">กำลังทอยลูกเต๋า...</p>
+            <div id="diceAnimationValue" class="dice-animation-value">?</div>
+        </div>
+    </div>
+
+
+    <div id="cardSelectionModal" class="card-selection-modal">
+        <div class="card-selection-content">
+            <h2 id="cardSelectionTitle" class="text-3xl font-bold text-purple-600 mb-6">เลือกการ์ด 1 ใบ!</h2>
+            <div id="cardSelectionGrid" class="card-selection-grid"></div>
+        </div>
+    </div>
+
+    <div id="questionModal" class="modal">
+        <div class="modal-content">
+             <div id="modalHeader" class="flex justify-between items-center mb-2">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800">คำถาม</h3>
+                <div id="questionTimerDisplay" class="text-xl font-bold text-orange-500"></div>
+            </div>
+            <p id="modalQuestion" class="mb-6 text-lg text-gray-700"></p>
+            <input type="text" id="modalAnswerInput" class="border border-gray-300 p-3 w-full rounded-lg mb-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="ใส่คำตอบของคุณ">
+            <div id="modalFeedback" class="mb-4 text-md font-semibold"></div>
+            <div class="flex justify-end space-x-4">
+                <button id="modalSubmitButton" class="modal-button modal-submit-button"><i class="fas fa-check mr-2"></i>ส่งคำตอบ</button>
+                <button id="modalCloseButton" class="modal-button modal-close-button"><i class="fas fa-times mr-2"></i>ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="emojiPickerModal" class="emoji-picker-modal">
+        <div class="emoji-picker-content">
+            <h3 class="text-xl font-bold text-center mb-4 text-gray-700">เลือก Emoji</h3>
+            <div id="emojiGrid" class="emoji-grid"></div>
+            <button id="closeEmojiPickerBtn" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg">ปิด</button>
+        </div>
+    </div>
+
+    <div id="victoryOverlay" class="victory-overlay hidden">
+        <div id="fireworksContainer" class="absolute inset-0 overflow-hidden"></div>
+        <div id="winnerNameDisplay" class="text-white text-3xl md:text-4xl lg:text-5xl font-bold p-6 md:p-8 bg-purple-700 bg-opacity-80 rounded-xl shadow-2xl text-center leading-tight">
+            </div>
+        <button id="playAgainBtn" class="mt-8 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-md transition-transform transform hover:scale-105">เล่นอีกครั้ง?</button>
+    </div>
+
+    <div id="prankModal" class="prank-modal">
+        <div class="prank-modal-content">
+            <h3 id="prankTitle" class="text-2xl font-bold mb-6 text-center text-purple-600"></h3>
+            <div id="prankOptionsContainer" class="mb-4">
+                </div>
+            <div id="prankButtonsContainer" class="flex justify-center space-x-4">
+                </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Game Configuration ---
+        const NUM_SQUARES = 50;
+        let players = [];
+        const defaultPlayerEmojis = ['🚀', '🌟', '🐢', '🦊', '😀', '😂', '😍', '🥳', '🍔', '🍕', '⚽️', '🎨', '💡', '💖', '👍', '💯'];
+        const commonEmojisForPicker = [
+            '🚀', '🌟', '🐢', '🦊', '😀', '😂', '😍', '🥳', '🍔', '🍕', '⚽️', '🎨', '💡', '💖', '👍', '💯',
+            '😊', '😎', '🤩', '🤔', '🎉', '🎈', '🎁', '🏆', '🐱', '🐶', '🐼', '🦄', '🤖', '👽', '👾', '👻',
+            '👑', '💎', '🍀', '🍄', '🍓', '🍉', '🍎', '🍊', '🍋', '🍌', '🍍', '🥭', '🍑', '🍒', '🥝', '🍅'
+        ];
+        const fireworkColors = ['#FF5252', '#FFC107', '#4CAF50', '#2196F3', '#9C27B0', '#FFEB3B', '#00BCD4', '#E91E63'];
+
+        let currentPlayerIndex = 0;
+        let gameActive = false;
+        let currentPlayerEmojiSelectionIndex = 0;
+        let isHandlingBonusMoveQuestion = false;
+        let currentGameQuestionPool = {};
+        let pendingAction = null;
+        let currentRound = 1;
+        let pendingSetbackCard = null;
+        let isAnsweringSetbackSave = false;
+        let isAnsweringFinalQuestion = false;
+
+        const boardConfig = [
+            { type: 'start', text: 'เริ่มต้น', icon: 'fas fa-mountain', instruction: 'จุดเริ่มต้นการผจญภัย!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษกับทุกคน!' }, // Event 1
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษกับทุกคน!' }, // Event 2
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-wind', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษกับทุกคน!' }, // Event 3
+            { type: 'bonus', text: 'โบนัส', icon: 'fas fa-star', instruction: 'ตอบถูกเพื่อรับโบนัส!' }, // Bonus restored
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-skull-crossbones', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษกับทุกคน!' }, // Event 4
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-bolt', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-poo-storm', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-shield-alt', instruction: 'ตอบถูกเพื่อรับพลัง!' },
+            { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษกับทุกคน!' }, // Event 5
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เลือกบทลงโทษให้เพื่อน!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
+            { type: 'finish', text: 'ยอดเขา!', icon: 'fas fa-flag-checkered', instruction: 'ตอบคำถามสุดท้ายเพื่อชนะ!' }
+        ];
+
+        const effectCards = {
+            powerUp: [
+                { text: "เดินหน้า 2 ช่อง", action: "move_forward", value: 2, icon: "fas fa-shoe-prints" },
+                { text: "เดินหน้า 3 ช่อง", action: "move_forward", value: 3, icon: "fas fa-running" },
+                { text: "ได้รับเกราะป้องกัน", action: "get_shield", icon: "fas fa-shield-alt" },
+                { text: "ทอยลูกเต๋าอีกครั้ง", action: "roll_again", icon: "fas fa-dice-d6" }
+            ],
+            setback: [
+                { text: "ถอยหลัง 3 ช่อง", action: "move_backward", value: 3, icon: "fas fa-undo-alt" },
+                { text: "ถอยหลัง 5 ช่อง", action: "move_backward", value: 5, icon: "fas fa-angle-double-left" },
+                { text: "ให้เพื่อนหยุดเดิน 1 ตา", action: "prank_skip_turn", value: 1, icon: "fas fa-user-clock" },
+            ],
+            bonus: [
+                { text: "เดินไปช่องที่ 35", action: "go_to_square", value: 34, icon: "fas fa-route" },
+                { text: "ทอยลูกเต๋าอีกครั้ง!", action: "roll_again", icon: "fas fa-redo" }
+            ]
+        };
+
+        const prankEffects = [
+            { text: "ให้เพื่อนถอยหลัง 1 ช่อง", action: "prank_move_backward", value: 1, icon: "fas fa-user-minus" },
+            { text: "ให้เพื่อนถอยหลัง 2 ช่อง", action: "prank_move_backward", value: 2, icon: "fas fa-users-cog" },
+            { text: "ให้เพื่อนหยุดเดิน 1 ตา", action: "prank_skip_turn", value: 1, icon: "fas fa-user-clock", cost: 10 }
+        ];
+
+        const punishmentEffects = [
+            { text: "ถอย 1 ช่อง", action: "punish_move_backward", value: 1 },
+            { text: "ถอย 2 ช่อง", action: "punish_move_backward", value: 2 },
+            { text: "ถอย 5 ช่อง", action: "punish_move_backward", value: 5, for3plusPlayers: true }
+        ];
+        
+        const groupEvents = [
+            { 
+                text: "พายุสุริยะ! คลื่นแม่เหล็กปั่นป่วน ทำให้ผู้เล่นทุกคนที่อยู่บนช่องเลขคี่ต้องถอยหลัง 1 ช่อง", 
+                action: (players) => {
+                    players.forEach(p => {
+                        if ((p.position + 1) % 2 !== 0) {
+                            p.position = Math.max(0, p.position - 1);
+                            p.onBoardPosition = p.position;
+                        }
+                    });
+                    showMessage("ผู้เล่นบนช่องเลขคี่ถอยหลัง 1 ช่อง!", 'info');
+                }
+            },
+            {
+                text: "ฝนดาวตก! ผู้เล่นทุกคนได้รับคะแนนโบนัส 15 คะแนน!",
+                action: (players) => {
+                    players.forEach(p => p.score += 15);
+                    showMessage("ทุกคนได้รับ 15 คะแนน!", 'success');
+                }
+            },
+            {
+                text: "แรงโน้มถ่วงผิดปกติ! ผู้เล่นที่อยู่นำหน้าสุด (ยกเว้นคนปัจจุบัน) ต้องสลับตำแหน่งกับผู้เล่นที่อยู่ท้ายสุด",
+                action: (players, currentPlayerIdx) => {
+                    if (players.length < 3) {
+                        showMessage("มีผู้เล่นไม่พอให้สลับตำแหน่ง!", 'info');
+                        return; 
+                    }
+                    
+                    let sortedPlayers = [...players].sort((a, b) => b.position - a.position);
+                    let leader = sortedPlayers[0];
+                    let last = sortedPlayers[sortedPlayers.length - 1];
+        
+                    if (leader.id === players[currentPlayerIdx].id && sortedPlayers.length > 1) {
+                        leader = sortedPlayers[1];
+                    }
+        
+                    if (leader && last && leader.id !== last.id) {
+                        const tempPos = leader.position;
+                        leader.position = last.position;
+                        last.position = tempPos;
+        
+                        leader.onBoardPosition = leader.position;
+                        last.onBoardPosition = last.position;
+                        showMessage(`${leader.name} สลับตำแหน่งกับ ${last.name}!`, 'info', 4000);
+                    } else {
+                        showMessage("ไม่สามารถสลับตำแหน่งได้ในตอนนี้", 'info');
+                    }
+                }
+            }
+        ];
+
+
+        // --- Master Question Bank ---
+        const allCards = {
+            mission: { easy: [], medium: [], hard: [] },
+            puzzle: { easy: [], medium: [], hard: [] }
+        };
+        
+        function populateAllCards() {
+            allCards.mission.easy = [
+                { question: "5 + 11 = ?", answer: "16", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "18 - 7 = ?", answer: "11", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "4 × 8 = ?", answer: "32", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 ÷ 5 = ?", answer: "4", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-3) + 9 = ?", answer: "6", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "10 + (-4) = ?", answer: "6", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "7 - 12 = ?", answer: "-5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-5) - 3 = ?", answer: "-8", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "6 × (-3) = ?", answer: "-18", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-2) × 10 = ?", answer: "-20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "15 ÷ (-3) = ?", answer: "-5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-14) ÷ 2 = ?", answer: "-7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-8) + (-5) = ?", answer: "-13", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-1) × (-13) = ?", answer: "13", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-25) ÷ (-5) = ?", answer: "5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "19 - 9 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "2 + 15 = ?", answer: "17", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "6 × 6 = ?", answer: "36", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 ÷ 3 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "14 + (-14) = ?", answer: "0", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "8 - (-2) = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "0 - 7 = ?", answer: "-7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-9) + 0 = ?", answer: "-9", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "11 × (-1) = ?", answer: "-11", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "45 ÷ 9 = ?", answer: "5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "17 + 3 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 - 15 = ?", answer: "5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "7 × 5 = ?", answer: "35", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "18 ÷ 6 = ?", answer: "3", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-6) + 16 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "13 + (-7) = ?", answer: "6", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "9 - 15 = ?", answer: "-6", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-4) - 6 = ?", answer: "-10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "8 × (-4) = ?", answer: "-32", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-5) × 7 = ?", answer: "-35", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "21 ÷ (-7) = ?", answer: "-3", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-24) ÷ 3 = ?", answer: "-8", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-9) + (-9) = ?", answer: "-18", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-6) × (-5) = ?", answer: "30", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-40) ÷ (-10) = ?", answer: "4", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "22 - 12 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "4 + 16 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "9 × 3 = ?", answer: "27", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "32 ÷ 4 = ?", answer: "8", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "18 + (-9) = ?", answer: "9", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "11 - (-4) = ?", answer: "15", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "2 - 9 = ?", answer: "-7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-7) - 7 = ?", answer: "-14", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "12 × (-2) = ?", answer: "-24", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 ÷ (-5) = ?", answer: "-10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-3) × 11 = ?", answer: "-33", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "36 ÷ 6 = ?", answer: "6", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-12) + 20 = ?", answer: "8", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-8) - (-8) = ?", answer: "0", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-4) × (-9) = ?", answer: "36", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 + 5 = ?", answer: "30", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 - 10 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "10 × 10 = ?", answer: "100", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "100 ÷ 10 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-15) + 5 = ?", answer: "-10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 + (-10) = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "15 - 20 = ?", answer: "-5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-1) - 10 = ?", answer: "-11", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "9 × (-5) = ?", answer: "-45", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-7) × 6 = ?", answer: "-42", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "42 ÷ (-6) = ?", answer: "-7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-50) ÷ 10 = ?", answer: "-5", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-11) + (-4) = ?", answer: "-15", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-8) × (-3) = ?", answer: "24", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-27) ÷ (-9) = ?", answer: "3", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 - 5 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "13 + 7 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "7 × 7 = ?", answer: "49", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "49 ÷ 7 = ?", answer: "7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 + (-20) = ?", answer: "0", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "10 - (-10) = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "0 - 12 = ?", answer: "-12", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-15) + 0 = ?", answer: "-15", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "1 × (-15) = ?", answer: "-15", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "60 ÷ 6 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "19 + 1 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "21 - 11 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "8 × 5 = ?", answer: "40", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "35 ÷ 5 = ?", answer: "7", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-9) + 19 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "16 + (-8) = ?", answer: "8", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "14 - 17 = ?", answer: "-3", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-6) - 9 = ?", answer: "-15", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "11 × (-3) = ?", answer: "-33", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-4) × 12 = ?", answer: "-48", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "33 ÷ (-3) = ?", answer: "-11", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-48) ÷ 4 = ?", answer: "-12", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-10) + (-10) = ?", answer: "-20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-7) × (-4) = ?", answer: "28", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-54) ÷ (-6) = ?", answer: "9", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "28 - 18 = ?", answer: "10", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "9 + 11 = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "12 × 3 = ?", answer: "36", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "36 ÷ 9 = ?", answer: "4", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 + (-5) = ?", answer: "20", difficulty: "easy", type: "calculation", requiresInput: true, category: "mixed" },
+            ];
+
+            allCards.mission.medium = [
+                { question: "(-25) + 50 = ?", answer: "25", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 - (-15) = ?", answer: "45", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-12) × 11 = ?", answer: "-132", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-100) ÷ 25 = ?", answer: "-4", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 + (10 × (-2)) = ?", answer: "30", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "100 - (40 ÷ 5) = ?", answer: "92", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-15) × (-10) = ?", answer: "150", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "75 + (-100) = ?", answer: "-25", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(18 - 8) × 5 = ?", answer: "50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-20) + 10) ÷ 2 = ?", answer: "-5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "35 - 5 × 4 = ?", answer: "15", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "60 ÷ 10 + 9 = ?", answer: "15", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-40) - (-25) = ?", answer: "-15", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "144 ÷ (-12) = ?", answer: "-12", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-20) × 5 + 30 = ?", answer: "-70", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "80 - 30 ÷ (-3) = ?", answer: "90", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "23 + (-43) = ?", answer: "-20", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-19) - 21 = ?", answer: "-40", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 × (-4) = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-81) ÷ (-9) = ?", answer: "9", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(5 + (-20)) × 3 = ?", answer: "-45", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "12 × (10 - 15) = ?", answer: "-60", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "40 - 7 × 5 = ?", answer: "5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "15 + 45 ÷ 9 = ?", answer: "20", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-32) + (-58) = ?", answer: "-90", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "67 - (-33) = ?", answer: "100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "15 × (-12) = ?", answer: "-180", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "120 ÷ (-10) = ?", answer: "-12", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "100 + ((-5) × 20) = ?", answer: "0", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 - (100 ÷ (-4)) = ?", answer: "75", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(30-50) × (-2) = ?", answer: "40", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-60) + 30) ÷ (-5) = ?", answer: "6", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "28 - 8 × 2 = ?", answer: "12", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "72 ÷ 9 + 12 = ?", answer: "20", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-55) + 25 = ?", answer: "-30", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-31) - 49 = ?", answer: "-80", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 × (-6) = ?", answer: "-180", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-200) ÷ 40 = ?", answer: "-5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 × (-2) + 10 = ?", answer: "-90", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "99 - 99 ÷ (-11) = ?", answer: "108", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(45 - 20) × 4 = ?", answer: "100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 × (12 - 18) = ?", answer: "-120", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "60 - 9 × 6 = ?", answer: "6", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 + 125 ÷ 5 = ?", answer: "50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-47) + (-33) = ?", answer: "-80", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "82 - (-18) = ?", answer: "100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "18 × (-10) = ?", answer: "-180", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "150 ÷ (-25) = ?", answer: "-6", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "200 + ((-8) × 25) = ?", answer: "0", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "75 - (150 ÷ (-2)) = ?", answer: "150", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(60-100) × (-1) = ?", answer: "40", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-80) + 20) ÷ (-12) = ?", answer: "5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "42 - 6 × 7 = ?", answer: "0", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "81 ÷ 9 + 21 = ?", answer: "30", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-62) + 12 = ?", answer: "-50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-28) - 72 = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "40 × (-5) = ?", answer: "-200", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-300) ÷ 60 = ?", answer: "-5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 × (-4) + 50 = ?", answer: "-50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "200 - 100 ÷ (-20) = ?", answer: "205", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(32 - 12) × 5 = ?", answer: "100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "15 × (10 - 20) = ?", answer: "-150", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "70 - 8 × 8 = ?", answer: "6", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "49 + 49 ÷ 7 = ?", answer: "56", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-53) + (-47) = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "91 - (-9) = ?", answer: "100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "22 × (-5) = ?", answer: "-110", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "196 ÷ (-14) = ?", answer: "-14", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "300 + ((-10) × 10) = ?", answer: "200", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "88 - (88 ÷ (-8)) = ?", answer: "99", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(48 - 24) × (-3) = ?", answer: "-72", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-100) + 50) ÷ (-25) = ?", answer: "2", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "56 - 7 × 9 = ?", answer: "-7", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "64 ÷ 8 + 32 = ?", answer: "40", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-75) + 25 = ?", answer: "-50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-44) - 56 = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 × (-8) = ?", answer: "-400", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-500) ÷ 100 = ?", answer: "-5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "150 + ((-25) × 4) = ?", answer: "50", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "45 - (90 ÷ (-9)) = ?", answer: "55", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(21-51) ×(-2) = ?", answer: "60", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-90)+10) ÷(-8) = ?", answer: "10", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "39-13 × 2 = ?", answer: "13", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "144 ÷ 12+13 = ?", answer: "25", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-88)+18 = ?", answer: "-70", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-65)-35 = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "60 × (-3) = ?", answer: "-180", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-180) ÷ 30 = ?", answer: "-6", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "70 × (-2)+40 = ?", answer: "-100", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "121-121 ÷ (-11) = ?", answer: "132", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(66-33) × 3 = ?", answer: "99", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 × (15-25) = ?", answer: "-300", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "80-9 × 10 = ?", answer: "-10", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "36+144 ÷ 12 = ?", answer: "48", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-99)+(-101) = ?", answer: "-200", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "250-(-50) = ?", answer: "300", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "35 × (-10) = ?", answer: "-350", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "225 ÷ (-15) = ?", answer: "-15", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "500+( (-50) × 2 ) = ?", answer: "400", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "1-(100 ÷ (-25)) = ?", answer: "5", difficulty: "medium", type: "calculation", requiresInput: true, category: "mixed" },
+            ];
+
+            allCards.mission.hard = [
+                { question: "(-5) × (12 - 7) + 30 = ?", answer: "5", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(100 ÷ (-5)) - (5 × 6) = ?", answer: "-50", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-40) + 15) × (18 ÷ (-9)) = ?", answer: "50", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "150 - ((-10) × (20-15)) = ?", answer: "200", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((8 - 20) ÷ 3) × (-10) = ?", answer: "40", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-200 ÷ (4 × (-5)) - 10 = ?", answer: "0", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-8 - 7) × (-2 - 3) = ?", answer: "75", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(50 - (-25)) ÷ ((-10) + 5) = ?", answer: "-15", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 × (-6) + 100 ÷ (-25) = ?", answer: "-124", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(3 × (-15)) + (80 ÷ (-4)) = ?", answer: "-65", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "500 - (20 × (-10) + 100) = ?", answer: "600", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-7) × (-9)) - (48 ÷ (-6)) = ?", answer: "71", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "( (27-12) × (-4) ) ÷ 15 = ?", answer: "-4", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "1 - ( (10-15) × (-2) ) = ?", answer: "-9", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "4 × ((-20) ÷ 5) - 14 = ?", answer: "-30", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "100 + (50 ÷ (2-7)) = ?", answer: "90", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-18) ÷ (-9)) × (30-40) = ?", answer: "-20", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(12 × 5) - (10 × 6) = ?", answer: "0", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-10 × (-10 + (24 ÷ (-3))) = ?", answer: "180", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(55 ÷ (-11)) + (6 × (-9)) = ?", answer: "-59", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "300 - (5 × (40-60)) = ?", answer: "400", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-90) ÷ (15-6)) × 5 = ?", answer: "-50", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(144 ÷ 12) + (169 ÷ (-13)) = ?", answer: "-1", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "25 × (4 - (10 ÷ (-2))) = ?", answer: "225", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-2) × (-3) × (-4)) - 10 = ?", answer: "-34", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "75 + (100 ÷ ((-10) - 15)) = ?", answer: "71", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(50 - 150) × ((-8) + 6) = ?", answer: "200", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "36 ÷ (2-8) + 42 ÷ (1-8) = ?", answer: "-12", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "120 - ((-6) × (-5) × (-2)) = ?", answer: "180", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: " ( (100+20) ÷ (-12) ) - 10 = ?", answer: "-20", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: " (-11) × (5 - 9) - 50 = ?", answer: "-6", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(1000 ÷ (-20)) - (50 × 3) = ?", answer: "-200", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-60)+12) × (25 ÷ (-5)) = ?", answer: "240", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "250 - ((-15) × (10-4)) = ?", answer: "340", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((15-45) ÷ 6) × (-12) = ?", answer: "60", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-500 ÷ (10 × (-5)) - 20 = ?", answer: "-10", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-9-6) × (-4-1) = ?", answer: "75", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(100 - (-50)) ÷ ((-20)+5) = ?", answer: "-10", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 × (-5) + 200 ÷ (-25) = ?", answer: "-158", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(4 × (-20)) + (120 ÷ (-6)) = ?", answer: "-100", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "1000 - (40 × (-10)+200) = ?", answer: "1200", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-8) × (-8))-(60 ÷ (-5)) = ?", answer: "76", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((45-25) ×(-5)) ÷ 20 = ?", answer: "-5", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "10 - ((12-22) ×(-3)) = ?", answer: "-20", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "5 × ((-40) ÷ 8) - 25 = ?", answer: "-50", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "200 + (100 ÷ (4-9)) = ?", answer: "180", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-36) ÷(-4)) × (50-70) = ?", answer: "-180", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(15 × 4) - (12 × 5) = ?", answer: "0", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-20 × (-5 + (32 ÷ (-4))) = ?", answer: "260", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(121 ÷ (-11)) + (8 × (-7)) = ?", answer: "-67", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "400 - (10 × (20-50)) = ?", answer: "700", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-120) ÷ (20-8)) × 6 = ?", answer: "-60", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(196 ÷ 14) + (225 ÷ (-15)) = ?", answer: "-1", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "30 × (5 - (20 ÷ (-4))) = ?", answer: "300", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-1) × (-2) × (-5)) - 15 = ?", answer: "-25", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "90 + (200 ÷ ((-20) - 5)) = ?", answer: "82", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(60-120) × ((-10)+7) = ?", answer: "180", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "45 ÷ (3-12) + 56 ÷ (2-9) = ?", answer: "-13", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "150 - ((-7) × (-5) × (-2)) = ?", answer: "220", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((200+40) ÷ (-24)) - 20 = ?", answer: "-30", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-12) × (1-8) - 100 = ?", answer: "-16", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(2000 ÷ (-40)) - (10 × 20) = ?", answer: "-250", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-80)+20) × (36 ÷ (-6)) = ?", answer: "360", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "300 - ((-20) × (12-5)) = ?", answer: "440", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((25-75) ÷ 10) × (-15) = ?", answer: "75", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-1000 ÷ (20 × (-5)) - 30 = ?", answer: "-20", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-10-5) × (-3-2) = ?", answer: "75", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(200 - (-100)) ÷ ((-30)+15) = ?", answer: "-20", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "40 × (-4) + 300 ÷ (-30) = ?", answer: "-170", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(5 × (-15))+(150 ÷ (-5)) = ?", answer: "-105", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "2000 - (50 × (-20)+500) = ?", answer: "2500", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-9) × (-9)) - (81 ÷ (-9)) = ?", answer: "90", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((54-24) × (-3)) ÷ 9 = ?", answer: "-10", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "20 - ((25-40) × (-2)) = ?", answer: "-10", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "6 × ((-50) ÷ 10) - 30 = ?", answer: "-60", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "300+(250 ÷(5-30)) = ?", answer: "290", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-48) ÷(-8)) ×(10-30) = ?", answer: "-120", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(20 × 3) - (30 × 2) = ?", answer: "0", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-30 × (-10 + (45 ÷ (-5))) = ?", answer: "570", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(144 ÷ (-12)) + (10 × (-10)) = ?", answer: "-112", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "500 - (2 × (100-200)) = ?", answer: "700", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-200) ÷ (25-5)) × 7 = ?", answer: "-70", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(400 ÷ 20) + (800 ÷ (-40)) = ?", answer: "0", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 × (1 - (40 ÷ (-8))) = ?", answer: "300", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-5) × (-4) × (-2)) - 20 = ?", answer: "-60", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "125 + (500 ÷ ((-30)-20)) = ?", answer: "115", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(100-200) × ((-5)+2) = ?", answer: "300", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "60 ÷ (5-15) + 70 ÷ (3-10) = ?", answer: "-16", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "240 - ((-8) × (-5) × (-3)) = ?", answer: "360", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: " ( (300+60) ÷ (-36) ) - 30 = ?", answer: "-40", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: " (-15) × (2-10) - 20 = ?", answer: "100", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(3000 ÷ (-50)) - (20 × 5) = ?", answer: "-160", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((-100)+25) × (49 ÷ (-7)) = ?", answer: "525", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "450 - ((-25) × (20-10)) = ?", answer: "700", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "((30-90) ÷ 12) × (-11) = ?", answer: "55", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "-800 ÷ (40 × (-2)) - 40 = ?", answer: "-30", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(-12-8) × (-5-5) = ?", answer: "200", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(300 - (-150)) ÷ ((-40)+10) = ?", answer: "-15", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "50 × (-3) + 400 ÷ (-20) = ?", answer: "-170", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+                { question: "(6 × (-25)) + (200 ÷ (-8)) = ?", answer: "-175", difficulty: "hard", type: "calculation", requiresInput: true, category: "mixed" },
+            ];
+            
+            //--- NEW PUZZLE CARDS ---
+            // NOTE: The following are sample questions. You can add up to 100 for each difficulty level.
+            allCards.puzzle.easy = [
+                { question: "(-5) + 12 = ?", choices: [7, -7, 17, -17], answer: 7, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "10 - (-4) = ?", choices: [6, -6, 14, -14], answer: 14, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "(-8) × 3 = ?", choices: [-24, 24, -5, 11], answer: -24, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "(-20) ÷ (-5) = ?", choices: [4, -4, 25, -15], answer: 4, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "6 + (-15) = ?", choices: [-9, 9, 21, -21], answer: -9, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "7 - 18 = ?", choices: [-11, 11, 25, -25], answer: -11, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "(-9) × (-6) = ?", choices: [54, -54, -15, 3], answer: 54, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "32 ÷ (-4) = ?", choices: [-8, 8, 28, -36], answer: -8, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "(-13) + (-8) = ?", choices: [-21, 21, -5, 5], answer: -21, difficulty: 'easy', type: 'multiple_choice' },
+                { question: "15 - 8 = ?", choices: [7, -7, 23, -23], answer: 7, difficulty: 'easy', type: "multiple_choice" },
+                { question: "5 × (-11) = ?", choices: [-55, 55, -6, 16], answer: -55, difficulty: "easy", type: "multiple_choice" },
+                { question: "(-48) ÷ 6 = ?", choices: [-8, 8, -42, -54], answer: -8, difficulty: "easy", type: "multiple_choice" },
+                { question: "(-3) + 20 = ?", choices: [17, -17, -23, 23], answer: 17, difficulty: "easy", type: "multiple_choice" },
+                { question: "9 - (-9) = ?", choices: [18, 0, -18, 1], answer: 18, difficulty: "easy", type: "multiple_choice" },
+                { question: "(-7) × (-7) = ?", choices: [49, -49, 0, 14], answer: 49, difficulty: "easy", type: "multiple_choice" },
+                // Add up to 100 questions here
+            ];
+
+            allCards.puzzle.medium = [
+                { question: "(8 - 12) × 5 = ?", choices: [-20, 20, -16, -28], answer: -20, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "30 ÷ ((-2) - 3) = ?", choices: [-6, 6, -10, 10], answer: -6, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "(-4) × 5 + 10 = ?", choices: [-10, 10, -30, -25], answer: -10, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "50 - 10 × 2 = ?", choices: [30, 80, 40, 60], answer: 30, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "(-5) + (-8) - 10 = ?", choices: [-23, 23, 3, -7], answer: -23, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "100 ÷ (-5) + 8 = ?", choices: [-12, -28, 12, 28], answer: -12, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "(5 - 9) × (2 + 3) = ?", choices: [-20, 20, 35, -35], answer: -20, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "6 × (-3) - (-5) = ?", choices: [-13, -23, 13, 23], answer: -13, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "40 - (15 ÷ (-3)) = ?", choices: [45, 35, -25, 25], answer: 45, difficulty: 'medium', type: 'multiple_choice' },
+                { question: "(-1 - 2) * (-3 - 4) = ?", choices: [21, -21, 10, -10], answer: 21, difficulty: "medium", type: "multiple_choice" },
+                { question: "20 + 5 * (-2) = ?", choices: [10, -30, 30, -10], answer: 10, difficulty: "medium", type: "multiple_choice" },
+                { question: "((-10) + 4) ÷ 2 = ?", choices: [-3, -7, 3, 7], answer: -3, difficulty: "medium", type: "multiple_choice" },
+                { question: "8 - (3 * (-4)) = ?", choices: [20, -4, 20, -20], answer: 20, difficulty: "medium", type: "multiple_choice" },
+                { question: "(-15 / 3) + (-10 / 2) = ?", choices: [-10, 0, -5, 5], answer: -10, difficulty: "medium", type: "multiple_choice" },
+                { question: "7 * ((-2) - (-5)) = ?", choices: [21, -21, -49, 49], answer: 21, difficulty: "medium", type: "multiple_choice" },
+                // Add up to 100 questions here
+            ];
+
+            allCards.puzzle.hard = [
+                { question: "อุณหภูมิตอนเช้า 5°C ตอนเที่ยงเพิ่มขึ้น 10°C และตอนกลางคืนลดลง 18°C อุณหภูมิตอนกลางคืนเป็นเท่าใด?", choices: ["-3°C", "3°C", "33°C", "-13°C"], answer: "-3°C", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "มานีมีเงิน 200 บาท ซื้อขนมไป 3 ชิ้น ชิ้นละ 15 บาท และซื้อน้ำ 1 ขวด ราคา 25 บาท มานีเหลือเงินเท่าไหร่?", choices: ["130 บาท", "150 บาท", "160 บาท", "110 บาท"], answer: "130 บาท", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "เรือดำน้ำอยู่ลึก -80 เมตร ดำลงไปอีก 50 เมตร แล้วลอยขึ้นมา 60 เมตร ขณะนี้เรือดำน้ำอยู่ที่ระดับความลึกเท่าใด?", choices: ["-70 เมตร", "-90 เมตร", "-190 เมตร", "30 เมตร"], answer: "-70 เมตร", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "สมชายเป็นหนี้ 500 บาท เขาทำงานได้เงินมา 1,200 บาท และนำไปใช้หนี้ทั้งหมด จากนั้นเขาซื้อของไปอีก 300 บาท สมชายเหลือเงินเท่าไหร่?", choices: ["400 บาท", "700 บาท", "1,400 บาท", "900 บาท"], answer: "400 บาท", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "คะแนนสอบครั้งแรกได้ 15 คะแนน ครั้งที่สองได้น้อยกว่าครั้งแรก 5 คะแนน และครั้งที่สามได้มากกว่าครั้งที่สอง 8 คะแนน คะแนนรวมทั้งสามครั้งเป็นเท่าใด?", choices: ["43 คะแนน", "38 คะแนน", "33 คะแนน", "48 คะแนน"], answer: "43 คะแนน", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "ตึกมี 20 ชั้น นาย A อยู่ที่ชั้น 15 เขาลงลิฟต์ไป 8 ชั้น แล้วขึ้นไปอีก 12 ชั้น ตอนนี้นาย A อยู่ที่ชั้นใด?", choices: ["ชั้น 19", "ชั้น 7", "ชั้น 5", "ชั้น 20"], answer: "ชั้น 19", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "พ่อค้าซื้อผลไม้มา 1,000 บาท ขายได้กำไร 300 บาท แต่มีผลไม้เน่าเสียคิดเป็นต้นทุน 150 บาท สรุปแล้วพ่อค้าได้กำไรหรือขาดทุนเท่าใด?", choices: ["กำไร 150 บาท", "กำไร 300 บาท", "ขาดทุน 150 บาท", "กำไร 450 บาท"], answer: "กำไร 150 บาท", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "เครื่องบิน บินสูงจากระดับน้ำทะเล 10,000 ฟุต ลดระดับลง 2,500 ฟุต จากนั้นไต่ระดับขึ้นไปอีก 1,000 ฟุต ขณะนี้เครื่องบินอยู่ที่ระดับความสูงเท่าใด?", choices: ["8,500 ฟุต", "7,500 ฟุต", "11,500 ฟุต", "9,500 ฟุต"], answer: "8,500 ฟุต", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "ปิติมีแต้มสะสม -50 แต้ม เขาทำภารกิจสำเร็จได้แต้มเพิ่ม 3 ครั้ง ครั้งละ 20 แต้ม ตอนนี้ปิติมีแต้มเท่าใด?", choices: ["10 แต้ม", "-10 แต้ม", "110 แต้ม", "60 แต้ม"], answer: "10 แต้ม", difficulty: 'hard', type: 'multiple_choice' },
+                { question: "ในเกมๆหนึ่ง เริ่มต้นทุกคนมี 0 คะแนน ถ้าตอบถูกได้ 5 คะแนน ตอบผิดติดลบ 3 คะแนน สมศรีตอบถูก 4 ครั้ง ตอบผิด 5 ครั้ง สมศรีมีคะแนนรวมเท่าใด?", choices: ["5 คะแนน", "20 คะแนน", "15 คะแนน", "-5 คะแนน"], answer: "5 คะแนน", difficulty: 'hard', type: 'multiple_choice' },
+                // Add up to 100 questions here
+            ];
+
+            console.log("Static question bank populated.");
+        }
+
+
+        const gameSounds = {
+            diceRoll: new Audio("sounds/dice_roll.mp3"),
+            playerMove: new Audio("sounds/player_move.mp3"),
+            correctAnswer: new Audio("sounds/correct.mp3"),
+            incorrectAnswer: new Audio("sounds/incorrect.mp3"),
+            powerUp: new Audio("sounds/power_up.mp3"),
+            setback: new Audio("sounds/setback.mp3"),
+            bonus: new Audio("sounds/bonus.mp3"),
+            cardSelect: new Audio("sounds/card_select.mp3"),
+            victory: new Audio("sounds/victory.mp3"),
+            buttonClick: new Audio("sounds/button_click.mp3"),
+            prank: new Audio("sounds/prank_effect.mp3"),
+            countdownTick: new Audio("sounds/countdown_tick.mp3")
+        };
+
+        function playSound(soundName) {
+            const sound = gameSounds[soundName];
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(error => {
+                    console.warn(`ไม่สามารถเล่นเสียง "${soundName}" อัตโนมัติ: `, error);
+                });
+            } else {
+                console.warn(`ไม่พบเสียง: ${soundName}`);
+            }
+        }
+
+        const gameSetupScreen = document.getElementById('gameSetupScreen');
+        const boardContainer = document.getElementById('boardContainer');
+        const numPlayersSelect = document.getElementById('numPlayersSelect');
+        const playerConfigArea = document.getElementById('playerConfigArea');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const gameBoard = document.getElementById('gameBoard');
+        const rollDiceButton = document.getElementById('rollDiceButton');
+        const messageArea = document.getElementById('messageArea');
+        const centralMessageOverlay = document.getElementById('centralMessageOverlay');
+        const centralMessageContent = document.getElementById('centralMessageContent');
+        const cardSelectionModal = document.getElementById('cardSelectionModal');
+        const cardSelectionTitle = document.getElementById('cardSelectionTitle');
+        const cardSelectionGrid = document.getElementById('cardSelectionGrid');
+        const playersInfoPanel = document.getElementById('playersInfoPanel');
+        const currentPlayerTurnDisplay = document.getElementById('currentPlayerTurn');
+        const currentRoundCounterDisplay = document.getElementById('currentRoundCounter');
+        const movementDieValueDisplay = document.getElementById('movementDieValue');
+        const modal = document.getElementById('questionModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalQuestion = document.getElementById('modalQuestion');
+        const modalAnswerInput = document.getElementById('modalAnswerInput');
+        const modalSubmitButton = document.getElementById('modalSubmitButton');
+        const modalCloseButton = document.getElementById('modalCloseButton');
+        const modalFeedback = document.getElementById('modalFeedback');
+        const emojiPickerModal = document.getElementById('emojiPickerModal');
+        const emojiGrid = document.getElementById('emojiGrid');
+        const closeEmojiPickerBtn = document.getElementById('closeEmojiPickerBtn');
+        const victoryOverlay = document.getElementById('victoryOverlay');
+        const fireworksContainer = document.getElementById('fireworksContainer');
+        const winnerNameDisplay = document.getElementById('winnerNameDisplay');
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const prankModal = document.getElementById('prankModal');
+        const prankTitle = document.getElementById('prankTitle');
+        const prankOptionsContainer = document.getElementById('prankOptionsContainer');
+        const prankButtonsContainer = document.getElementById('prankButtonsContainer');
+        const backgroundMusicElement = document.getElementById('backgroundMusic');
+        const diceAnimationOverlay = document.getElementById('diceAnimationOverlay');
+        const diceAnimationValue = document.getElementById('diceAnimationValue');
+        const diceAnimationText = document.getElementById('diceAnimationText');
+        const welcomeScreenModal = document.getElementById('welcomeScreenModal');
+        const readyButton = document.getElementById('readyButton');
+        const heartbeatOverlay = document.getElementById('heartbeatOverlay'); 
+
+
+        let currentCardData = null;
+        let cardsForSelection = [];
+        let currentEffectCards = [];
+        let questionTimerInterval = null;
+        let timeLeft = 0;
+        const QUESTION_TIME_LIMIT = 30;
+
+
+        readyButton.addEventListener('click', () => {
+            playSound('buttonClick');
+            welcomeScreenModal.style.display = 'none';
+            gameSetupScreen.classList.remove('hidden');
+            createPlayerConfigInputs(parseInt(numPlayersSelect.value));
+        });
+
+        function createPlayerConfigInputs(num) {
+            playerConfigArea.innerHTML = '';
+            for (let i = 0; i < num; i++) {
+                const entryDiv = document.createElement('div');
+                entryDiv.classList.add('player-config-entry', 'p-3', 'bg-gray-50', 'rounded-lg', 'shadow-sm');
+                entryDiv.innerHTML = `
+                    <label class="font-semibold text-gray-700 w-1/4">ผู้เล่น ${i + 1}:</label>
+                    <button type="button" class="player-emoji-select-btn" data-player-index="${i}">${defaultPlayerEmojis[i] || '😃'}</button>
+                    <input type="text" class="player-name-input setup-input flex-grow" placeholder="ชื่อ (ไม่บังคับ)">
+                `;
+                playerConfigArea.appendChild(entryDiv);
+            }
+            document.querySelectorAll('.player-emoji-select-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    playSound('buttonClick');
+                    currentPlayerEmojiSelectionIndex = parseInt(e.target.dataset.playerIndex);
+                    openEmojiPicker();
+                });
+            });
+        }
+        function openEmojiPicker() {
+            emojiGrid.innerHTML = '';
+            commonEmojisForPicker.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.classList.add('emoji-btn');
+                btn.textContent = emoji;
+                btn.addEventListener('click', () => { playSound('buttonClick'); selectEmoji(emoji); });
+                emojiGrid.appendChild(btn);
+            });
+            emojiPickerModal.style.display = 'flex';
+        }
+        function selectEmoji(emoji) {
+            const playerEmojiButton = document.querySelector(`.player-emoji-select-btn[data-player-index="${currentPlayerEmojiSelectionIndex}"]`);
+            if (playerEmojiButton) { playerEmojiButton.textContent = emoji; }
+            emojiPickerModal.style.display = 'none';
+        }
+        closeEmojiPickerBtn.addEventListener('click', () => { playSound('buttonClick'); emojiPickerModal.style.display = 'none'; });
+        numPlayersSelect.addEventListener('change', (e) => { playSound('buttonClick'); createPlayerConfigInputs(parseInt(e.target.value)); });
+
+        function getCurrentDifficulty(playerPosition) {
+            if (playerPosition < 15) {
+                return 'easy';
+            } else if (playerPosition < 35) {
+                return 'medium';
+            } else {
+                return 'hard';
+            }
+        }
+
+        startGameBtn.addEventListener('click', () => {
+            playSound('buttonClick');
+            const num = parseInt(numPlayersSelect.value);
+
+            const emojiButtons = document.querySelectorAll('.player-emoji-select-btn');
+            const nameInputs = document.querySelectorAll('.player-name-input');
+
+            players = [];
+            for (let i = 0; i < num; i++) {
+                players.push({
+                    id: i + 1,
+                    name: nameInputs[i].value.trim() || `ผู้เล่น ${i + 1}`,
+                    emoji: emojiButtons[i].textContent.trim(),
+                    position: 0,
+                    onBoardPosition: 0,
+                    score: 0, 
+                    hasShield: false,
+                    extraTurnsToTake: 0,
+                    hasBeenPrankedThisRound: false
+                });
+            }
+
+            currentGameQuestionPool = JSON.parse(JSON.stringify(allCards));
+            currentRound = 1;
+            document.getElementById('currentRoundCounter').textContent = currentRound;
+
+            gameSetupScreen.classList.add('hidden');
+            boardContainer.classList.remove('hidden');
+            victoryOverlay.style.display = 'none';
+            fireworksContainer.innerHTML = '';
+            gameActive = true;
+            currentPlayerIndex = 0;
+            initializeBoard();
+            initializePlayersInfoPanel();
+            showMessage(`เกมเริ่มต้น! ตาของ ${players[currentPlayerIndex].name}`, 'turn_info');
+            rollDiceButton.disabled = false;
+
+            if (backgroundMusicElement) {
+                backgroundMusicElement.src = "sounds/background_music.mp3";
+                backgroundMusicElement.volume = 0.1;
+                backgroundMusicElement.play().catch(error => console.warn("ไม่สามารถเล่นเพลงพื้นหลังอัตโนมัติ:", error));
+            }
+        });
+
+        playAgainBtn.addEventListener('click', () => {
+            playSound('buttonClick');
+            if (backgroundMusicElement) { backgroundMusicElement.pause(); backgroundMusicElement.currentTime = 0; }
+            victoryOverlay.style.display = 'none';
+            fireworksContainer.innerHTML = '';
+            boardContainer.classList.add('hidden');
+            welcomeScreenModal.style.display = 'flex';
+            gameSetupScreen.classList.add('hidden');
+            createPlayerConfigInputs(parseInt(numPlayersSelect.value));
+        });
+
+        // --- Game Logic Functions ---
+        function initializeBoard() {
+            gameBoard.innerHTML = '';
+            const numRows = 5;
+            const numCols = 10;
+            for (let i = 0; i < NUM_SQUARES; i++) {
+                const squareData = boardConfig[i];
+                const squareDiv = document.createElement('div');
+                squareDiv.id = `square-${i}`;
+                squareDiv.classList.add('board-square', `${squareData.type}-square`);
+
+                const visualRowFromBottom = Math.floor(i / numCols);
+                let visualColInRow;
+                if (visualRowFromBottom % 2 === 0) {
+                    visualColInRow = i % numCols;
+                } else {
+                    visualColInRow = (numCols - 1) - (i % numCols);
+                }
+
+                const cssGridRow = numRows - visualRowFromBottom;
+                const cssGridColumn = visualColInRow + 1;
+
+                squareDiv.style.gridRowStart = cssGridRow;
+                squareDiv.style.gridColumnStart = cssGridColumn;
+
+
+                squareDiv.innerHTML = `
+                    <span class="square-number">${i + 1}</span>
+                    <i class="${squareData.icon} square-icon"></i>
+                    <span class="square-text">${squareData.text}</span>
+                    <div class="player-slots-container" id="slots-sq-${i}"></div>
+                `;
+                gameBoard.appendChild(squareDiv);
+            }
+            renderPlayerPieces();
+        }
+
+        function initializePlayersInfoPanel() {
+            playersInfoPanel.innerHTML = '';
+            players.forEach(player => {
+                const playerInfoDiv = document.createElement('div');
+                playerInfoDiv.id = `player${player.id}InfoDisplay`;
+                playerInfoDiv.classList.add('text-lg', 'mb-2', 'p-2', 'border', 'border-gray-200', 'rounded-lg');
+                playerInfoDiv.innerHTML = `
+                    <div class="font-bold">${player.name} (${player.emoji})</div>
+                    <div>ช่อง: <span id="player${player.id}Pos" class="font-bold">1</span>
+                    <span id="player${player.id}ShieldIcon" class="ml-2">${player.hasShield ? '<i class="fas fa-shield-alt text-blue-500"></i>' : ''}</span></div>
+                    <div><i class="fas fa-star text-yellow-500"></i> คะแนน: <span id="player${player.id}Score" class="font-bold">0</span></div>
+                `;
+                playersInfoPanel.appendChild(playerInfoDiv);
+            });
+            updatePlayerInfo();
+        }
+
+        function renderPlayerPieces() {
+            document.querySelectorAll('.player-piece').forEach(p => p.remove());
+            players.forEach(player => {
+                if (player.onBoardPosition < NUM_SQUARES && player.onBoardPosition >= 0) {
+                    const slotsContainer = document.getElementById(`slots-sq-${player.onBoardPosition}`);
+                    if (slotsContainer) {
+                        const pieceDiv = document.createElement('div');
+                        pieceDiv.classList.add('player-piece');
+                        pieceDiv.textContent = player.emoji;
+                        slotsContainer.appendChild(pieceDiv);
+                        pieceDiv.classList.add('player-piece-landed');
+                        playSound('playerMove');
+                        setTimeout(() => {
+                            if (pieceDiv) pieceDiv.classList.remove('player-piece-landed');
+                        }, 700);
+                    }
+                }
+            });
+        }
+        
+        function updatePlayerInfo() {
+            players.forEach(player => {
+                const posDisplay = document.getElementById(`player${player.id}Pos`);
+                if (posDisplay) { posDisplay.textContent = player.position + 1; }
+
+                const shieldIconDisplay = document.getElementById(`player${player.id}ShieldIcon`);
+                if (shieldIconDisplay) { shieldIconDisplay.innerHTML = player.hasShield ? '<i class="fas fa-shield-alt text-blue-500" title="มีเกราะป้องกัน"></i>' : '';}
+                
+                const scoreDisplay = document.getElementById(`player${player.id}Score`);
+                if (scoreDisplay) { scoreDisplay.textContent = player.score; }
+            });
+            if (players.length > 0 && players[currentPlayerIndex]) {
+                 currentPlayerTurnDisplay.textContent = players[currentPlayerIndex].name;
+            } else { currentPlayerTurnDisplay.textContent = "-"; }
+            currentRoundCounterDisplay.textContent = currentRound;
+        }
+
+        function showMessage(msg, type = 'info', duration = 3500) {
+            const bottomMessageArea = document.getElementById('messageArea');
+            const centralOverlay = document.getElementById('centralMessageOverlay');
+            const centralContent = document.getElementById('centralMessageContent');
+
+            if (type === 'turn_info') {
+                bottomMessageArea.textContent = msg;
+                bottomMessageArea.className = 'mt-6 p-5 bg-blue-100 text-blue-800 rounded-xl shadow-lg text-center text-lg min-h-[60px]';
+            } else {
+                centralContent.innerHTML = `<p class="text-2xl font-semibold ${type === 'success' ? 'text-green-600' : type === 'error' ? 'text-red-600' : 'text-indigo-600'}">${msg}</p>`;
+                centralOverlay.style.display = 'flex';
+                setTimeout(() => {
+                    centralOverlay.style.display = 'none';
+                }, duration);
+            }
+        }
+
+
+        function rollMainGameDie() { return getRandomInt(-3, 9); }
+        function getRandomInt(min, max) { min = Math.ceil(min); max = Math.floor(max); return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        async function animateDiceRoll(finalRollFunction, duration = 1500, intervalTime = 100) {
+            playSound('diceRoll');
+            diceAnimationOverlay.style.display = 'flex';
+            diceAnimationText.textContent = "กำลังทอยลูกเต๋า...";
+            diceAnimationValue.textContent = '?';
+
+            return new Promise(resolve => {
+                let rollCount = 0;
+                const maxRolls = Math.floor(duration / intervalTime);
+                const animationInterval = setInterval(() => {
+                    diceAnimationValue.textContent = getRandomInt(-3, 9);
+                    rollCount++;
+                    if (rollCount >= maxRolls) {
+                        clearInterval(animationInterval);
+                        const finalValue = finalRollFunction();
+                        diceAnimationText.textContent = "คุณทอยได้:";
+                        diceAnimationValue.textContent = finalValue;
+                        movementDieValueDisplay.textContent = finalValue;
+                        setTimeout(() => {
+                           diceAnimationOverlay.style.display = 'none';
+                        }, 1500);
+                        resolve(finalValue);
+                    }
+                }, intervalTime);
+            });
+        }
+        rollDiceButton.addEventListener('click', async () => {
+            if (!gameActive || modal.style.display === 'flex' || cardSelectionModal.style.display === 'flex' || prankModal.style.display === 'flex' || !players[currentPlayerIndex]) return;
+            playSound('buttonClick');
+            rollDiceButton.disabled = true;
+
+            movementDieResult = await animateDiceRoll(rollMainGameDie);
+
+            setTimeout(() => {
+                setTimeout(() => { movePlayer(movementDieResult, false); }, 100);
+            }, 1600);
+        });
+
+        async function movePlayer(steps, isBonusMove = false) {
+            if (!players[currentPlayerIndex]) return;
+            const player = players[currentPlayerIndex];
+            let targetPosition = player.position + steps;
+
+            if (targetPosition >= NUM_SQUARES - 1) targetPosition = NUM_SQUARES - 1;
+            if (targetPosition < 0) targetPosition = 0;
+
+            if (steps < 0 && player.hasShield) {
+                showMessage(`${player.name} มีเกราะป้องกัน! ไม่ต้องถอยหลังครั้งนี้`, 'success', 3000);
+                player.hasShield = false;
+                updatePlayerInfo();
+                switchTurn();
+                return;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 100));
+
+            const moveInterval = 350;
+            let currentDisplayPosition = player.onBoardPosition;
+            const stepDirection = (targetPosition > currentDisplayPosition) ? 1 : -1;
+
+            function animateStep() {
+                if (currentDisplayPosition !== targetPosition) {
+                    currentDisplayPosition += stepDirection;
+                    player.onBoardPosition = currentDisplayPosition;
+                    renderPlayerPieces();
+                    setTimeout(animateStep, moveInterval);
+                } else {
+                    player.position = targetPosition;
+                    renderPlayerPieces();
+                    updatePlayerInfo();
+
+                    setTimeout(() => {
+                        const finalSquare = boardConfig[player.position];
+                        if (!isBonusMove) {
+                            handleSquareAction(player.position);
+                        } else {
+                            if (finalSquare.type === 'normal' || finalSquare.type === 'puzzle') {
+                                isHandlingBonusMoveQuestion = true;
+                                handleSquareAction(player.position);
+                            } else if (finalSquare.type === 'finish') {
+                                handleSquareAction(player.position);
+                            } else {
+                                switchTurn();
+                            }
+                        }
+                    }, 500);
+                }
+            }
+
+            if (player.onBoardPosition !== targetPosition) {
+                animateStep();
+            } else {
+                if (!isBonusMove) {
+                    handleSquareAction(player.position);
+                } else {
+                    switchTurn();
+                }
+            }
+        }
+
+
+        function displayVictory(winner) {
+             playSound('victory');
+            gameActive = false;
+            rollDiceButton.disabled = true;
+            if (backgroundMusicElement) { backgroundMusicElement.pause(); backgroundMusicElement.currentTime = 0; }
+            winnerNameDisplay.innerHTML = `🎉 ยินดีด้วย ${winner.name} (${winner.emoji})! 🎉<br>คุณคือผู้พิชิตยอดเขา! (คะแนนรวม: ${winner.score})`;
+            victoryOverlay.style.display = 'flex';
+            for (let i = 0; i < 20; i++) { setTimeout(() => { createFireworkBurst(); }, i * 150); }
+        }
+        function createFireworkBurst() {
+            const numParticles = 30; const burstX = Math.random() * window.innerWidth; const burstY = Math.random() * (window.innerHeight * 0.7);
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div'); particle.classList.add('firework-particle');
+                particle.style.backgroundColor = fireworkColors[Math.floor(Math.random() * fireworkColors.length)];
+                particle.style.left = burstX + 'px'; particle.style.top = burstY + 'px';
+                const angle = Math.random() * Math.PI * 2; const radius = Math.random() * 100 + 40;
+                particle.style.setProperty('--tx', Math.cos(angle) * radius + 'px'); particle.style.setProperty('--ty', Math.sin(angle) * radius + 'px');
+                fireworksContainer.appendChild(particle);
+                particle.addEventListener('animationend', () => { particle.remove(); });
+            }
+        }
+
+        const questionTimerDisplay = document.getElementById('questionTimerDisplay');
+
+        function updateTimerDisplay() {
+            if (questionTimerDisplay) {
+                questionTimerDisplay.textContent = `เวลา: ${timeLeft} วินาที`;
+                if (timeLeft <= 5 && timeLeft > 0) {
+                    questionTimerDisplay.classList.add('text-red-600', 'font-bold', 'animate-pulse');
+                } else {
+                    questionTimerDisplay.classList.remove('text-red-600', 'font-bold', 'animate-pulse');
+                }
+            }
+        }
+        
+        function stopQuestionTimer() {
+            if (questionTimerInterval) {
+                clearInterval(questionTimerInterval);
+                questionTimerInterval = null;
+            }
+             if (questionTimerDisplay) {
+                questionTimerDisplay.classList.remove('text-red-600', 'font-bold', 'animate-pulse');
+                questionTimerDisplay.textContent = '';
+            }
+            if (heartbeatOverlay) heartbeatOverlay.style.display = 'none';
+        }
+
+        let currentQuestionTimeoutCallback = null;
+
+        function startQuestionTimer(onTimeUpCallback) {
+            stopQuestionTimer();
+            timeLeft = QUESTION_TIME_LIMIT;
+            currentQuestionTimeoutCallback = onTimeUpCallback;
+            updateTimerDisplay();
+
+            questionTimerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 10 && timeLeft > 0) {
+                    heartbeatOverlay.style.display = 'block';
+                    playSound('countdownTick');
+                }
+
+                if (timeLeft <= 0) {
+                    stopQuestionTimer();
+                    if (currentQuestionTimeoutCallback) {
+                        currentQuestionTimeoutCallback();
+                    }
+                }
+            }, 1000);
+        }
+
+        
+        function displayCardSelection(cardDeckType, titlePrefix = "เลือกการ์ด", customSourcePool = null) {
+            playSound('cardSelect');
+            cardsForSelection = [];
+            let sourceDeck;
+            let currentDynamicDifficulty = getCurrentDifficulty(players[currentPlayerIndex].position);
+        
+            if (cardDeckType === 'mission') {
+                if (customSourcePool) {
+                    sourceDeck = customSourcePool;
+                } else {
+                    if (currentGameQuestionPool.mission[currentDynamicDifficulty].length === 0) {
+                        console.log(`Resetting ${currentDynamicDifficulty} mission cards.`);
+                        showMessage(`กำลังสับการ์ดภารกิจ (${currentDynamicDifficulty}) ใหม่!`, 'info', 2000);
+                        currentGameQuestionPool.mission[currentDynamicDifficulty] = JSON.parse(JSON.stringify(allCards.mission[currentDynamicDifficulty]));
+                    }
+                    sourceDeck = currentGameQuestionPool.mission[currentDynamicDifficulty] || [];
+                }
+                const shuffledMissions = [...sourceDeck].sort(() => 0.5 - Math.random());
+                cardsForSelection = shuffledMissions.slice(0, 10);
+        
+            } else if (cardDeckType === 'puzzle') {
+                 if (!currentGameQuestionPool.puzzle[currentDynamicDifficulty] || currentGameQuestionPool.puzzle[currentDynamicDifficulty].length === 0) {
+                    console.log(`Resetting ${currentDynamicDifficulty} puzzle cards.`);
+                    showMessage(`กำลังสับการ์ดปริศนา (${currentDynamicDifficulty}) ใหม่!`, 'info', 2000);
+                    currentGameQuestionPool.puzzle[currentDynamicDifficulty] = JSON.parse(JSON.stringify(allCards.puzzle[currentDynamicDifficulty]));
+                }
+                sourceDeck = currentGameQuestionPool.puzzle[currentDynamicDifficulty] || [];
+                const shuffledPuzzles = [...sourceDeck].sort(() => 0.5 - Math.random());
+                cardsForSelection = shuffledPuzzles.slice(0, 10);
+        
+            } else { // Effect cards
+                sourceDeck = effectCards[cardDeckType] || [];
+                const shuffledDeck = [...sourceDeck].sort(() => 0.5 - Math.random());
+                cardsForSelection = shuffledDeck.slice(0, 5);
+            }
+        
+            if (cardsForSelection.length === 0) {
+                showMessage("การ์ดหมด! ข้ามไปตานต่อไป", "info", 3000);
+                setTimeout(switchTurn, 1500);
+                return;
+            }
+        
+            cardSelectionGrid.innerHTML = '';
+            cardSelectionTitle.textContent = `${titlePrefix}!`;
+            if (cardDeckType === 'powerUp') cardSelectionTitle.textContent = "เลือกการ์ดพลังเสริม";
+            else if (cardDeckType === 'setback') cardSelectionTitle.textContent = "เลือกการ์ดอุปสรรค!";
+            else if (cardDeckType === 'bonus') cardSelectionTitle.textContent = "เลือกการ์ดโบนัส";
+        
+            cardsForSelection.forEach((cardData, index) => {
+                const cardBackDiv = document.createElement('div');
+                cardBackDiv.classList.add('card-back');
+                if (cardData.icon && (cardDeckType === 'powerUp' || cardDeckType === 'setback' || cardDeckType === 'bonus')) {
+                     cardBackDiv.innerHTML = `<i class="${cardData.icon}"></i>`;
+                     cardBackDiv.title = cardData.text;
+                } else {
+                    cardBackDiv.innerHTML = `<i class="fas fa-question"></i>`;
+                }
+                cardBackDiv.dataset.cardIndex = index;
+        
+                cardBackDiv.addEventListener('click', async (e) => {
+                    playSound('cardSelect');
+                    const chosenCardIndex = parseInt(e.currentTarget.dataset.cardIndex);
+                    currentCardData = cardsForSelection[chosenCardIndex];
+                    
+                    if (currentCardData.question) {
+                        const difficulty = currentCardData.difficulty;
+                        let sourcePoolList;
+        
+                        if (cardDeckType === 'mission' || cardDeckType === 'puzzle') {
+                             if(difficulty) {
+                                sourcePoolList = currentGameQuestionPool[cardDeckType][difficulty];
+                             }
+                        }
+        
+                        if (sourcePoolList) {
+                            const indexToRemove = sourcePoolList.findIndex(q => q.question === currentCardData.question);
+                            if (indexToRemove > -1) {
+                                sourcePoolList.splice(indexToRemove, 1);
+                                console.log(`Removed card: ${currentCardData.question} from ${cardDeckType}.${difficulty}`);
+                            }
+                        }
+                    }
+        
+                    cardSelectionModal.style.display = 'none';
+        
+                    if (cardDeckType === 'mission' || cardDeckType === 'puzzle') {
+                        const modalTitleText = cardDeckType === 'mission' ? 'การ์ดภารกิจ' : 'การ์ดปริศนา';
+                        showQuestionModal(`${modalTitleText} <i class="fas ${cardDeckType === 'mission' ? 'fa-tasks' : 'fa-question-circle'}"></i>`, currentCardData.question, handleQuestionAnswer);
+                    } else {
+                        applyEffectCard(currentCardData);
+                    }
+                });
+                cardSelectionGrid.appendChild(cardBackDiv);
+            });
+            cardSelectionModal.style.display = 'flex';
+        }
+        
+        function applyEffectCard(effectCard) {
+            showMessage(`คุณได้รับการ์ด: ${effectCard.text}!`, "success", 3000);
+            const player = players[currentPlayerIndex];
+
+            if (effectCard.action.includes("move_forward") || effectCard.action === "get_shield" || effectCard.action === "roll_again") playSound('powerUp');
+            if (effectCard.action.includes("move_backward") || effectCard.action === "go_to_start" || effectCard.action === "next_player_extra_turn") playSound('setback');
+            if (effectCard.action.includes("go_to_square")) playSound('bonus');
+
+            setTimeout(() => {
+                switch (effectCard.action) {
+                    case "move_forward": movePlayer(effectCard.value, true); break;
+                    case "move_backward": movePlayer(-effectCard.value, true); break;
+                    case "get_shield": player.hasShield = true; updatePlayerInfo(); switchTurn(); break;
+                    case "roll_again": showMessage("ทอยลูกเต๋าอีกครั้ง!", "info", 2000); rollDiceButton.disabled = false; break;
+                    case "next_player_extra_turn":
+                        let nextPlayerActualIndex = (currentPlayerIndex + 1) % players.length;
+                        players[nextPlayerActualIndex].extraTurnsToTake = (players[nextPlayerActualIndex].extraTurnsToTake || 0) + 1;
+                        showMessage(`${players[nextPlayerActualIndex].name} จะได้เล่นตาเพิ่ม!`, "info", 3000);
+                        switchTurn();
+                        break;
+                    case "go_to_start":
+                         if (player.hasShield) { showMessage(`${player.name} ใช้เกราะป้องกัน! ไม่ต้องกลับไปจุดเริ่มต้น`, 'success', 3000); player.hasShield = false; updatePlayerInfo(); switchTurn(); }
+                         else { player.position = 0; player.onBoardPosition = 0; renderPlayerPieces(); updatePlayerInfo(); switchTurn(); }
+                        break;
+                    case "go_to_square":
+                        let steps = effectCard.value - player.position;
+                        movePlayer(steps, true);
+                        break;
+                    default: switchTurn();
+                }
+            }, 1500);
+        }
+
+        function handleQuestionAnswer(isCorrect, timedOut = false) {
+            if (isAnsweringFinalQuestion) {
+                isAnsweringFinalQuestion = false;
+                if (isCorrect) {
+                    players[currentPlayerIndex].score += 50; 
+                    updatePlayerInfo();
+                    playSound('victory');
+                    displayVictory(players[currentPlayerIndex]);
+                } else {
+                    playSound('incorrectAnswer');
+                    showMessage('ตอบผิด! คุณถูกผลักกลับ 1 ช่อง', 'error', 3000);
+                    setTimeout(() => movePlayer(-1, true), 3100);
+                }
+                return;
+            }
+
+            if (isAnsweringSetbackSave) {
+                isAnsweringSetbackSave = false;
+                if (isCorrect) {
+                    players[currentPlayerIndex].score += 10; 
+                    updatePlayerInfo();
+                    playSound('powerUp');
+                    showMessage('ตอบถูก! คุณรอดจากอุปสรรค!', 'success', 3000);
+                    pendingSetbackCard = null;
+                    setTimeout(switchTurn, 3100);
+                } else {
+                    playSound('incorrectAnswer');
+                    showMessage('ตอบผิด! คุณต้องรับผลของอุปสรรค', 'error', 3000);
+                    const cardToApply = pendingSetbackCard;
+                    pendingSetbackCard = null;
+                    setTimeout(() => applyEffectCard(cardToApply), 3100);
+                }
+                return;
+            }
+            
+            if (pendingAction) {
+                const actionToRun = pendingAction;
+                pendingAction = null; 
+                if (isCorrect) {
+                    players[currentPlayerIndex].score += 5;
+                    updatePlayerInfo();
+                    playSound('correctAnswer');
+                    showMessage('ตอบถูก! คุณได้รับสิทธิ์เปิดการ์ดพิเศษ!', 'success', 2500);
+                    setTimeout(() => actionToRun(), 2600);
+                } else {
+                    playSound('incorrectAnswer');
+                    showMessage('ตอบผิด! คุณจึงไม่ได้รับเอฟเฟกต์พิเศษ', 'error', 3000);
+                    setTimeout(switchTurn, 3100);
+                }
+                return;
+            }
+
+            if (isHandlingBonusMoveQuestion) {
+                isHandlingBonusMoveQuestion = false;
+                if (isCorrect) {
+                    playSound('correctAnswer');
+                    showMessage('ตอบถูก!', 'success', 2000);
+                } else {
+                    playSound('incorrectAnswer');
+                    showMessage(`ตอบผิด! คำตอบที่ถูกต้องคือ: ${currentCardData.answer}`, 'error', 3000);
+                }
+                setTimeout(switchTurn, 2500);
+                return;
+            }
+
+            if (isCorrect) {
+                playSound('correctAnswer');
+                const player = players[currentPlayerIndex];
+                const difficultyPoints = {'easy': 10, 'medium': 20, 'hard': 30};
+                const pointsEarned = difficultyPoints[currentCardData.difficulty] || 15;
+                player.score += pointsEarned;
+                showMessage(`ตอบถูก! ได้รับ ${pointsEarned} คะแนน!`, 'success', 3000);
+                updatePlayerInfo();
+
+                if (players.length > 1) {
+                    setTimeout(offerPrankChoice, 1000);
+                } else {
+                    setTimeout(switchTurn, 3100);
+                }
+            } else {
+                playSound('incorrectAnswer');
+                const reason = timedOut ? 'หมดเวลา!' : 'ตอบผิด!';
+                showMessage(`${reason} คำตอบที่ถูกต้องคือ: ${currentCardData.answer}`, 'error', 3500);
+                if (players.length > 1) {
+                    setTimeout(initiatePunishment, 1000);
+                } else {
+                    setTimeout(switchTurn, 3600);
+                }
+            }
+        }
+
+        function offerPrankChoice() {
+            if (currentRound === 1 && currentPlayerIndex < players.length - 1) {
+                showMessage("รอบแรกยังแกล้งเพื่อนไม่ได้นะ!", 'info', 3000);
+                setTimeout(switchTurn, 1500);
+                return;
+            }
+
+            prankTitle.textContent = "เลือกผู้เล่นที่จะแกล้ง:";
+            prankOptionsContainer.innerHTML = ``;
+            prankButtonsContainer.innerHTML = '';
+
+            const validTargets = players.filter((p, index) => index !== currentPlayerIndex && !p.hasBeenPrankedThisRound);
+
+            if (validTargets.length === 0) {
+                showMessage("ไม่มีผู้เล่นที่สามารถแกล้งได้ในตอนนี้!", 'info', 3000);
+                setTimeout(switchTurn, 1500);
+                return;
+            }
+
+            validTargets.forEach(targetData => {
+                const pIndex = players.findIndex(p => p.id === targetData.id);
+                const btn = document.createElement('button');
+                btn.classList.add('prank-target-btn');
+                btn.textContent = `${targetData.name} (${targetData.emoji})`;
+                btn.onclick = () => {
+                    playSound('buttonClick');
+                    selectPrankEffect(pIndex);
+                };
+                prankOptionsContainer.appendChild(btn);
+            });
+
+            prankButtonsContainer.innerHTML = `<button id="skipPrankBtn" class="modal-button bg-gray-300 hover:bg-gray-400 text-gray-700">ไม่แกล้ง</button>`;
+            document.getElementById('skipPrankBtn').onclick = () => {
+                playSound('buttonClick');
+                prankModal.style.display = 'none';
+                switchTurn();
+            };
+            prankModal.style.display = 'flex';
+        }
+        
+        function selectPrankEffect(targetPlayerIndex) {
+            prankTitle.textContent = `เลือกวิธีแกล้ง ${players[targetPlayerIndex].name}:`;
+            prankOptionsContainer.innerHTML = '';
+            const currentPlayer = players[currentPlayerIndex];
+
+            prankEffects.forEach(effect => {
+                const btn = document.createElement('button');
+                btn.classList.add('prank-effect-btn');
+                
+                let buttonText = `<i class="${effect.icon} mr-2"></i> ${effect.text}`;
+                if (effect.cost) {
+                    buttonText += ` (ใช้ ${effect.cost} คะแนน)`;
+                }
+                btn.innerHTML = buttonText;
+
+                if (effect.cost && currentPlayer.score < effect.cost) {
+                    btn.disabled = true;
+                    btn.title = `คุณมีคะแนนไม่พอ (ต้องใช้ ${effect.cost})`;
+                }
+
+                btn.onclick = () => {
+                    playSound('buttonClick');
+                    prankModal.style.display = 'none';
+                    applyPrankToTarget(targetPlayerIndex, effect);
+                };
+                prankOptionsContainer.appendChild(btn);
+            });
+
+            prankButtonsContainer.innerHTML = `<button id="cancelPrankEffectBtn" class="modal-button bg-gray-300 hover:bg-gray-400 text-gray-700">ยกเลิก</button>`;
+            document.getElementById('cancelPrankEffectBtn').onclick = () => {
+                playSound('buttonClick');
+                prankModal.style.display = 'none';
+                switchTurn();
+            };
+        }
+        
+        function applyPrankToTarget(targetPlayerIndex, prankEffect) {
+            playSound('prank');
+            const targetPlayer = players[targetPlayerIndex];
+            targetPlayer.hasBeenPrankedThisRound = true;
+
+            if (prankEffect.cost) {
+                const currentPlayer = players[currentPlayerIndex];
+                currentPlayer.score -= prankEffect.cost;
+                showMessage(`${currentPlayer.name} ใช้ ${prankEffect.cost} คะแนนเพื่อแกล้ง ${targetPlayer.name}!`, 'info', 3000);
+                updatePlayerInfo();
+            } else {
+                showMessage(`${players[currentPlayerIndex].name} แกล้ง ${targetPlayer.name} โดย ${prankEffect.text}!`, 'info', 3000);
+            }
+
+            setTimeout(() => {
+                if (prankEffect.action === "prank_move_backward") {
+                    targetPlayer.position -= prankEffect.value;
+                    if (targetPlayer.position < 0) targetPlayer.position = 0;
+                    targetPlayer.onBoardPosition = targetPlayer.position;
+                } else if (prankEffect.action === "prank_skip_turn") {
+                    targetPlayer.extraTurnsToTake = (targetPlayer.extraTurnsToTake || 0) - prankEffect.value;
+                }
+                renderPlayerPieces();
+                updatePlayerInfo();
+                switchTurn();
+            }, 1500);
+        }
+
+        function initiatePunishment() {
+            const playerToPunish = players[currentPlayerIndex];
+            prankTitle.textContent = `${playerToPunish.name} ตอบผิด! เลือกบทลงโทษเลย!`;
+            prankOptionsContainer.innerHTML = '';
+            prankButtonsContainer.innerHTML = '';
+
+            let availablePunishments = punishmentEffects.filter(p =>
+                p.for3plusPlayers ? players.length >= 3 : true
+            );
+
+            availablePunishments.forEach(effect => {
+                const btn = document.createElement('button');
+                btn.classList.add('punishment-btn');
+                btn.textContent = effect.text;
+                btn.onclick = () => {
+                    playSound('buttonClick');
+                    applyPunishment(effect);
+                };
+                prankOptionsContainer.appendChild(btn);
+            });
+
+            prankModal.style.display = 'flex';
+        }
+
+        function applyPunishment(punishmentEffect) {
+            prankModal.style.display = 'none';
+            playSound('setback');
+            const player = players[currentPlayerIndex];
+            showMessage(`${player.name} โดนลงโทษให้... ${punishmentEffect.text}!`, 'error', 3000);
+
+            setTimeout(() => {
+                movePlayer(-punishmentEffect.value, true);
+            }, 1500);
+        }
+
+        function initiateSetbackSelectionByOpponents() {
+            const player = players[currentPlayerIndex];
+            prankTitle.textContent = `${player.name} ตกช่องอุปสรรค! เลือกการ์ดให้เพื่อนเลย`;
+            prankOptionsContainer.innerHTML = '';
+            prankButtonsContainer.innerHTML = '';
+            
+            const setbackCards = effectCards.setback;
+            setbackCards.forEach(card => {
+                const btn = document.createElement('button');
+                btn.classList.add('setback-choice-btn');
+                btn.innerHTML = `<i class="${card.icon} mr-2"></i> ${card.text}`;
+                btn.onclick = () => {
+                    prankModal.style.display = 'none';
+                    pendingSetbackCard = card;
+                    askSetbackSaveQuestion();
+                };
+                prankOptionsContainer.appendChild(btn);
+            });
+            prankModal.style.display = 'flex';
+        }
+
+        function askSetbackSaveQuestion() {
+            isAnsweringSetbackSave = true;
+            const challengePool = [...currentGameQuestionPool.mission.medium, ...currentGameQuestionPool.mission.hard];
+
+            if (challengePool.length === 0) {
+                showMessage('การ์ดคำถามยากหมด! คุณโชคดี รอดตัวไป!', 'success', 3000);
+                pendingSetbackCard = null;
+                isAnsweringSetbackSave = false;
+                setTimeout(switchTurn, 3100);
+                return;
+            }
+
+            const randomCardIndex = Math.floor(Math.random() * challengePool.length);
+            const questionCard = challengePool[randomCardIndex];
+            
+            currentCardData = questionCard;
+            
+            const originalPool = currentGameQuestionPool.mission[questionCard.difficulty];
+            const indexInOriginalPool = originalPool.findIndex(q => q.question === questionCard.question);
+            if(indexInOriginalPool > -1) {
+                originalPool.splice(indexInOriginalPool, 1);
+            }
+
+            showQuestionModal('ตอบให้ถูกเพื่อรอดจากอุปสรรค!', questionCard.question, handleQuestionAnswer);
+        }
+
+        function askFinalQuestion() {
+            isAnsweringFinalQuestion = true;
+            const hardQuestionPool = currentGameQuestionPool.mission.hard;
+
+            if (hardQuestionPool.length === 0) {
+                showMessage('สุดยอด! การ์ดคำถามยากหมดแล้ว คุณชนะเลย!', 'success', 3000);
+                setTimeout(() => displayVictory(players[currentPlayerIndex]), 3100);
+                return;
+            }
+
+            const randomCardIndex = Math.floor(Math.random() * hardQuestionPool.length);
+            const finalQuestionCard = hardQuestionPool[randomCardIndex];
+
+            currentCardData = finalQuestionCard;
+            hardQuestionPool.splice(randomCardIndex, 1);
+
+            showQuestionModal('คำถามสุดท้ายเพื่อพิชิตยอดเขา!', finalQuestionCard.question, handleQuestionAnswer);
+        }
+
+        async function handleSquareAction(squareIndex) {
+            if (!players[currentPlayerIndex]) return;
+            const square = boardConfig[squareIndex];
+
+            showMessage(`${square.text}: ${square.instruction}`, 'info', 2000);
+
+            setTimeout(() => {
+                switch (square.type) {
+                    case 'power-up':
+                        pendingAction = () => displayCardSelection('powerUp', 'เลือกการ์ดพลังเสริม');
+                        const powerUpPool = [...currentGameQuestionPool.mission.medium, ...currentGameQuestionPool.mission.hard];
+                        displayCardSelection('mission', 'คำถามชิงรางวัล (กลาง/ยาก)!', powerUpPool);
+                        break;
+                    case 'bonus':
+                        pendingAction = () => displayCardSelection('bonus', 'เลือกการ์ดโบนัส');
+                        const bonusPool = [...currentGameQuestionPool.mission.medium, ...currentGameQuestionPool.mission.hard];
+                        displayCardSelection('mission', 'คำถามชิงรางวัล (กลาง/ยาก)!', bonusPool);
+                        break;
+                    case 'setback':
+                        initiateSetbackSelectionByOpponents();
+                        break;
+                    case 'puzzle':
+                        displayCardSelection('puzzle', 'เลือกการ์ดปริศนา');
+                        break;
+                    case 'normal':
+                        displayCardSelection('mission', 'เลือกการ์ดภารกิจ');
+                        break;
+                    case 'event':
+                        const randomEvent = groupEvents[Math.floor(Math.random() * groupEvents.length)];
+                        showMessage(`เกิดอีเวนต์: ${randomEvent.text}`, 'info', 4000);
+                        setTimeout(() => {
+                            randomEvent.action(players, currentPlayerIndex);
+                            renderPlayerPieces();
+                            updatePlayerInfo();
+                            switchTurn();
+                        }, 4100);
+                        break;
+                    case 'finish':
+                        askFinalQuestion();
+                        break;
+                    case 'start':
+                    default:
+                        switchTurn();
+                        break;
+                }
+            }, 2100);
+        }
+        
+        
+        function showQuestionModal(titleHTML, question, answerCallback) {
+            modal.answerCallback = answerCallback;
+        
+            modalTitle.innerHTML = titleHTML;
+            modalQuestion.textContent = question;
+            modalAnswerInput.value = '';
+            modalFeedback.textContent = '';
+            modalSubmitButton.disabled = false;
+            modalCloseButton.disabled = false;
+            modalCloseButton.textContent = "ปิด";
+        
+            const oldContainer = document.getElementById('modalChoicesContainer');
+            if (oldContainer) {
+                oldContainer.remove();
+            }
+        
+            if (currentCardData && (currentCardData.type === 'true_false' || currentCardData.type === 'multiple_choice')) {
+                modalAnswerInput.style.display = 'none';
+                modalSubmitButton.style.display = 'none';
+        
+                const answerButtonContainer = document.createElement('div');
+                answerButtonContainer.id = 'modalChoicesContainer';
+                
+                currentCardData.choices.forEach(choice => {
+                    const choiceBtn = document.createElement('button');
+                    choiceBtn.textContent = choice;
+                    choiceBtn.className = 'modal-button modal-submit-button'; // Grid classes are now in CSS
+                    choiceBtn.onclick = () => {
+                        playSound('buttonClick');
+                        stopQuestionTimer();
+                        const isCorrect = (choice.toString().toLowerCase() === currentCardData.answer.toString().toLowerCase());
+                        modal.style.display = 'none';
+                        if (modal.answerCallback) {
+                            modal.answerCallback(isCorrect, false);
+                        }
+                    };
+                    answerButtonContainer.appendChild(choiceBtn);
+                });
+        
+                modalFeedback.insertAdjacentElement('beforebegin', answerButtonContainer);
+        
+            } else {
+                modalAnswerInput.style.display = 'block';
+                modalSubmitButton.style.display = 'inline-block';
+            }
+        
+            modal.style.display = 'flex';
+            if (modalAnswerInput.style.display === 'block') {
+                modalAnswerInput.focus();
+            }
+        
+            startQuestionTimer(() => {
+                if (modal.style.display === 'flex') {
+                    if (modal.answerCallback) {
+                        modal.answerCallback(false, true);
+                    }
+                }
+            });
+        
+            modalSubmitButton.onclick = () => {
+                playSound('buttonClick');
+                stopQuestionTimer();
+        
+                let playerAnswer = modalAnswerInput.value.trim();
+                let correctAnswer = currentCardData ? currentCardData.answer.toString() : '';
+                let isCorrect = false;
+                if(currentCardData) {
+                     isCorrect = playerAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                }
+        
+                modalSubmitButton.disabled = true;
+                modalCloseButton.disabled = true;
+                modal.style.display = 'none';
+        
+                if (modal.answerCallback) {
+                    modal.answerCallback(isCorrect, false);
+                }
+            };
+        
+            modalCloseButton.onclick = () => {
+                playSound('buttonClick');
+                stopQuestionTimer();
+                modal.style.display = 'none';
+                if (modal.answerCallback) modal.answerCallback(false, false); 
+            };
+        }
+
+        function switchTurn() {
+            if (!gameActive || players.length === 0) { rollDiceButton.disabled = true; return; }
+
+            const oldPlayerIndex = currentPlayerIndex;
+            let playerWhoJustPlayed = players[currentPlayerIndex];
+
+            if (playerWhoJustPlayed.extraTurnsToTake > 0) {
+                playerWhoJustPlayed.extraTurnsToTake--;
+                showMessage(`${playerWhoJustPlayed.name} ได้เล่นตาพิเศษ!`, 'info', 3000);
+            } else {
+                let nextPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                while (players[nextPlayerIndex].extraTurnsToTake < 0) {
+                    showMessage(`${players[nextPlayerIndex].name} โดนแกล้ง! ข้ามตานี้`, 'error', 2000);
+                    players[nextPlayerIndex].extraTurnsToTake++;
+                    nextPlayerIndex = (nextPlayerIndex + 1) % players.length;
+                }
+                currentPlayerIndex = nextPlayerIndex;
+            }
+            
+            if (players[currentPlayerIndex]) {
+                players[currentPlayerIndex].hasBeenPrankedThisRound = false;
+            }
+
+            if (currentPlayerIndex < oldPlayerIndex || (oldPlayerIndex === players.length - 1 && currentPlayerIndex === 0) ) {
+                currentRound++;
+                showMessage(`รอบที่ ${currentRound} เริ่มขึ้นแล้ว!`, 'turn_info');
+            }
+
+            updatePlayerInfo();
+            if (players.length > 0 && players[currentPlayerIndex]) {
+                 document.getElementById('messageArea').textContent = `ตาของ ${players[currentPlayerIndex].name}`;
+            }
+
+            rollDiceButton.disabled = false;
+            movementDieValueDisplay.textContent = '-';
+        }
+
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            console.log('DOM fully loaded and parsed');
+            populateAllCards();
+            createPlayerConfigInputs(parseInt(numPlayersSelect.value));
+            boardContainer.classList.add('hidden');
+            gameSetupScreen.classList.add('hidden');
+            welcomeScreenModal.style.display = 'flex';
+        });
+
+    </script>
+</body>
+</html>
