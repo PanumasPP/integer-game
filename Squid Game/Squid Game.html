@@ -264,6 +264,15 @@
             const CAI_CONFIG = { lessons: [ { id: 'L01', title: 'บทที่ 1: เลขคู่-คี่ (1 หลัก)', questionsTotal: 10, passThreshold: 8, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<h5 style="color: #5dade2; text-align: center;">🔵 จำนวนคู่ คืออะไร?</h5><p>จำนวนคู่ คือ จำนวนที่สามารถแบ่งเป็น 2 ส่วนเท่า ๆ กันได้พอดี โดยไม่เหลือเศษเลย</p><p><strong>🟢 ลองนึกภาพดูสิ...</strong></p><p style="margin: 5px 0;">ถ้ามีลูกอม 4 เม็ด แล้วเราแบ่งให้เพื่อน 2 คน คนละเท่า ๆ กัน เพื่อนแต่ละคนจะได้ 2 เม็ด ไม่มีเหลือเลย!</p><hr><h5 style="color: #f1c40f; text-align: center;">🔴 จำนวนคี่ คืออะไร?</h5><p>จำนวนคี่ คือ จำนวนที่เมื่อแบ่งเป็น 2 ส่วนเท่า ๆ กัน จะเหลือ 1 เสมอ</p><p><strong>🟡 ลองนึกภาพอีกที...</strong></p><p style="margin: 5px 0;">ถ้ามีลูกอม 5 เม็ด แล้วจะแบ่งให้เพื่อน 2 คน คนละเท่า ๆ กัน จะได้ไปคนละ 2 เม็ด... แล้วจะเหลือลูกอม 1 เม็ด!</p><hr><div style="background-color: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 15px;"><h5 style="margin-top:0; text-align: center;">✋ วิธีจำง่าย ๆ</h5><p style="margin-bottom: 5px;"><strong>จำนวนคู่</strong> คือจำนวนที่ลงท้ายด้วย <strong>0, 2, 4, 6, 8</strong></p><p style="margin-bottom: 0;"><strong>จำนวนคี่</strong> คือจำนวนที่ลงท้ายด้วย <strong>1, 3, 5, 7, 9</strong></p></div>`, problemGenerator: () => Math.floor(Math.random() * 10), checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; return `<strong>${num}</strong> เป็น <strong>${type}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } }, { id: 'L02', title: 'บทที่ 2: เลขคู่-คี่ (2 หลัก)', questionsTotal: 10, passThreshold: 8, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<p>เก่งมาก! ต่อไปเรามาลองกับเลข 2 หลักกัน</p><p>จำไว้ว่า... เราดูแค่ <strong>เลขตัวสุดท้าย</strong> เท่านั้น!</p>`, problemGenerator: () => Math.floor(Math.random() * 90) + 10, checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; const lastDigit = num % 10; return `<strong>${num}</strong> เป็น <strong>${type}</strong> เพราะลงท้ายด้วยเลข <strong>${lastDigit}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } }, { id: 'L03', title: 'บทที่ 3: เลขคู่-คี่ (3 หลัก)', questionsTotal: 10, passThreshold: 9, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<p>ด่านสุดท้ายแล้ว! เลขจะเยอะขึ้น แต่หลักการยังเหมือนเดิม</p><p>ไม่ต้องกลัวนะ... ดูแค่ <strong>เลขตัวสุดท้าย</strong> ก็พอ!</p>`, problemGenerator: () => Math.floor(Math.random() * 900) + 100, checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; const lastDigit = num % 10; return `<strong>${num}</strong> เป็น <strong>${type}</strong> เพราะลงท้ายด้วยเลข <strong>${lastDigit}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } } ], practice: { endless: { title: "โหมดปกติ", initialTime: 60, levelUpScore: 10, timeBonus: 5 }, challenge: { title: "โหมดท้าทาย", duration: 60, numLanes: 4, horizontalMargin: 10, difficulties: { easy: { name: "ง่าย", minSpawn: 1800, maxSpawn: 2500, floatDuration: 10 }, medium: { name: "ปานกลาง", minSpawn: 1200, maxSpawn: 2000, floatDuration: 8 }, hard: { name: "ยาก", minSpawn: 800, maxSpawn: 1500, floatDuration: 6.5 } } } } };
             const dom = { gameContainer: document.getElementById('game-container'), squidArea: document.getElementById('squid-area'), feedback: document.getElementById('feedback'), grill1: document.getElementById('grill-1'), grill2: document.getElementById('grill-2'), grill1Label: document.querySelector('#grill-1 .grill-label'), grill2Label: document.querySelector('#grill-2 .grill-label'), welcomeCreditScreen: document.getElementById('welcome-credit-screen'), registerScreen: document.getElementById('register-screen'), playerNameInput: document.getElementById('player-name-input'), btnStartRegister: document.getElementById('btn-start-register'), mainMenuScreen: document.getElementById('main-menu-screen'), mainMenuTitle: document.getElementById('main-menu-title'), lessonSelectTitle: document.getElementById('lesson-select-title'), difficultySelectTitle: document.getElementById('difficulty-select-title'), btnLessonMode: document.getElementById('btn-lesson-mode'), btnEndless: document.getElementById('btn-endless'), btnChallenge: document.getElementById('btn-challenge'), lessonSelectScreen: document.getElementById('lesson-select-screen'), lessonList: document.getElementById('lesson-list'), difficultySelectionScreen: document.getElementById('difficulty-selection-screen'), btnEasy: document.getElementById('btn-easy'), btnMedium: document.getElementById('btn-medium'), btnHard: document.getElementById('btn-hard'), tutorialScreen: document.getElementById('tutorial-screen'), tutorialTitle: document.getElementById('tutorial-title'), tutorialBody: document.getElementById('tutorial-body'), startLessonBtn: document.getElementById('start-lesson-btn'), lessonCompleteScreen: document.getElementById('lesson-complete-screen'), summaryTitle: document.getElementById('summary-title'), summaryAccuracy: document.getElementById('summary-accuracy'), summaryStars: document.getElementById('summary-stars'), summaryFeedback: document.getElementById('summary-feedback'), retryLessonBtn: document.getElementById('retry-lesson-btn'), nextLessonBtn: document.getElementById('next-lesson-btn'), backToLessonsBtn: document.getElementById('back-to-lessons-btn'), homeBtn: document.getElementById('home-btn'), muteBtn: document.getElementById('mute-btn'), fullscreenBtn: document.getElementById('fullscreen-btn'), title: document.querySelector('h1'), infoBar: document.getElementById('info-bar'), countdownDisplay: document.getElementById('countdown-display'), bgm: document.getElementById('bgm'), };
             let userProgress = {}, score, level, timeLeft, gameTimer, isMuted = false, draggedElement = null, isGameActive = false, currentGameMode = null, currentLesson = null, currentDifficulty = null, currentQuestion, correctAnswers, spawnerTimeout, currentPlayerName = '';
+            
+            // Define sounds object (assuming sound elements are loaded)
+            const sounds = {
+                correct: document.getElementById('sfx-correct'),
+                wrong: document.getElementById('sfx-wrong'),
+                combo: document.getElementById('sfx-combo'),
+                levelup: document.getElementById('sfx-levelup')
+            };
+
             const playSound = (key) => { if (!isMuted && sounds[key]) { sounds[key].currentTime = 0; sounds[key].play().catch(() => {}); } };
             const vibrate = (pattern) => { if (navigator.vibrate) navigator.vibrate(pattern); };
             
@@ -331,11 +340,20 @@
                     [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
                     if (droppedOnGrill) {
                         originalSquid.style.visibility = 'visible';
-                        droppedOnGrill.appendChild(originalSquid);
+                        // originalSquid.remove(); // Remove original squid before processing answer
                         const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
                         handler(originalSquid, droppedOnGrill.id);
                     } else {
+                        // If dropped outside, remove the original squid (missed)
                         if (originalSquid) originalSquid.remove();
+                        if (currentGameMode !== 'lesson') { // Only penalize/advance in practice modes
+                            if (isGameActive) { // Make sure game is still active before trying to generate next squid
+                                if (currentGameMode === 'endless') {
+                                    handlePracticeAnswer(originalSquid, 'none'); // Treat as wrong answer
+                                }
+                                // For challenge mode, squid will float up and be removed by animationend listener
+                            }
+                        }
                     }
                     draggedClone = null;
                     originalSquid = null;
@@ -343,7 +361,21 @@
                 function moveCloneWithTouch(e) { const touch = e.touches[0]; draggedClone.style.left = (touch.clientX - offsetX) + 'px'; draggedClone.style.top = (touch.clientY - offsetY) + 'px'; }
             }
             
-            function initializeDragDrop() { [dom.grill1, dom.grill2].forEach(grill => { grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); }); grill.addEventListener('dragleave', () => grill.classList.remove('drag-over')); grill.addEventListener('drop', e => { e.preventDefault(); if (!draggedElement || !isGameActive) return; grill.classList.remove('drag-over'); const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer; handler(draggedElement, e.currentTarget.id); draggedElement = null; }); }); }
+            function initializeDragDrop() { 
+                [dom.grill1, dom.grill2].forEach(grill => { 
+                    grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); }); 
+                    grill.addEventListener('dragleave', () => grill.classList.remove('drag-over')); 
+                    grill.addEventListener('drop', e => { 
+                        e.preventDefault(); 
+                        if (!draggedElement || !isGameActive) return; 
+                        grill.classList.remove('drag-over'); 
+                        const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer; 
+                        handler(draggedElement, e.currentTarget.id); 
+                        draggedElement = null; 
+                    }); 
+                }); 
+            }
+
             function showRegisterScreen() { const savedName = localStorage.getItem('squid_player_name'); if (savedName) { currentPlayerName = savedName; dom.playerNameInput.value = savedName; if (!isMuted) { dom.bgm.play().catch(()=>{}); } showMainMenu(); } else { showScreen('register-screen'); } }
             function registerPlayer() { const name = dom.playerNameInput.value.trim(); if (name === '') { alert('กรุณาใส่ชื่อของคุณ!'); return; } currentPlayerName = name; localStorage.setItem('squid_player_name', name); if (!isMuted) dom.bgm.play().catch(()=>{}); showMainMenu(); }
             function loadProgress() { const saved = localStorage.getItem('squid_cai_progress_p2'); userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} }; }
@@ -397,28 +429,31 @@
                         squidEl.remove(); 
                         nextQuestion(); 
                     } else { 
-                        squidEl.classList.remove('squid-wrong'); 
-                        dom.squidArea.appendChild(squidEl); // Return to play area
-                        isGameActive = true; 
+                        squidEl.remove(); // Remove squid even if wrong in lesson mode
+                        nextQuestion(); 
                     } 
                 }, delay); 
             }
             
-            // --- REFACTORED AND FINALIZED FUNCTION (FIXED) ---
+            // --- FUNCTION 1: CORRECTED ---
             function handlePracticeAnswer(squidEl, grillId) {
-                if (!isGameActive) return;
-                isGameActive = false; // ล็อกการควบคุมชั่วคราวเพื่อป้องกันการกดซ้ำ
+                // Check if the game is still active, important for touch events or race conditions
+                if (!isGameActive) {
+                    squidEl.remove(); // Remove squid if game is not active to clean up
+                    return;
+                }
 
                 const num = parseInt(squidEl.dataset.number);
-                const isCorrect = (num % 2 === 0 && grillId === 'grill-1') || ((num % 2 !== 0) && grillId === 'grill-2');
-                let animationDelay = 500; // Delay พื้นฐานสำหรับอนิเมชัน (ตอนตอบผิด)
+                // Assume that any answer to a grill is an attempt, if grillId is 'none', it's a missed squid
+                const isCorrect = (grillId !== 'none') && ((num % 2 === 0 && grillId === 'grill-1') || ((num % 2 !== 0) && grillId === 'grill-2'));
+                let animationDelay = 500; 
 
                 if (isCorrect) {
-                    animationDelay = 1500; // Delay ตอนตอบถูกจะนานกว่า เพื่อให้เห็นอนิเมชันปิ้งหมึก
+                    animationDelay = 1500; 
                     score++;
                     playSound('correct');
                     vibrate(100);
-                    updateHUD(); // อัปเดตคะแนนบนหน้าจอทันที
+                    updateHUD(); 
                     
                     const scoreContainer = document.getElementById('score-container');
                     if (scoreContainer) {
@@ -427,12 +462,11 @@
                     }
                     squidEl.classList.add('squid-correct');
 
-                    // ตรวจสอบการเลื่อนระดับในโหมด Endless
                     if (currentGameMode === 'endless' && score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0) {
                         level++;
                         timeLeft += CAI_CONFIG.practice.endless.timeBonus;
                         playSound('levelup');
-                        updateHUD(); // อัปเดต HUD อีกครั้งเพื่อแสดงเวลาที่เพิ่มขึ้น
+                        updateHUD(); 
                     }
                 } else {
                     playSound('wrong');
@@ -440,25 +474,28 @@
                     squidEl.classList.add('squid-wrong');
                 }
                 
-                // ส่วนที่จะทำงานหลังจากอนิเมชัน (ปิ้งหมึก หรือ ส่ายหัว) แสดงผลจบ
+                // This part ensures the squid is removed and next action happens after animation
                 setTimeout(() => {
-                    squidEl.remove(); // นำปลาหมึกตัวที่ตอบแล้วออกไปเสมอ
-
-                    // --- จุดที่แก้ไขหลัก ---
-                    // หากเป็นโหมด Endless (ปกติ) ให้สร้างปลาหมึกตัวใหม่ขึ้นมากลางจอ
-                    if (currentGameMode === 'endless') {
-                        generateSquidEndless();
+                    squidEl.remove(); // Always remove the squid after it's been handled
+                    
+                    if (isGameActive) { // Only generate/schedule if the game is still active
+                        if (currentGameMode === 'endless') {
+                            generateSquidEndless();
+                        }
+                        // For challenge mode, squids are spawned by scheduleNextSquid,
+                        // which calls itself, so no need to call here.
                     }
-                    // หากเป็นโหมด Challenge (ท้าทาย) ไม่ต้องทำอะไร
-                    // เพราะเกมจะสร้างปลาหมึกตัวใหม่ตามเวลาที่กำหนดไว้อยู่แล้ว
-
-                    // ปลดล็อกการควบคุมเพื่อให้ผู้เล่นสามารถเล่นต่อได้
-                    isGameActive = true; 
-
                 }, animationDelay);
             }
 
-            function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
+            // --- FUNCTION 2: CORRECTED ---
+            function generateSquidEndless() {
+                // No 'if (!isGameActive) return;' here, as it should always generate a squid when called
+                dom.squidArea.innerHTML = ''; // Clear previous squid
+                const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; 
+                createSquid(number); 
+            }
+
             function scheduleNextSquid() { if (!isGameActive || timeLeft <= 0) return; const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; const { minSpawn, maxSpawn } = difficultySettings; const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn; spawnerTimeout = setTimeout(() => { spawnSquidChallenge(); scheduleNextSquid(); }, nextSpawnTime); }
             function spawnSquidChallenge() { if (!isGameActive) return; const config = CAI_CONFIG.practice.challenge; const numLanes = config.numLanes; const margin = config.horizontalMargin; const effectiveWidth = 100 - (margin * 2); const laneWidth = effectiveWidth / numLanes; const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => { const leftPercent = parseFloat(squid.style.left); return Math.floor((leftPercent - margin) / laneWidth); }); let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane)); if (availableLanes.length === 0) return; const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)]; const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2); const position = { left: `${positionX}%`, transform: 'translateX(-50%)' }; createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up'); }
             
