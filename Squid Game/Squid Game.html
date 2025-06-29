@@ -215,7 +215,6 @@
             #info-bar, .overlay-text { font-size: 1em; }
             .selection-group button, .action-button { width: 80%; font-size: 1.1em; }
         }
-
     </style>
 </head>
 <body>
@@ -373,60 +372,81 @@
             function updateHUD() { let titleText = ''; let infoHTML = ''; if(currentGameMode === 'lesson'){ titleText = currentLesson.title; infoHTML = `<div>ข้อที่: ${currentQuestion}/${currentLesson.questionsTotal}</div> <div>ถูกต้อง: ${correctAnswers}</div>`; } else { const modeTitle = CAI_CONFIG.practice[currentGameMode].title; const diffName = currentGameMode === 'challenge' ? ` (${CAI_CONFIG.practice.challenge.difficulties[currentDifficulty].name})` : ''; titleText = `${currentPlayerName} | ${modeTitle}${diffName}`; let highScoreKey = `highScore_${currentGameMode}` + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : ''); if (!userProgress.highScores) userProgress.highScores = {}; let highScore = userProgress.highScores[highScoreKey] || 0; infoHTML = `<div id="score-container">คะแนน: <span id="score">${score}</span></div> <div id="hiscore-container">สูงสุด: ${highScore}</div> <div id="timer-board">เวลา: <span id="timer">${timeLeft}</span></div>`; } dom.title.textContent = titleText; dom.infoBar.innerHTML = infoHTML; }
             function showLessonComplete() { const lesson = currentLesson; const accuracy = (correctAnswers / lesson.questionsTotal) * 100; const passed = correctAnswers >= lesson.passThreshold; let stars = passed ? (accuracy >= 95 ? '⭐⭐⭐' : (accuracy >= 80 ? '⭐⭐' : '⭐')) : ''; dom.summaryStars.style.fontSize = '3em'; dom.summaryTitle.textContent = passed ? "ยินดีด้วย คุณผ่านแล้ว!" : "พยายามอีกนิดนะ!"; dom.summaryAccuracy.style.display = 'block'; dom.summaryAccuracy.textContent = `ความแม่นยำ: ${accuracy.toFixed(0)}% (ตอบถูก ${correctAnswers} จาก ${lesson.questionsTotal} ข้อ)`; dom.summaryStars.textContent = stars; dom.summaryFeedback.textContent = passed ? "ไปต่อบทเรียนถัดไปได้เลย!" : "ลองทบทวนอีกครั้งนะ"; if (passed) { unlockNextLesson(lesson.id); saveProgress(); } dom.retryLessonBtn.textContent = "ลองอีกครั้ง"; dom.retryLessonBtn.onclick = () => startLesson(lesson.id); dom.retryLessonBtn.style.display = 'inline-block'; const nextLessonIndex = CAI_CONFIG.lessons.findIndex(l => l.id === lesson.id) + 1; const hasNextLesson = nextLessonIndex < CAI_CONFIG.lessons.length; dom.nextLessonBtn.style.display = (passed && hasNextLesson) ? 'inline-block' : 'none'; if(passed && hasNextLesson) { const nextLesson = CAI_CONFIG.lessons[nextLessonIndex]; if (userProgress.unlockedLessons.includes(nextLesson.id)) { dom.nextLessonBtn.onclick = () => startLesson(nextLesson.id); } } dom.backToLessonsBtn.style.display = 'inline-block'; showScreen('lesson-complete-screen'); }
             function createSquid(number, position = {}, animationClasses = 'spawn-anim') { const squidEl = document.createElement('div'); squidEl.className = `squid ${animationClasses}`; squidEl.dataset.number = number; squidEl.innerHTML = `<span class="number-display">${number}</span>`; dom.squidArea.appendChild(squidEl); Object.assign(squidEl.style, position); if (!isTouchDevice) { squidEl.draggable = true; squidEl.addEventListener('dragstart', (e) => { draggedElement = e.target.closest('.squid'); if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0); }); squidEl.addEventListener('dragend', () => { if(draggedElement) draggedElement.classList.remove('dragging'); }); } if (animationClasses.includes('float-up')) { const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; squidEl.style.animationDuration = `${difficultySettings.floatDuration}s`; squidEl.addEventListener('animationend', () => { if (squidEl.parentElement === dom.squidArea) squidEl.remove(); }); } }
-            function handleAnswer(squidEl, grillId) { if (!isGameActive) return; isGameActive = false; const num = parseInt(squidEl.dataset.number); const isCorrect = currentLesson.checkAnswer(num, grillId); if (isCorrect) { correctAnswers++; playSound('correct'); vibrate(100); squidEl.classList.add('squid-correct'); } else { playSound('wrong'); vibrate([100, 50, 100]); squidEl.classList.add('squid-wrong'); } dom.feedback.innerHTML = currentLesson.getExplanation(num, isCorrect); updateHUD(); squidEl.draggable = false; const delay = isCorrect ? 1500 : 500; setTimeout(() => { isGameActive = true; if(isCorrect) { squidEl.remove(); nextQuestion(); } else { squidEl.classList.remove('squid-wrong'); if (squidEl.parentNode !== dom.squidArea) { dom.squidArea.appendChild(squidEl); } isGameActive = true; } }, delay); }
             
-            // --- FINAL FIX: Add game state lock to this function ---
+            function handleAnswer(squidEl, grillId) { 
+                if (!isGameActive) return; 
+                isGameActive = false; 
+                const num = parseInt(squidEl.dataset.number); 
+                const isCorrect = currentLesson.checkAnswer(num, grillId); 
+                if (isCorrect) { 
+                    correctAnswers++; 
+                    playSound('correct'); 
+                    vibrate(100); 
+                    squidEl.classList.add('squid-correct'); 
+                } else { 
+                    playSound('wrong'); 
+                    vibrate([100, 50, 100]); 
+                    squidEl.classList.add('squid-wrong'); 
+                } 
+                dom.feedback.innerHTML = currentLesson.getExplanation(num, isCorrect); 
+                updateHUD(); 
+                squidEl.draggable = false; 
+                const delay = isCorrect ? 1500 : 800; 
+                setTimeout(() => { 
+                    if(isCorrect) { 
+                        squidEl.remove(); 
+                        nextQuestion(); 
+                    } else { 
+                        squidEl.classList.remove('squid-wrong'); 
+                        dom.squidArea.appendChild(squidEl); // Return to play area
+                        isGameActive = true; 
+                    } 
+                }, delay); 
+            }
+            
+            // --- REFACTORED AND FINALIZED FUNCTION ---
             function handlePracticeAnswer(squidEl, grillId) {
                 if (!isGameActive) return;
-                isGameActive = false; // LOCK the game state immediately
+                isGameActive = false; // Lock game state
 
                 const num = parseInt(squidEl.dataset.number);
-                const isEven = num % 2 === 0;
-                const correct = (isEven && grillId === 'grill-1') || (!isEven && grillId === 'grill-2');
+                const correct = (num % 2 === 0 && grillId === 'grill-1') || ((num % 2 !== 0) && grillId === 'grill-2');
+                let delay = 500;
 
                 if (correct) {
+                    delay = 1500;
                     score++;
                     playSound('correct');
                     vibrate(100);
-                    squidEl.style.animation = 'none';
-                    void squidEl.offsetWidth; 
-                    squidEl.classList.add('squid-correct');
-                    
-                    setTimeout(() => {
-                        squidEl.remove();
-                        if (currentGameMode !== 'endless') {
-                            isGameActive = true; // Unlock for challenge mode
-                        }
-                    }, 1500);
-
-                    if (currentGameMode === 'endless') {
-                        if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){
-                            level++;
-                            timeLeft += CAI_CONFIG.practice.endless.timeBonus;
-                            playSound('levelup');
-                        }
-                        setTimeout(() => {
-                            generateSquidEndless();
-                            isGameActive = true; // Unlock for endless mode after new squid is made
-                        }, 500);
+                    updateHUD(); // Update score display immediately
+                    const scoreContainer = document.getElementById('score-container');
+                    if (scoreContainer) {
+                        scoreContainer.classList.add('score-pop');
+                        setTimeout(() => scoreContainer.classList.remove('score-pop'), 300);
                     }
+                    squidEl.classList.add('squid-correct');
                 } else {
                     playSound('wrong');
                     vibrate([100, 50, 100]);
                     squidEl.classList.add('squid-wrong');
-                    setTimeout(() => {
-                        squidEl.classList.remove('squid-wrong');
-                        squidEl.remove(); // Remove wrong squid in practice modes
-                        isGameActive = true; // UNLOCK the game state
-                    }, 500);
                 }
                 
-                updateHUD();
-                const scoreContainer = document.getElementById('score-container');
-                if (scoreContainer && correct) {
-                    scoreContainer.classList.add('score-pop');
-                    setTimeout(() => scoreContainer.classList.remove('score-pop'), 300);
-                }
+                setTimeout(() => {
+                    squidEl.remove(); // Always remove squid after animation
+                    
+                    if (correct && currentGameMode === 'endless') {
+                        if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){
+                            level++;
+                            timeLeft += CAI_CONFIG.practice.endless.timeBonus;
+                            playSound('levelup');
+                            updateHUD();
+                        }
+                        generateSquidEndless();
+                    }
+                    
+                    isGameActive = true; // Unlock game state
+
+                }, delay);
             }
 
             function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
