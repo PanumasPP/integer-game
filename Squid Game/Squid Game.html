@@ -214,8 +214,6 @@
             #info-bar, .overlay-text { font-size: 1em; }
             .selection-group button, .action-button { width: 80%; font-size: 1.1em; }
         }
-        
-        /* --- REMOVED: ลบ media query ที่ทำให้เตาย่างเรียงแนวตั้งออกไป --- */
 
     </style>
 </head>
@@ -360,6 +358,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // --- BUG FIX: ตรวจสอบอุปกรณ์ว่าเป็น touch screen หรือไม่ ---
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
             const CAI_CONFIG = {
                 lessons: [
                     {
@@ -492,13 +493,16 @@
                 dom.backToLessonsBtn.addEventListener('click', showLessonSelect);
                 dom.btnStartRegister.addEventListener('click', registerPlayer);
                 
-                initializeDragDrop();
-                initializeTouchEvents(); // Call the corrected touch handler
+                // --- Conditional Event Handlers ---
+                if (isTouchDevice) {
+                    initializeTouchEvents();
+                } else {
+                    initializeDragDrop();
+                }
 
                 showRegisterScreen();
             }
 
-            // --- BUG FIX: แก้ไขฟังก์ชัน Touch Events ให้ทำงานถูกต้องและไม่ค้าง ---
             function initializeTouchEvents() {
                 let touchDraggedElement = null;
                 let originalParent = null; 
@@ -540,11 +544,8 @@
 
                 dom.gameContainer.addEventListener('touchend', (e) => {
                     if (!touchDraggedElement) return;
-
                     e.preventDefault();
                     
-                    // --- REVISED LOGIC TO PREVENT BUG ---
-                    // 1. Find what's under the touch point
                     touchDraggedElement.style.visibility = 'hidden';
                     const touch = e.changedTouches[0];
                     const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -557,7 +558,6 @@
                         droppedOnGrill = dom.grill2;
                     }
 
-                    // 2. Clean up all dragging styles and states
                     [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
                     touchDraggedElement.classList.remove('dragging');
                     touchDraggedElement.style.position = '';
@@ -565,12 +565,10 @@
                     touchDraggedElement.style.left = '';
                     touchDraggedElement.style.top = '';
                     
-                    // 3. ALWAYS return the element to its original parent first. This prevents it from getting stuck.
                     if (originalParent) {
                         originalParent.appendChild(touchDraggedElement);
                     }
                     
-                    // 4. NOW, handle the game logic
                     if (droppedOnGrill) {
                         if (currentGameMode === 'lesson') {
                             handleAnswer(touchDraggedElement, droppedOnGrill.id);
@@ -579,7 +577,6 @@
                         }
                     }
                     
-                    // 5. Reset variables for the next touch
                     touchDraggedElement = null;
                     originalParent = null;
                 });
@@ -590,7 +587,6 @@
                     touchDraggedElement.style.top = (touch.clientY - touchDraggedElement.offsetHeight / 2) + 'px';
                 }
             }
-
 
             function showRegisterScreen() {
                 const savedName = localStorage.getItem('squid_player_name');
@@ -923,23 +919,29 @@
                 showScreen('lesson-complete-screen');
             }
 
+            // --- BUG FIX: แก้ไขฟังก์ชันนี้เพื่อแยกการทำงานระหว่าง touch และ mouse ---
             function createSquid(number, position = {}, animationClasses = 'spawn-anim') {
                 const squidEl = document.createElement('div');
                 squidEl.className = `squid ${animationClasses}`;
-                squidEl.draggable = true;
                 squidEl.dataset.number = number;
                 
                 squidEl.innerHTML = `<span class="number-display">${number}</span>`;
                 dom.squidArea.appendChild(squidEl);
                 Object.assign(squidEl.style, position);
 
-                squidEl.addEventListener('dragstart', (e) => {
-                    draggedElement = e.target.closest('.squid');
-                    if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0);
-                });
-                squidEl.addEventListener('dragend', () => {
-                    if(draggedElement) draggedElement.classList.remove('dragging');
-                });
+                // --- CONDITIONALLY ADD EVENT LISTENERS ---
+                if (!isTouchDevice) {
+                    // For desktop/mouse users, use the classic drag and drop
+                    squidEl.draggable = true;
+                    squidEl.addEventListener('dragstart', (e) => {
+                        draggedElement = e.target.closest('.squid');
+                        if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0);
+                    });
+                    squidEl.addEventListener('dragend', () => {
+                        if(draggedElement) draggedElement.classList.remove('dragging');
+                    });
+                }
+                // For touch devices, the main `initializeTouchEvents` will handle everything.
                 
                 if (animationClasses.includes('float-up')) {
                     const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty];
@@ -1025,10 +1027,9 @@
                     squidEl.classList.add('squid-wrong');
                     setTimeout(() => {
                         squidEl.classList.remove('squid-wrong');
-                         if (squidEl.parentNode !== dom.squidArea) {
-                            dom.squidArea.appendChild(squidEl);
+                        if (!isTouchDevice) {
+                           squidEl.draggable = true;
                         }
-                        squidEl.draggable = true;
                     }, 500);
                 }
                 
