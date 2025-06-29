@@ -174,7 +174,6 @@
         #feedback { font-size: 1.3em; font-weight: bold; min-height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 10px; }
         #grill-section { display: flex; justify-content: space-evenly; align-items: center; gap: 20px; padding-bottom: 10px; }
         
-        /* --- CSS IMPROVEMENT: ทำให้หมึกที่วางบนเตาอยู่ตรงกลาง --- */
         .grill { 
             border: 3px dashed transparent; border-radius: 15px; 
             transition: all 0.3s ease-in-out; 
@@ -287,42 +286,28 @@
                 showRegisterScreen();
             }
 
-            // =======================================================================
-            // FINALIZED TOUCH EVENT HANDLER USING CLONING METHOD
-            // =======================================================================
             function initializeTouchEvents() {
-                let originalSquid = null;
-                let draggedClone = null;
-                let offsetX = 0;
-                let offsetY = 0;
-
+                let originalSquid = null, draggedClone = null, offsetX = 0, offsetY = 0;
                 dom.gameContainer.addEventListener('touchstart', (e) => {
                     if (!isGameActive) return;
                     const target = e.target.closest('.squid');
                     if (!target || target.classList.contains('squid-correct')) return;
-                    
                     e.preventDefault();
                     originalSquid = target;
                     originalSquid.style.animation = 'none';
-
                     draggedClone = originalSquid.cloneNode(true);
                     draggedClone.style.transition = 'none';
                     draggedClone.classList.add('dragging');
-                    
                     originalSquid.style.visibility = 'hidden';
-
                     const rect = originalSquid.getBoundingClientRect();
                     const touch = e.touches[0];
                     offsetX = touch.clientX - rect.left;
                     offsetY = touch.clientY - rect.top;
-
                     document.body.appendChild(draggedClone);
                     draggedClone.style.position = 'absolute';
                     draggedClone.style.zIndex = '1000';
                     moveCloneWithTouch(e);
-
                 }, { passive: false });
-
                 dom.gameContainer.addEventListener('touchmove', (e) => {
                     if (!draggedClone) return;
                     e.preventDefault();
@@ -334,40 +319,29 @@
                         grill.classList.toggle('drag-over', grill === elementUnderTouch || grill.contains(elementUnderTouch));
                     });
                 }, { passive: false });
-
                 dom.gameContainer.addEventListener('touchend', (e) => {
                     if (!draggedClone) return;
                     e.preventDefault();
-
                     draggedClone.style.visibility = 'hidden';
                     const elementUnderTouch = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
                     draggedClone.style.visibility = 'visible';
                     let droppedOnGrill = [dom.grill1, dom.grill2].find(g => g === elementUnderTouch || g.contains(elementUnderTouch));
-
                     if (draggedClone.parentNode) {
                         draggedClone.parentNode.removeChild(draggedClone);
                     }
                     [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
-                    
                     if (droppedOnGrill) {
-                        // --- FIX: Make original visible and move it to the grill BEFORE handling it ---
                         originalSquid.style.visibility = 'visible';
-                        droppedOnGrill.appendChild(originalSquid); // Place the squid on the grill
+                        droppedOnGrill.appendChild(originalSquid);
                         const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
                         handler(originalSquid, droppedOnGrill.id);
                     } else {
                         if (originalSquid) originalSquid.remove();
                     }
-
                     draggedClone = null;
                     originalSquid = null;
                 });
-
-                function moveCloneWithTouch(e) {
-                    const touch = e.touches[0];
-                    draggedClone.style.left = (touch.clientX - offsetX) + 'px';
-                    draggedClone.style.top = (touch.clientY - offsetY) + 'px';
-                }
+                function moveCloneWithTouch(e) { const touch = e.touches[0]; draggedClone.style.left = (touch.clientX - offsetX) + 'px'; draggedClone.style.top = (touch.clientY - offsetY) + 'px'; }
             }
             
             function initializeDragDrop() { [dom.grill1, dom.grill2].forEach(grill => { grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); }); grill.addEventListener('dragleave', () => grill.classList.remove('drag-over')); grill.addEventListener('drop', e => { e.preventDefault(); if (!draggedElement || !isGameActive) return; grill.classList.remove('drag-over'); const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer; handler(draggedElement, e.currentTarget.id); draggedElement = null; }); }); }
@@ -400,7 +374,61 @@
             function showLessonComplete() { const lesson = currentLesson; const accuracy = (correctAnswers / lesson.questionsTotal) * 100; const passed = correctAnswers >= lesson.passThreshold; let stars = passed ? (accuracy >= 95 ? '⭐⭐⭐' : (accuracy >= 80 ? '⭐⭐' : '⭐')) : ''; dom.summaryStars.style.fontSize = '3em'; dom.summaryTitle.textContent = passed ? "ยินดีด้วย คุณผ่านแล้ว!" : "พยายามอีกนิดนะ!"; dom.summaryAccuracy.style.display = 'block'; dom.summaryAccuracy.textContent = `ความแม่นยำ: ${accuracy.toFixed(0)}% (ตอบถูก ${correctAnswers} จาก ${lesson.questionsTotal} ข้อ)`; dom.summaryStars.textContent = stars; dom.summaryFeedback.textContent = passed ? "ไปต่อบทเรียนถัดไปได้เลย!" : "ลองทบทวนอีกครั้งนะ"; if (passed) { unlockNextLesson(lesson.id); saveProgress(); } dom.retryLessonBtn.textContent = "ลองอีกครั้ง"; dom.retryLessonBtn.onclick = () => startLesson(lesson.id); dom.retryLessonBtn.style.display = 'inline-block'; const nextLessonIndex = CAI_CONFIG.lessons.findIndex(l => l.id === lesson.id) + 1; const hasNextLesson = nextLessonIndex < CAI_CONFIG.lessons.length; dom.nextLessonBtn.style.display = (passed && hasNextLesson) ? 'inline-block' : 'none'; if(passed && hasNextLesson) { const nextLesson = CAI_CONFIG.lessons[nextLessonIndex]; if (userProgress.unlockedLessons.includes(nextLesson.id)) { dom.nextLessonBtn.onclick = () => startLesson(nextLesson.id); } } dom.backToLessonsBtn.style.display = 'inline-block'; showScreen('lesson-complete-screen'); }
             function createSquid(number, position = {}, animationClasses = 'spawn-anim') { const squidEl = document.createElement('div'); squidEl.className = `squid ${animationClasses}`; squidEl.dataset.number = number; squidEl.innerHTML = `<span class="number-display">${number}</span>`; dom.squidArea.appendChild(squidEl); Object.assign(squidEl.style, position); if (!isTouchDevice) { squidEl.draggable = true; squidEl.addEventListener('dragstart', (e) => { draggedElement = e.target.closest('.squid'); if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0); }); squidEl.addEventListener('dragend', () => { if(draggedElement) draggedElement.classList.remove('dragging'); }); } if (animationClasses.includes('float-up')) { const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; squidEl.style.animationDuration = `${difficultySettings.floatDuration}s`; squidEl.addEventListener('animationend', () => { if (squidEl.parentElement === dom.squidArea) squidEl.remove(); }); } }
             function handleAnswer(squidEl, grillId) { if (!isGameActive) return; isGameActive = false; const num = parseInt(squidEl.dataset.number); const isCorrect = currentLesson.checkAnswer(num, grillId); if (isCorrect) { correctAnswers++; playSound('correct'); vibrate(100); squidEl.classList.add('squid-correct'); } else { playSound('wrong'); vibrate([100, 50, 100]); squidEl.classList.add('squid-wrong'); } dom.feedback.innerHTML = currentLesson.getExplanation(num, isCorrect); updateHUD(); squidEl.draggable = false; const delay = isCorrect ? 1500 : 500; setTimeout(() => { isGameActive = true; if(isCorrect) { squidEl.remove(); nextQuestion(); } else { squidEl.classList.remove('squid-wrong'); if (squidEl.parentNode !== dom.squidArea) { dom.squidArea.appendChild(squidEl); } isGameActive = true; } }, delay); }
-            function handlePracticeAnswer(squidEl, grillId) { if (!isGameActive) return; const num = parseInt(squidEl.dataset.number); const isEven = num % 2 === 0; const correct = (isEven && grillId === 'grill-1') || (!isEven && grillId === 'grill-2'); if (!isTouchDevice) { squidEl.draggable = false; } if (correct) { score++; playSound('correct'); vibrate(100); squidEl.style.animation = 'none'; void squidEl.offsetWidth; squidEl.classList.add('squid-correct'); setTimeout(() => squidEl.remove(), 1500); if (currentGameMode === 'endless') { isGameActive = false; if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){ level++; timeLeft += CAI_CONFIG.practice.endless.timeBonus; playSound('levelup'); } setTimeout(() => { isGameActive = true; generateSquidEndless(); }, 500); } } else { playSound('wrong'); vibrate([100, 50, 100]); squidEl.classList.add('squid-wrong'); setTimeout(() => { squidEl.classList.remove('squid-wrong'); if (!isTouchDevice) { squidEl.draggable = true; } }, 500); } updateHUD(); const scoreContainer = document.getElementById('score-container'); if (scoreContainer && correct) { scoreContainer.classList.add('score-pop'); setTimeout(() => scoreContainer.classList.remove('score-pop'), 300); } }
+            
+            // --- FINAL FIX: Add game state lock to this function ---
+            function handlePracticeAnswer(squidEl, grillId) {
+                if (!isGameActive) return;
+                isGameActive = false; // LOCK the game state immediately
+
+                const num = parseInt(squidEl.dataset.number);
+                const isEven = num % 2 === 0;
+                const correct = (isEven && grillId === 'grill-1') || (!isEven && grillId === 'grill-2');
+
+                if (correct) {
+                    score++;
+                    playSound('correct');
+                    vibrate(100);
+                    squidEl.style.animation = 'none';
+                    void squidEl.offsetWidth; 
+                    squidEl.classList.add('squid-correct');
+                    
+                    setTimeout(() => {
+                        squidEl.remove();
+                        if (currentGameMode !== 'endless') {
+                            isGameActive = true; // Unlock for challenge mode
+                        }
+                    }, 1500);
+
+                    if (currentGameMode === 'endless') {
+                        if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){
+                            level++;
+                            timeLeft += CAI_CONFIG.practice.endless.timeBonus;
+                            playSound('levelup');
+                        }
+                        setTimeout(() => {
+                            generateSquidEndless();
+                            isGameActive = true; // Unlock for endless mode after new squid is made
+                        }, 500);
+                    }
+                } else {
+                    playSound('wrong');
+                    vibrate([100, 50, 100]);
+                    squidEl.classList.add('squid-wrong');
+                    setTimeout(() => {
+                        squidEl.classList.remove('squid-wrong');
+                        squidEl.remove(); // Remove wrong squid in practice modes
+                        isGameActive = true; // UNLOCK the game state
+                    }, 500);
+                }
+                
+                updateHUD();
+                const scoreContainer = document.getElementById('score-container');
+                if (scoreContainer && correct) {
+                    scoreContainer.classList.add('score-pop');
+                    setTimeout(() => scoreContainer.classList.remove('score-pop'), 300);
+                }
+            }
+
             function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
             function scheduleNextSquid() { if (!isGameActive || timeLeft <= 0) return; const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; const { minSpawn, maxSpawn } = difficultySettings; const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn; spawnerTimeout = setTimeout(() => { spawnSquidChallenge(); scheduleNextSquid(); }, nextSpawnTime); }
             function spawnSquidChallenge() { if (!isGameActive) return; const config = CAI_CONFIG.practice.challenge; const numLanes = config.numLanes; const margin = config.horizontalMargin; const effectiveWidth = 100 - (margin * 2); const laneWidth = effectiveWidth / numLanes; const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => { const leftPercent = parseFloat(squid.style.left); return Math.floor((leftPercent - margin) / laneWidth); }); let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane)); if (availableLanes.length === 0) return; const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)]; const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2); const position = { left: `${positionX}%`, transform: 'translateX(-50%)' }; createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up'); }
