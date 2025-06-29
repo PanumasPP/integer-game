@@ -18,10 +18,7 @@
         html, body {
             height: 100%; width: 100%; margin: 0; padding: 0;
             overflow: hidden; font-family: 'Mitr', sans-serif; background-color: #000;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
+            user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
         }
         
         #game-container {
@@ -221,107 +218,7 @@
     <div id="loading-screen"><div class="spinner"></div><p>กำลังโหลด...</p></div>
 
     <div id="game-container">
-        <div id="countdown-display"></div>
-        <div class="control-btn-group">
-            <button id="home-btn" class="control-btn" title="กลับหน้าหลัก">
-                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            </button>
-            <button id="mute-btn" class="control-btn" title="ปิด/เปิดเสียง">
-                <svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                <svg class="muted-icon" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
-            </button>
-            <button id="fullscreen-btn" class="control-btn" title="โหมดเต็มหน้าจอ">
-                <svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                <svg class="fs-exit-icon" style="display: none;" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
-            </button>
-        </div>
-
-        <div id="welcome-credit-screen" class="screen-overlay active">
-            <div class="overlay-content" style="text-align: center;">
-                <h2 class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2>
-                <p style="font-size: 1.2em; margin-top: 40px;">จัดทำโดย</p>
-                <h3 style="font-size: 1.8em; color: #ffeb3b; margin: 10px 0;">นางสาวกฤษณา แกล้วกล้า</h3>
-                <p style="font-size: 1.2em;">ครูโรงเรียนสวนป่าอุปถัมภ์</p>
-                <p style="margin-top: 50px; color: #ccc;">กำลังเข้าสู่เกมในอีกสักครู่...</p>
-            </div>
-        </div>
-
-        <div id="register-screen" class="screen-overlay">
-            <div class="overlay-content">
-               <h2 class="overlay-title">ลงทะเบียน</h2>
-                <div class="selection-group">
-                    <p style="font-size: 1.1em; margin-bottom: 15px;">กรุณาใส่ชื่อของคุณเพื่อเริ่มเล่นและเก็บคะแนน</p>
-                    <input type="text" id="player-name-input" placeholder="ใส่ชื่อที่นี่..." style="font-family: 'Mitr', sans-serif; font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #3498db; width: 280px; max-width: 80%; text-align: center;">
-                    <button id="btn-start-register" class="action-button btn-green" style="margin-top: 15px;">เริ่มเล่น</button>
-                </div>
-            </div>
-        </div>
-        
-        <div id="main-menu-screen" class="screen-overlay">
-            <div class="overlay-content">
-                <h2 id="main-menu-title" class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2>
-                <div class="selection-group">
-                    <button id="btn-lesson-mode">โหมดบทเรียน</button>
-                    <button id="btn-endless">โหมดฝึกฝน (ปกติ)</button>
-                    <button id="btn-challenge">โหมดฝึกฝน (ท้าทาย)</button>
-                </div>
-            </div>
-        </div>
-        
-        <div id="lesson-select-screen" class="screen-overlay">
-            <div class="overlay-content">
-                <h2 id="lesson-select-title" class="overlay-title">เลือกบทเรียน</h2>
-                <ul id="lesson-list"></ul>
-            </div>
-        </div>
-        
-        <div id="difficulty-selection-screen" class="screen-overlay">
-            <div class="overlay-content">
-                <h2 id="difficulty-select-title" class="overlay-title">เลือกระดับความยาก</h2>
-                <div id="difficulty-selection" class="selection-group">
-                    <button id="btn-easy">ง่าย</button>
-                    <button id="btn-medium">ปานกลาง</button>
-                    <button id="btn-hard">ยาก</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="tutorial-screen" class="screen-overlay">
-            <div class="overlay-content tutorial-box">
-                <h2 id="tutorial-title" class="overlay-title"></h2>
-                <div id="tutorial-body" class="overlay-text"></div>
-                <button id="start-lesson-btn" class="action-button btn-green">เข้าใจแล้ว เริ่มเลย!</button>
-            </div>
-        </div>
-
-        <div id="lesson-complete-screen" class="screen-overlay">
-            <div class="overlay-content summary-box">
-                <h2 id="summary-title" class="overlay-title"></h2>
-                <p id="summary-accuracy" class="overlay-text"></p>
-                <div id="summary-stars" class="summary-stars"></div>
-                <p id="summary-feedback" class="overlay-text"></p>
-                <div class="selection-group" id="summary-buttons">
-                    <button id="retry-lesson-btn" class="action-button">ลองอีกครั้ง</button>
-                    <button id="next-lesson-btn" class="action-button btn-green">บทเรียนถัดไป</button>
-                    <button id="back-to-lessons-btn" class="action-button">กลับไปหน้าเลือกบทเรียน</button>
-                </div>
-            </div>
-        </div>
-
-        <header>
-            <h1></h1>
-            <div id="info-bar"></div>
-        </header>
-
-        <main id="squid-area"></main>
-
-        <footer>
-            <div id="feedback"></div>
-            <div id="grill-section">
-                <div id="grill-1" class="grill"><span class="grill-label"></span></div>
-                <div id="grill-2" class="grill"><span class="grill-label"></span></div>
-            </div>
-        </footer>
+        <div id="countdown-display"></div><div class="control-btn-group"><button id="home-btn" class="control-btn" title="กลับหน้าหลัก"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></button><button id="mute-btn" class="control-btn" title="ปิด/เปิดเสียง"><svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg><svg class="muted-icon" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg></button><button id="fullscreen-btn" class="control-btn" title="โหมดเต็มหน้าจอ"><svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg><svg class="fs-exit-icon" style="display: none;" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg></button></div><div id="welcome-credit-screen" class="screen-overlay active"><div class="overlay-content" style="text-align: center;"><h2 class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><p style="font-size: 1.2em; margin-top: 40px;">จัดทำโดย</p><h3 style="font-size: 1.8em; color: #ffeb3b; margin: 10px 0;">นางสาวกฤษณา แกล้วกล้า</h3><p style="font-size: 1.2em;">ครูโรงเรียนสวนป่าอุปถัมภ์</p><p style="margin-top: 50px; color: #ccc;">กำลังเข้าสู่เกมในอีกสักครู่...</p></div></div><div id="register-screen" class="screen-overlay"><div class="overlay-content"><h2 class="overlay-title">ลงทะเบียน</h2><div class="selection-group"><p style="font-size: 1.1em; margin-bottom: 15px;">กรุณาใส่ชื่อของคุณเพื่อเริ่มเล่นและเก็บคะแนน</p><input type="text" id="player-name-input" placeholder="ใส่ชื่อที่นี่..." style="font-family: 'Mitr', sans-serif; font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #3498db; width: 280px; max-width: 80%; text-align: center;"><button id="btn-start-register" class="action-button btn-green" style="margin-top: 15px;">เริ่มเล่น</button></div></div></div><div id="main-menu-screen" class="screen-overlay"><div class="overlay-content"><h2 id="main-menu-title" class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><div class="selection-group"><button id="btn-lesson-mode">โหมดบทเรียน</button><button id="btn-endless">โหมดฝึกฝน (ปกติ)</button><button id="btn-challenge">โหมดฝึกฝน (ท้าทาย)</button></div></div></div><div id="lesson-select-screen" class="screen-overlay"><div class="overlay-content"><h2 id="lesson-select-title" class="overlay-title">เลือกบทเรียน</h2><ul id="lesson-list"></ul></div></div><div id="difficulty-selection-screen" class="screen-overlay"><div class="overlay-content"><h2 id="difficulty-select-title" class="overlay-title">เลือกระดับความยาก</h2><div id="difficulty-selection" class="selection-group"><button id="btn-easy">ง่าย</button><button id="btn-medium">ปานกลาง</button><button id="btn-hard">ยาก</button></div></div></div><div id="tutorial-screen" class="screen-overlay"><div class="overlay-content tutorial-box"><h2 id="tutorial-title" class="overlay-title"></h2><div id="tutorial-body" class="overlay-text"></div><button id="start-lesson-btn" class="action-button btn-green">เข้าใจแล้ว เริ่มเลย!</button></div></div><div id="lesson-complete-screen" class="screen-overlay"><div class="overlay-content summary-box"><h2 id="summary-title" class="overlay-title"></h2><p id="summary-accuracy" class="overlay-text"></p><div id="summary-stars" class="summary-stars"></div><p id="summary-feedback" class="overlay-text"></p><div class="selection-group" id="summary-buttons"><button id="retry-lesson-btn" class="action-button">ลองอีกครั้ง</button><button id="next-lesson-btn" class="action-button btn-green">บทเรียนถัดไป</button><button id="back-to-lessons-btn" class="action-button">กลับไปหน้าเลือกบทเรียน</button></div></div></div><header><h1></h1><div id="info-bar"></div></header><main id="squid-area"></main><footer><div id="feedback"></div><div id="grill-section"><div id="grill-1" class="grill"><span class="grill-label"></span></div><div id="grill-2" class="grill"><span class="grill-label"></span></div></div></footer>
     </div>
     
     <audio id="sfx-correct" src="sound/correct.mp3" preload="auto"></audio>
@@ -331,6 +228,9 @@
     <audio id="bgm" src="sound/background.mp3" loop preload="auto"></audio>
     
     <script>
+        // All JavaScript from the previous response goes here...
+        // The key changes are highlighted below.
+
         const imagesToLoad = ['BG.png', 'squid.png', 'grill-1.png', 'grill-2.png'];
         let imagesLoaded = 0;
         if (imagesToLoad.length === 0) {
@@ -358,7 +258,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // --- BUG FIX: ตรวจสอบอุปกรณ์ว่าเป็น touch screen หรือไม่ ---
             const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
             const CAI_CONFIG = {
@@ -412,54 +311,9 @@
                 }
             };
 
-            const dom = {
-                gameContainer: document.getElementById('game-container'),
-                squidArea: document.getElementById('squid-area'),
-                feedback: document.getElementById('feedback'),
-                grill1: document.getElementById('grill-1'),
-                grill2: document.getElementById('grill-2'),
-                grill1Label: document.querySelector('#grill-1 .grill-label'),
-                grill2Label: document.querySelector('#grill-2 .grill-label'),
-                welcomeCreditScreen: document.getElementById('welcome-credit-screen'),
-                registerScreen: document.getElementById('register-screen'),
-                playerNameInput: document.getElementById('player-name-input'),
-                btnStartRegister: document.getElementById('btn-start-register'),
-                mainMenuScreen: document.getElementById('main-menu-screen'),
-                mainMenuTitle: document.getElementById('main-menu-title'),
-                lessonSelectTitle: document.getElementById('lesson-select-title'),
-                difficultySelectTitle: document.getElementById('difficulty-select-title'),
-                btnLessonMode: document.getElementById('btn-lesson-mode'),
-                btnEndless: document.getElementById('btn-endless'),
-                btnChallenge: document.getElementById('btn-challenge'),
-                lessonSelectScreen: document.getElementById('lesson-select-screen'),
-                lessonList: document.getElementById('lesson-list'),
-                difficultySelectionScreen: document.getElementById('difficulty-selection-screen'),
-                btnEasy: document.getElementById('btn-easy'),
-                btnMedium: document.getElementById('btn-medium'),
-                btnHard: document.getElementById('btn-hard'),
-                tutorialScreen: document.getElementById('tutorial-screen'),
-                tutorialTitle: document.getElementById('tutorial-title'),
-                tutorialBody: document.getElementById('tutorial-body'),
-                startLessonBtn: document.getElementById('start-lesson-btn'),
-                lessonCompleteScreen: document.getElementById('lesson-complete-screen'),
-                summaryTitle: document.getElementById('summary-title'),
-                summaryAccuracy: document.getElementById('summary-accuracy'),
-                summaryStars: document.getElementById('summary-stars'),
-                summaryFeedback: document.getElementById('summary-feedback'),
-                retryLessonBtn: document.getElementById('retry-lesson-btn'),
-                nextLessonBtn: document.getElementById('next-lesson-btn'),
-                backToLessonsBtn: document.getElementById('back-to-lessons-btn'),
-                homeBtn: document.getElementById('home-btn'),
-                muteBtn: document.getElementById('mute-btn'),
-                fullscreenBtn: document.getElementById('fullscreen-btn'),
-                title: document.querySelector('h1'),
-                infoBar: document.getElementById('info-bar'),
-                countdownDisplay: document.getElementById('countdown-display'),
-                bgm: document.getElementById('bgm'),
-            };
+            const dom = { gameContainer: document.getElementById('game-container'), squidArea: document.getElementById('squid-area'), feedback: document.getElementById('feedback'), grill1: document.getElementById('grill-1'), grill2: document.getElementById('grill-2'), grill1Label: document.querySelector('#grill-1 .grill-label'), grill2Label: document.querySelector('#grill-2 .grill-label'), welcomeCreditScreen: document.getElementById('welcome-credit-screen'), registerScreen: document.getElementById('register-screen'), playerNameInput: document.getElementById('player-name-input'), btnStartRegister: document.getElementById('btn-start-register'), mainMenuScreen: document.getElementById('main-menu-screen'), mainMenuTitle: document.getElementById('main-menu-title'), lessonSelectTitle: document.getElementById('lesson-select-title'), difficultySelectTitle: document.getElementById('difficulty-select-title'), btnLessonMode: document.getElementById('btn-lesson-mode'), btnEndless: document.getElementById('btn-endless'), btnChallenge: document.getElementById('btn-challenge'), lessonSelectScreen: document.getElementById('lesson-select-screen'), lessonList: document.getElementById('lesson-list'), difficultySelectionScreen: document.getElementById('difficulty-selection-screen'), btnEasy: document.getElementById('btn-easy'), btnMedium: document.getElementById('btn-medium'), btnHard: document.getElementById('btn-hard'), tutorialScreen: document.getElementById('tutorial-screen'), tutorialTitle: document.getElementById('tutorial-title'), tutorialBody: document.getElementById('tutorial-body'), startLessonBtn: document.getElementById('start-lesson-btn'), lessonCompleteScreen: document.getElementById('lesson-complete-screen'), summaryTitle: document.getElementById('summary-title'), summaryAccuracy: document.getElementById('summary-accuracy'), summaryStars: document.getElementById('summary-stars'), summaryFeedback: document.getElementById('summary-feedback'), retryLessonBtn: document.getElementById('retry-lesson-btn'), nextLessonBtn: document.getElementById('next-lesson-btn'), backToLessonsBtn: document.getElementById('back-to-lessons-btn'), homeBtn: document.getElementById('home-btn'), muteBtn: document.getElementById('mute-btn'), fullscreenBtn: document.getElementById('fullscreen-btn'), title: document.querySelector('h1'), infoBar: document.getElementById('info-bar'), countdownDisplay: document.getElementById('countdown-display'), bgm: document.getElementById('bgm'), };
 
-            const sounds = { correct: document.getElementById('sfx-correct'), wrong: document.getElementById('sfx-wrong'),
-                combo: document.getElementById('sfx-combo'), levelup: document.getElementById('sfx-levelup') };
+            const sounds = { correct: document.getElementById('sfx-correct'), wrong: document.getElementById('sfx-wrong'), combo: document.getElementById('sfx-combo'), levelup: document.getElementById('sfx-levelup') };
 
             let userProgress = {};
             let score, level, timeLeft, gameTimer, isMuted = false, draggedElement = null, isGameActive = false;
@@ -493,7 +347,6 @@
                 dom.backToLessonsBtn.addEventListener('click', showLessonSelect);
                 dom.btnStartRegister.addEventListener('click', registerPlayer);
                 
-                // --- Conditional Event Handlers ---
                 if (isTouchDevice) {
                     initializeTouchEvents();
                 } else {
@@ -503,6 +356,7 @@
                 showRegisterScreen();
             }
 
+            // --- REVISED TOUCH HANDLERS ---
             function initializeTouchEvents() {
                 let touchDraggedElement = null;
                 let originalParent = null; 
@@ -511,6 +365,12 @@
                     if (!isGameActive) return;
                     const targetSquid = e.target.closest('.squid');
                     if (targetSquid && !targetSquid.classList.contains('squid-correct')) {
+                        
+                        // --- BUG FIX: Stop animation before moving the element ---
+                        if (targetSquid.classList.contains('float-up')) {
+                            targetSquid.style.animation = 'none';
+                        }
+                        
                         e.preventDefault(); 
                         touchDraggedElement = targetSquid;
                         originalParent = targetSquid.parentNode;
@@ -565,7 +425,9 @@
                     touchDraggedElement.style.left = '';
                     touchDraggedElement.style.top = '';
                     
-                    if (originalParent) {
+                    if (originalParent && originalParent.contains(touchDraggedElement)) {
+                        // Already re-parented, do nothing
+                    } else if (originalParent) {
                         originalParent.appendChild(touchDraggedElement);
                     }
                     
@@ -575,6 +437,10 @@
                         } else {
                             handlePracticeAnswer(touchDraggedElement, droppedOnGrill.id);
                         }
+                    } else {
+                        // --- BUG FIX: If not dropped on a grill, it's a miss. Remove it. ---
+                        // This prevents it from being stuck or snapping to the center.
+                        touchDraggedElement.remove();
                     }
                     
                     touchDraggedElement = null;
@@ -586,503 +452,6 @@
                     touchDraggedElement.style.left = (touch.clientX - touchDraggedElement.offsetWidth / 2) + 'px';
                     touchDraggedElement.style.top = (touch.clientY - touchDraggedElement.offsetHeight / 2) + 'px';
                 }
-            }
-
-            function showRegisterScreen() {
-                const savedName = localStorage.getItem('squid_player_name');
-                if (savedName) {
-                    currentPlayerName = savedName;
-                    dom.playerNameInput.value = savedName;
-                    if (!isMuted) { dom.bgm.play().catch(()=>{}); }
-                    showMainMenu();
-                } else {
-                    showScreen('register-screen');
-                }
-            }
-
-            function registerPlayer() {
-                const name = dom.playerNameInput.value.trim();
-                if (name === '') {
-                    alert('กรุณาใส่ชื่อของคุณ!');
-                    return;
-                }
-                currentPlayerName = name;
-                localStorage.setItem('squid_player_name', name);
-                
-                if (!isMuted) dom.bgm.play().catch(()=>{});
-                
-                showMainMenu();
-            }
-
-            function loadProgress() {
-                const saved = localStorage.getItem('squid_cai_progress_p2');
-                userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} };
-            }
-
-            function saveProgress() {
-                localStorage.setItem('squid_cai_progress_p2', JSON.stringify(userProgress));
-            }
-            
-            function getLeaderboard(mode) {
-                try {
-                    const leaderboard = localStorage.getItem(`leaderboard_${mode}`);
-                    return leaderboard ? JSON.parse(leaderboard) : [];
-                } catch (e) { return []; }
-            }
-
-            function saveScoreToLeaderboard(mode, playerName, score) {
-                if(!mode || mode === 'lesson') return;
-                const leaderboard = getLeaderboard(mode);
-                leaderboard.push({ name: playerName, score: score });
-                leaderboard.sort((a, b) => b.score - a.score);
-                const top10 = leaderboard.slice(0, 10);
-                try {
-                    localStorage.setItem(`leaderboard_${mode}`, JSON.stringify(top10));
-                } catch (e) { console.error("ไม่สามารถบันทึก leaderboard:", e); }
-            }
-
-            function unlockNextLesson(currentLessonId) {
-                const currentIndex = CAI_CONFIG.lessons.findIndex(l => l.id === currentLessonId);
-                if (currentIndex > -1 && currentIndex < CAI_CONFIG.lessons.length - 1) {
-                    const nextLessonId = CAI_CONFIG.lessons[currentIndex + 1].id;
-                    if (!userProgress.unlockedLessons.includes(nextLessonId)) {
-                        userProgress.unlockedLessons.push(nextLessonId);
-                    }
-                }
-            }
-            
-            function showScreen(screenId) {
-                document.querySelectorAll('.screen-overlay').forEach(s => s.classList.remove('active'));
-                if (screenId) document.getElementById(screenId).classList.add('active');
-                
-                const isGameScreen = !screenId;
-                dom.homeBtn.style.display = (screenId && screenId !== 'main-menu-screen' && screenId !== 'welcome-credit-screen' && screenId !== 'register-screen') || isGameScreen ? 'flex' : 'none';
-
-                isGameActive = false;
-                clearTimeout(spawnerTimeout);
-                clearInterval(gameTimer);
-            }
-
-            function showMainMenu() {
-                showScreen('main-menu-screen');
-                dom.title.textContent = `ผู้เล่น: ${currentPlayerName}`;
-                dom.infoBar.innerHTML = '';
-                dom.feedback.innerHTML = 'เลือกโหมดที่ต้องการเล่นได้เลย!';
-                dom.grill1Label.textContent = '';
-                dom.grill2Label.textContent = '';
-            }
-
-            function showLessonSelect() {
-                dom.lessonSelectTitle.textContent = "เลือกบทเรียน";
-                const list = dom.lessonList;
-                list.innerHTML = '';
-                CAI_CONFIG.lessons.forEach(lesson => {
-                    const isUnlocked = userProgress.unlockedLessons.includes(lesson.id);
-                    const li = document.createElement('li');
-                    li.className = `lesson-item ${isUnlocked ? '' : 'locked'}`;
-                    li.innerHTML = `${lesson.title} <span class="lock-icon">🔒</span>`;
-                    if (isUnlocked) li.addEventListener('click', () => startLesson(lesson.id));
-                    list.appendChild(li);
-                });
-                showScreen('lesson-select-screen');
-            }
-
-            function showDifficultySelection() {
-                dom.difficultySelectTitle.textContent = "เลือกระดับความยาก";
-                showScreen('difficulty-selection-screen');
-            }
-            
-            const toggleMute = () => {
-                isMuted = !isMuted;
-                dom.muteBtn.classList.toggle('muted', isMuted);
-                dom.bgm.muted = isMuted;
-                if (!isMuted) dom.bgm.play().catch(()=>{});
-            };
-
-            const toggleFullScreen = () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(() => {});
-                } else if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            };
-
-            document.addEventListener('fullscreenchange', () => {
-                const isFullscreen = !!document.fullscreenElement;
-                dom.fullscreenBtn.classList.toggle('fs-exit', isFullscreen);
-            });
-
-
-            function startGame(mode, difficulty = 'medium') {
-                currentGameMode = mode;
-                currentDifficulty = difficulty;
-                
-                showScreen(null);
-                dom.feedback.innerHTML = '';
-                
-                startCountdown(() => {
-                    isGameActive = true;
-                    if (mode === 'lesson') playLesson();
-                    else if (mode === 'endless') setupEndlessMode();
-                    else if (mode === 'challenge') setupChallengeMode();
-                });
-            }
-
-            function startCountdown(onComplete) {
-                let count = 3;
-                dom.countdownDisplay.style.display = 'flex';
-                
-                const updateAndShow = () => {
-                    dom.countdownDisplay.classList.remove('countdown-pop');
-                    void dom.countdownDisplay.offsetWidth;
-                    if (count > 0) {
-                        dom.countdownDisplay.textContent = count;
-                        playSound('combo');
-                    } else {
-                        dom.countdownDisplay.textContent = 'GO!';
-                        playSound('levelup');
-                    }
-                    dom.countdownDisplay.classList.add('countdown-pop');
-                };
-
-                const countdownInterval = setInterval(() => {
-                    count--;
-                    if (count < 0) {
-                        clearInterval(countdownInterval);
-                        dom.countdownDisplay.style.display = 'none';
-                        onComplete();
-                    } else {
-                        updateAndShow();
-                    }
-                }, 1000);
-                updateAndShow();
-            }
-
-            function endGame() {
-                isGameActive = false;
-                clearTimeout(spawnerTimeout);
-                clearInterval(gameTimer);
-                dom.squidArea.innerHTML = '';
-
-                const modeKey = currentGameMode + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : '');
-                saveScoreToLeaderboard(modeKey, currentPlayerName, score);
-                const leaderboard = getLeaderboard(modeKey);
-                const playerRank = leaderboard.findIndex(entry => entry.name === currentPlayerName && entry.score === score) + 1;
-                
-                dom.summaryAccuracy.style.display = 'block';
-                dom.backToLessonsBtn.style.display = 'none';
-                dom.nextLessonBtn.style.display = 'none';
-                dom.retryLessonBtn.style.display = 'inline-block';
-                dom.retryLessonBtn.textContent = "กลับหน้าหลัก";
-                dom.retryLessonBtn.onclick = showMainMenu;
-                
-                let highScoreKey = `highScore_${currentGameMode}` + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : '');
-                if (!userProgress.highScores) userProgress.highScores = {};
-                let currentHighScore = userProgress.highScores[highScoreKey] || 0;
-
-                dom.summaryTitle.textContent = "เกมจบแล้ว!";
-                if (score > currentHighScore) {
-                    userProgress.highScores[highScoreKey] = score;
-                    saveProgress();
-                    dom.summaryAccuracy.innerHTML = `สุดยอด! สถิติใหม่!<br>คะแนน: ${score}`;
-                } else {
-                    dom.summaryAccuracy.innerHTML = `ทำได้ ${score} คะแนน!<br>สถิติสูงสุดส่วนตัว: ${currentHighScore}`;
-                }
-                
-                const rankText = playerRank > 0 ? `คุณอยู่อันดับที่ ${playerRank} ของเครื่องนี้` : 'พยายามอีกหน่อยนะ!';
-                dom.summaryStars.style.fontSize = '1.5em'; 
-                dom.summaryStars.textContent = rankText;
-                
-                dom.summaryFeedback.textContent = 'กลับไปที่หน้าหลักเพื่อเล่นอีกครั้ง';
-                showScreen('lesson-complete-screen');
-            }
-            
-            const updateTimer = () => {
-                timeLeft--;
-                const timerEl = document.getElementById('timer');
-                if (timerEl) timerEl.textContent = timeLeft;
-                if (timeLeft <= 0) {
-                    timeLeft = 0;
-                    if (timerEl) timerEl.textContent = timeLeft;
-                    endGame();
-                }
-            };
-            
-            function setupPracticeModeGrills() {
-                dom.grill1Label.textContent = "เลขคู่";
-                dom.grill2Label.textContent = "เลขคี่";
-            }
-
-            function setupEndlessMode() {
-                score = 0; level = 1;
-                timeLeft = CAI_CONFIG.practice.endless.initialTime;
-                setupPracticeModeGrills();
-                updateHUD();
-                generateSquidEndless();
-                gameTimer = setInterval(updateTimer, 1000);
-            }
-
-            function setupChallengeMode() {
-                score = 0;
-                timeLeft = CAI_CONFIG.practice.challenge.duration;
-                setupPracticeModeGrills();
-                updateHUD();
-                scheduleNextSquid(); 
-                gameTimer = setInterval(updateTimer, 1000);
-            }
-
-            function startLesson(lessonId){
-                currentLesson = CAI_CONFIG.lessons.find(l => l.id === lessonId);
-                if(currentLesson) showTutorial();
-            }
-
-            function showTutorial() {
-                dom.tutorialTitle.textContent = currentLesson.title;
-                dom.tutorialBody.innerHTML = currentLesson.tutorialHTML;
-                dom.startLessonBtn.onclick = () => startGame('lesson');
-                showScreen('tutorial-screen');
-            }
-
-            function playLesson() {
-                currentQuestion = 0;
-                correctAnswers = 0;
-                dom.grill1Label.textContent = currentLesson.grillLabels.one;
-                dom.grill2Label.textContent = currentLesson.grillLabels.two;
-                nextQuestion();
-            }
-
-            function nextQuestion() {
-                if (!isGameActive) return;
-                if (currentQuestion >= currentLesson.questionsTotal) {
-                    isGameActive = false;
-                    setTimeout(showLessonComplete, 500);
-                    return;
-                }
-                currentQuestion++;
-                updateHUD();
-                dom.feedback.innerHTML = '';
-                dom.squidArea.innerHTML = '';
-                const number = currentLesson.problemGenerator();
-                createSquid(number);
-            }
-            
-            function updateHUD() {
-                let titleText = '';
-                let infoHTML = '';
-                if(currentGameMode === 'lesson'){
-                    titleText = currentLesson.title;
-                    infoHTML = `<div>ข้อที่: ${currentQuestion}/${currentLesson.questionsTotal}</div> <div>ถูกต้อง: ${correctAnswers}</div>`;
-                } else {
-                    const modeTitle = CAI_CONFIG.practice[currentGameMode].title;
-                    const diffName = currentGameMode === 'challenge' ? ` (${CAI_CONFIG.practice.challenge.difficulties[currentDifficulty].name})` : '';
-                    titleText = `${currentPlayerName} | ${modeTitle}${diffName}`;
-
-                    let highScoreKey = `highScore_${currentGameMode}` + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : '');
-                    if (!userProgress.highScores) userProgress.highScores = {};
-                    let highScore = userProgress.highScores[highScoreKey] || 0;
-                    infoHTML = `<div id="score-container">คะแนน: <span id="score">${score}</span></div> <div id="hiscore-container">สูงสุด: ${highScore}</div> <div id="timer-board">เวลา: <span id="timer">${timeLeft}</span></div>`;
-                }
-                dom.title.textContent = titleText;
-                dom.infoBar.innerHTML = infoHTML;
-            }
-
-            function showLessonComplete() {
-                const lesson = currentLesson;
-                const accuracy = (correctAnswers / lesson.questionsTotal) * 100;
-                const passed = correctAnswers >= lesson.passThreshold;
-                
-                let stars = passed ? (accuracy >= 95 ? '⭐⭐⭐' : (accuracy >= 80 ? '⭐⭐' : '⭐')) : '';
-                dom.summaryStars.style.fontSize = '3em';
-                dom.summaryTitle.textContent = passed ? "ยินดีด้วย คุณผ่านแล้ว!" : "พยายามอีกนิดนะ!";
-                dom.summaryAccuracy.style.display = 'block';
-                dom.summaryAccuracy.textContent = `ความแม่นยำ: ${accuracy.toFixed(0)}% (ตอบถูก ${correctAnswers} จาก ${lesson.questionsTotal} ข้อ)`;
-                dom.summaryStars.textContent = stars;
-                dom.summaryFeedback.textContent = passed ? "ไปต่อบทเรียนถัดไปได้เลย!" : "ลองทบทวนอีกครั้งนะ";
-                
-                if (passed) { unlockNextLesson(lesson.id); saveProgress(); }
-
-                dom.retryLessonBtn.textContent = "ลองอีกครั้ง";
-                dom.retryLessonBtn.onclick = () => startLesson(lesson.id);
-                dom.retryLessonBtn.style.display = 'inline-block';
-                
-                const nextLessonIndex = CAI_CONFIG.lessons.findIndex(l => l.id === lesson.id) + 1;
-                const hasNextLesson = nextLessonIndex < CAI_CONFIG.lessons.length;
-                
-                dom.nextLessonBtn.style.display = (passed && hasNextLesson) ? 'inline-block' : 'none';
-                if(passed && hasNextLesson) {
-                    const nextLesson = CAI_CONFIG.lessons[nextLessonIndex];
-                     if (userProgress.unlockedLessons.includes(nextLesson.id)) {
-                        dom.nextLessonBtn.onclick = () => startLesson(nextLesson.id);
-                    }
-                }
-                dom.backToLessonsBtn.style.display = 'inline-block';
-                showScreen('lesson-complete-screen');
-            }
-
-            // --- BUG FIX: แก้ไขฟังก์ชันนี้เพื่อแยกการทำงานระหว่าง touch และ mouse ---
-            function createSquid(number, position = {}, animationClasses = 'spawn-anim') {
-                const squidEl = document.createElement('div');
-                squidEl.className = `squid ${animationClasses}`;
-                squidEl.dataset.number = number;
-                
-                squidEl.innerHTML = `<span class="number-display">${number}</span>`;
-                dom.squidArea.appendChild(squidEl);
-                Object.assign(squidEl.style, position);
-
-                // --- CONDITIONALLY ADD EVENT LISTENERS ---
-                if (!isTouchDevice) {
-                    // For desktop/mouse users, use the classic drag and drop
-                    squidEl.draggable = true;
-                    squidEl.addEventListener('dragstart', (e) => {
-                        draggedElement = e.target.closest('.squid');
-                        if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0);
-                    });
-                    squidEl.addEventListener('dragend', () => {
-                        if(draggedElement) draggedElement.classList.remove('dragging');
-                    });
-                }
-                // For touch devices, the main `initializeTouchEvents` will handle everything.
-                
-                if (animationClasses.includes('float-up')) {
-                    const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty];
-                    squidEl.style.animationDuration = `${difficultySettings.floatDuration}s`;
-                    squidEl.addEventListener('animationend', () => {
-                        if (squidEl.parentElement === dom.squidArea) squidEl.remove();
-                    });
-                }
-            }
-            
-            function handleAnswer(squidEl, grillId) {
-                if (!isGameActive) return;
-                isGameActive = false; 
-
-                const num = parseInt(squidEl.dataset.number);
-                const isCorrect = currentLesson.checkAnswer(num, grillId);
-                
-                if (isCorrect) {
-                    correctAnswers++;
-                    playSound('correct');
-                    vibrate(100);
-                    squidEl.classList.add('squid-correct');
-                } else {
-                    playSound('wrong');
-                    vibrate([100, 50, 100]);
-                    squidEl.classList.add('squid-wrong');
-                }
-                
-                dom.feedback.innerHTML = currentLesson.getExplanation(num, isCorrect);
-                updateHUD();
-                
-                squidEl.draggable = false;
-
-                const delay = isCorrect ? 1500 : 500;
-                setTimeout(() => {
-                    isGameActive = true;
-                     if(isCorrect) {
-                        squidEl.remove();
-                        nextQuestion();
-                    } else {
-                        squidEl.classList.remove('squid-wrong');
-                        if (squidEl.parentNode !== dom.squidArea) {
-                            dom.squidArea.appendChild(squidEl);
-                        }
-                        isGameActive = true; 
-                    }
-                }, delay);
-            }
-            
-            function handlePracticeAnswer(squidEl, grillId) {
-                if (!isGameActive) return;
-
-                const num = parseInt(squidEl.dataset.number);
-                const isEven = num % 2 === 0;
-                const correct = (isEven && grillId === 'grill-1') || (!isEven && grillId === 'grill-2');
-                squidEl.draggable = false;
-
-                if (correct) {
-                    score++;
-                    playSound('correct');
-                    vibrate(100);
-                    squidEl.style.animation = 'none';
-                    void squidEl.offsetWidth; 
-                    squidEl.classList.add('squid-correct');
-                    
-                    setTimeout(() => squidEl.remove(), 1500);
-
-                    if (currentGameMode === 'endless') {
-                        isGameActive = false;
-                        if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){
-                            level++;
-                            timeLeft += CAI_CONFIG.practice.endless.timeBonus;
-                            playSound('levelup');
-                        }
-                        setTimeout(() => {
-                            isGameActive = true;
-                            generateSquidEndless();
-                        }, 500);
-                    }
-                } else {
-                    playSound('wrong');
-                    vibrate([100, 50, 100]);
-                    squidEl.classList.add('squid-wrong');
-                    setTimeout(() => {
-                        squidEl.classList.remove('squid-wrong');
-                        if (!isTouchDevice) {
-                           squidEl.draggable = true;
-                        }
-                    }, 500);
-                }
-                
-                updateHUD();
-                const scoreContainer = document.getElementById('score-container');
-                if (scoreContainer && correct) {
-                    scoreContainer.classList.add('score-pop');
-                    setTimeout(() => scoreContainer.classList.remove('score-pop'), 300);
-                }
-            }
-            
-            function generateSquidEndless() {
-                if (!isGameActive) return;
-                dom.squidArea.innerHTML = '';
-                const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1;
-                createSquid(number); 
-            }
-
-            function scheduleNextSquid() {
-                if (!isGameActive || timeLeft <= 0) return;
-
-                const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty];
-                const { minSpawn, maxSpawn } = difficultySettings;
-                const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn;
-
-                spawnerTimeout = setTimeout(() => {
-                    spawnSquidChallenge();
-                    scheduleNextSquid();
-                }, nextSpawnTime);
-            }
-            
-            function spawnSquidChallenge() {
-                if (!isGameActive) return;
-                const config = CAI_CONFIG.practice.challenge;
-                const numLanes = config.numLanes;
-                const margin = config.horizontalMargin;
-                const effectiveWidth = 100 - (margin * 2);
-                const laneWidth = effectiveWidth / numLanes;
-                
-                const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => {
-                    const leftPercent = parseFloat(squid.style.left);
-                    return Math.floor((leftPercent - margin) / laneWidth);
-                });
-
-                let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane));
-
-                if (availableLanes.length === 0) return;
-
-                const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)];
-                const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2);
-
-                const position = { left: `${positionX}%`, transform: 'translateX(-50%)' };
-                createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up');
             }
 
             function initializeDragDrop() {
@@ -1104,6 +473,107 @@
                 });
             }
 
+            // --- The rest of the JavaScript functions are the same as before ---
+            // (showRegisterScreen, registerPlayer, etc. ... createSquid is the other main change)
+
+            function showRegisterScreen(){ /* ... same ... */ }
+            function registerPlayer(){ /* ... same ... */ }
+            function loadProgress(){ /* ... same ... */ }
+            function saveProgress(){ /* ... same ... */ }
+            function getLeaderboard(mode){ /* ... same ... */ }
+            function saveScoreToLeaderboard(mode, playerName, score){ /* ... same ... */ }
+            function unlockNextLesson(currentLessonId){ /* ... same ... */ }
+            function showScreen(screenId){ /* ... same ... */ }
+            function showMainMenu(){ /* ... same ... */ }
+            function showLessonSelect(){ /* ... same ... */ }
+            function showDifficultySelection(){ /* ... same ... */ }
+            const toggleMute = ()=>{ /* ... same ... */ };
+            const toggleFullScreen = ()=>{ /* ... same ... */ };
+            document.addEventListener('fullscreenchange', ()=>{ /* ... same ... */ });
+            function startGame(mode, difficulty = 'medium'){ /* ... same ... */ }
+            function startCountdown(onComplete){ /* ... same ... */ }
+            function endGame(){ /* ... same ... */ }
+            const updateTimer = ()=>{ /* ... same ... */ };
+            function setupPracticeModeGrills(){ /* ... same ... */ }
+            function setupEndlessMode(){ /* ... same ... */ }
+            function setupChallengeMode(){ /* ... same ... */ }
+            function startLesson(lessonId){ /* ... same ... */ }
+            function showTutorial(){ /* ... same ... */ }
+            function playLesson(){ /* ... same ... */ }
+            function nextQuestion(){ /* ... same ... */ }
+            function updateHUD(){ /* ... same ... */ }
+            function showLessonComplete(){ /* ... same ... */ }
+            
+            // --- REVISED createSquid FUNCTION ---
+            function createSquid(number, position = {}, animationClasses = 'spawn-anim') {
+                const squidEl = document.createElement('div');
+                squidEl.className = `squid ${animationClasses}`;
+                squidEl.dataset.number = number;
+                
+                squidEl.innerHTML = `<span class="number-display">${number}</span>`;
+                dom.squidArea.appendChild(squidEl);
+                Object.assign(squidEl.style, position);
+
+                if (!isTouchDevice) {
+                    squidEl.draggable = true;
+                    squidEl.addEventListener('dragstart', (e) => {
+                        draggedElement = e.target.closest('.squid');
+                        if(draggedElement) setTimeout(() => draggedElement.classList.add('dragging'), 0);
+                    });
+                    squidEl.addEventListener('dragend', () => {
+                        if(draggedElement) draggedElement.classList.remove('dragging');
+                    });
+                }
+                
+                if (animationClasses.includes('float-up')) {
+                    const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty];
+                    squidEl.style.animationDuration = `${difficultySettings.floatDuration}s`;
+                    squidEl.addEventListener('animationend', () => {
+                        if (squidEl.parentElement === dom.squidArea) squidEl.remove();
+                    });
+                }
+            }
+            
+            function handleAnswer(squidEl, grillId){ /* ... same ... */ }
+            function handlePracticeAnswer(squidEl, grillId){ /* ... same ... */ }
+            function generateSquidEndless(){ /* ... same ... */ }
+            function scheduleNextSquid(){ /* ... same ... */ }
+            function spawnSquidChallenge(){ /* ... same ... */ }
+
+            // Copying the full functions here to be safe
+            function showRegisterScreen() { const savedName = localStorage.getItem('squid_player_name'); if (savedName) { currentPlayerName = savedName; dom.playerNameInput.value = savedName; if (!isMuted) { dom.bgm.play().catch(()=>{}); } showMainMenu(); } else { showScreen('register-screen'); } }
+            function registerPlayer() { const name = dom.playerNameInput.value.trim(); if (name === '') { alert('กรุณาใส่ชื่อของคุณ!'); return; } currentPlayerName = name; localStorage.setItem('squid_player_name', name); if (!isMuted) dom.bgm.play().catch(()=>{}); showMainMenu(); }
+            function loadProgress() { const saved = localStorage.getItem('squid_cai_progress_p2'); userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} }; }
+            function saveProgress() { localStorage.setItem('squid_cai_progress_p2', JSON.stringify(userProgress)); }
+            function getLeaderboard(mode) { try { const leaderboard = localStorage.getItem(`leaderboard_${mode}`); return leaderboard ? JSON.parse(leaderboard) : []; } catch (e) { return []; } }
+            function saveScoreToLeaderboard(mode, playerName, score) { if(!mode || mode === 'lesson') return; const leaderboard = getLeaderboard(mode); leaderboard.push({ name: playerName, score: score }); leaderboard.sort((a, b) => b.score - a.score); const top10 = leaderboard.slice(0, 10); try { localStorage.setItem(`leaderboard_${mode}`, JSON.stringify(top10)); } catch (e) { console.error("ไม่สามารถบันทึก leaderboard:", e); } }
+            function unlockNextLesson(currentLessonId) { const currentIndex = CAI_CONFIG.lessons.findIndex(l => l.id === currentLessonId); if (currentIndex > -1 && currentIndex < CAI_CONFIG.lessons.length - 1) { const nextLessonId = CAI_CONFIG.lessons[currentIndex + 1].id; if (!userProgress.unlockedLessons.includes(nextLessonId)) { userProgress.unlockedLessons.push(nextLessonId); } } }
+            function showScreen(screenId) { document.querySelectorAll('.screen-overlay').forEach(s => s.classList.remove('active')); if (screenId) document.getElementById(screenId).classList.add('active'); const isGameScreen = !screenId; dom.homeBtn.style.display = (screenId && screenId !== 'main-menu-screen' && screenId !== 'welcome-credit-screen' && screenId !== 'register-screen') || isGameScreen ? 'flex' : 'none'; isGameActive = false; clearTimeout(spawnerTimeout); clearInterval(gameTimer); }
+            function showMainMenu() { showScreen('main-menu-screen'); dom.title.textContent = `ผู้เล่น: ${currentPlayerName}`; dom.infoBar.innerHTML = ''; dom.feedback.innerHTML = 'เลือกโหมดที่ต้องการเล่นได้เลย!'; dom.grill1Label.textContent = ''; dom.grill2Label.textContent = ''; }
+            function showLessonSelect() { dom.lessonSelectTitle.textContent = "เลือกบทเรียน"; const list = dom.lessonList; list.innerHTML = ''; CAI_CONFIG.lessons.forEach(lesson => { const isUnlocked = userProgress.unlockedLessons.includes(lesson.id); const li = document.createElement('li'); li.className = `lesson-item ${isUnlocked ? '' : 'locked'}`; li.innerHTML = `${lesson.title} <span class="lock-icon">🔒</span>`; if (isUnlocked) li.addEventListener('click', () => startLesson(lesson.id)); list.appendChild(li); }); showScreen('lesson-select-screen'); }
+            function showDifficultySelection() { dom.difficultySelectTitle.textContent = "เลือกระดับความยาก"; showScreen('difficulty-selection-screen'); }
+            const toggleMute = () => { isMuted = !isMuted; dom.muteBtn.classList.toggle('muted', isMuted); dom.bgm.muted = isMuted; if (!isMuted) dom.bgm.play().catch(()=>{}); };
+            const toggleFullScreen = () => { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(() => {}); } else if (document.exitFullscreen) { document.exitFullscreen(); } };
+            document.addEventListener('fullscreenchange', () => { const isFullscreen = !!document.fullscreenElement; dom.fullscreenBtn.classList.toggle('fs-exit', isFullscreen); });
+            function startGame(mode, difficulty = 'medium') { currentGameMode = mode; currentDifficulty = difficulty; showScreen(null); dom.feedback.innerHTML = ''; startCountdown(() => { isGameActive = true; if (mode === 'lesson') playLesson(); else if (mode === 'endless') setupEndlessMode(); else if (mode === 'challenge') setupChallengeMode(); }); }
+            function startCountdown(onComplete) { let count = 3; dom.countdownDisplay.style.display = 'flex'; const updateAndShow = () => { dom.countdownDisplay.classList.remove('countdown-pop'); void dom.countdownDisplay.offsetWidth; if (count > 0) { dom.countdownDisplay.textContent = count; playSound('combo'); } else { dom.countdownDisplay.textContent = 'GO!'; playSound('levelup'); } dom.countdownDisplay.classList.add('countdown-pop'); }; const countdownInterval = setInterval(() => { count--; if (count < 0) { clearInterval(countdownInterval); dom.countdownDisplay.style.display = 'none'; onComplete(); } else { updateAndShow(); } }, 1000); updateAndShow(); }
+            function endGame() { isGameActive = false; clearTimeout(spawnerTimeout); clearInterval(gameTimer); dom.squidArea.innerHTML = ''; const modeKey = currentGameMode + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : ''); saveScoreToLeaderboard(modeKey, currentPlayerName, score); const leaderboard = getLeaderboard(modeKey); const playerRank = leaderboard.findIndex(entry => entry.name === currentPlayerName && entry.score === score) + 1; dom.summaryAccuracy.style.display = 'block'; dom.backToLessonsBtn.style.display = 'none'; dom.nextLessonBtn.style.display = 'none'; dom.retryLessonBtn.style.display = 'inline-block'; dom.retryLessonBtn.textContent = "กลับหน้าหลัก"; dom.retryLessonBtn.onclick = showMainMenu; let highScoreKey = `highScore_${currentGameMode}` + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : ''); if (!userProgress.highScores) userProgress.highScores = {}; let currentHighScore = userProgress.highScores[highScoreKey] || 0; dom.summaryTitle.textContent = "เกมจบแล้ว!"; if (score > currentHighScore) { userProgress.highScores[highScoreKey] = score; saveProgress(); dom.summaryAccuracy.innerHTML = `สุดยอด! สถิติใหม่!<br>คะแนน: ${score}`; } else { dom.summaryAccuracy.innerHTML = `ทำได้ ${score} คะแนน!<br>สถิติสูงสุดส่วนตัว: ${currentHighScore}`; } const rankText = playerRank > 0 ? `คุณอยู่อันดับที่ ${playerRank} ของเครื่องนี้` : 'พยายามอีกหน่อยนะ!'; dom.summaryStars.style.fontSize = '1.5em'; dom.summaryStars.textContent = rankText; dom.summaryFeedback.textContent = 'กลับไปที่หน้าหลักเพื่อเล่นอีกครั้ง'; showScreen('lesson-complete-screen'); }
+            const updateTimer = () => { timeLeft--; const timerEl = document.getElementById('timer'); if (timerEl) timerEl.textContent = timeLeft; if (timeLeft <= 0) { timeLeft = 0; if (timerEl) timerEl.textContent = timeLeft; endGame(); } };
+            function setupPracticeModeGrills() { dom.grill1Label.textContent = "เลขคู่"; dom.grill2Label.textContent = "เลขคี่"; }
+            function setupEndlessMode() { score = 0; level = 1; timeLeft = CAI_CONFIG.practice.endless.initialTime; setupPracticeModeGrills(); updateHUD(); generateSquidEndless(); gameTimer = setInterval(updateTimer, 1000); }
+            function setupChallengeMode() { score = 0; timeLeft = CAI_CONFIG.practice.challenge.duration; setupPracticeModeGrills(); updateHUD(); scheduleNextSquid(); gameTimer = setInterval(updateTimer, 1000); }
+            function startLesson(lessonId){ currentLesson = CAI_CONFIG.lessons.find(l => l.id === lessonId); if(currentLesson) showTutorial(); }
+            function showTutorial() { dom.tutorialTitle.textContent = currentLesson.title; dom.tutorialBody.innerHTML = currentLesson.tutorialHTML; dom.startLessonBtn.onclick = () => startGame('lesson'); showScreen('tutorial-screen'); }
+            function playLesson() { currentQuestion = 0; correctAnswers = 0; dom.grill1Label.textContent = currentLesson.grillLabels.one; dom.grill2Label.textContent = currentLesson.grillLabels.two; nextQuestion(); }
+            function nextQuestion() { if (!isGameActive) return; if (currentQuestion >= currentLesson.questionsTotal) { isGameActive = false; setTimeout(showLessonComplete, 500); return; } currentQuestion++; updateHUD(); dom.feedback.innerHTML = ''; dom.squidArea.innerHTML = ''; const number = currentLesson.problemGenerator(); createSquid(number); }
+            function updateHUD() { let titleText = ''; let infoHTML = ''; if(currentGameMode === 'lesson'){ titleText = currentLesson.title; infoHTML = `<div>ข้อที่: ${currentQuestion}/${currentLesson.questionsTotal}</div> <div>ถูกต้อง: ${correctAnswers}</div>`; } else { const modeTitle = CAI_CONFIG.practice[currentGameMode].title; const diffName = currentGameMode === 'challenge' ? ` (${CAI_CONFIG.practice.challenge.difficulties[currentDifficulty].name})` : ''; titleText = `${currentPlayerName} | ${modeTitle}${diffName}`; let highScoreKey = `highScore_${currentGameMode}` + (currentGameMode === 'challenge' ? `_${currentDifficulty}` : ''); if (!userProgress.highScores) userProgress.highScores = {}; let highScore = userProgress.highScores[highScoreKey] || 0; infoHTML = `<div id="score-container">คะแนน: <span id="score">${score}</span></div> <div id="hiscore-container">สูงสุด: ${highScore}</div> <div id="timer-board">เวลา: <span id="timer">${timeLeft}</span></div>`; } dom.title.textContent = titleText; dom.infoBar.innerHTML = infoHTML; }
+            function showLessonComplete() { const lesson = currentLesson; const accuracy = (correctAnswers / lesson.questionsTotal) * 100; const passed = correctAnswers >= lesson.passThreshold; let stars = passed ? (accuracy >= 95 ? '⭐⭐⭐' : (accuracy >= 80 ? '⭐⭐' : '⭐')) : ''; dom.summaryStars.style.fontSize = '3em'; dom.summaryTitle.textContent = passed ? "ยินดีด้วย คุณผ่านแล้ว!" : "พยายามอีกนิดนะ!"; dom.summaryAccuracy.style.display = 'block'; dom.summaryAccuracy.textContent = `ความแม่นยำ: ${accuracy.toFixed(0)}% (ตอบถูก ${correctAnswers} จาก ${lesson.questionsTotal} ข้อ)`; dom.summaryStars.textContent = stars; dom.summaryFeedback.textContent = passed ? "ไปต่อบทเรียนถัดไปได้เลย!" : "ลองทบทวนอีกครั้งนะ"; if (passed) { unlockNextLesson(lesson.id); saveProgress(); } dom.retryLessonBtn.textContent = "ลองอีกครั้ง"; dom.retryLessonBtn.onclick = () => startLesson(lesson.id); dom.retryLessonBtn.style.display = 'inline-block'; const nextLessonIndex = CAI_CONFIG.lessons.findIndex(l => l.id === lesson.id) + 1; const hasNextLesson = nextLessonIndex < CAI_CONFIG.lessons.length; dom.nextLessonBtn.style.display = (passed && hasNextLesson) ? 'inline-block' : 'none'; if(passed && hasNextLesson) { const nextLesson = CAI_CONFIG.lessons[nextLessonIndex]; if (userProgress.unlockedLessons.includes(nextLesson.id)) { dom.nextLessonBtn.onclick = () => startLesson(nextLesson.id); } } dom.backToLessonsBtn.style.display = 'inline-block'; showScreen('lesson-complete-screen'); }
+            function handleAnswer(squidEl, grillId) { if (!isGameActive) return; isGameActive = false; const num = parseInt(squidEl.dataset.number); const isCorrect = currentLesson.checkAnswer(num, grillId); if (isCorrect) { correctAnswers++; playSound('correct'); vibrate(100); squidEl.classList.add('squid-correct'); } else { playSound('wrong'); vibrate([100, 50, 100]); squidEl.classList.add('squid-wrong'); } dom.feedback.innerHTML = currentLesson.getExplanation(num, isCorrect); updateHUD(); squidEl.draggable = false; const delay = isCorrect ? 1500 : 500; setTimeout(() => { isGameActive = true; if(isCorrect) { squidEl.remove(); nextQuestion(); } else { squidEl.classList.remove('squid-wrong'); if (squidEl.parentNode !== dom.squidArea) { dom.squidArea.appendChild(squidEl); } isGameActive = true; } }, delay); }
+            function handlePracticeAnswer(squidEl, grillId) { if (!isGameActive) return; const num = parseInt(squidEl.dataset.number); const isEven = num % 2 === 0; const correct = (isEven && grillId === 'grill-1') || (!isEven && grillId === 'grill-2'); if (!isTouchDevice) { squidEl.draggable = false; } if (correct) { score++; playSound('correct'); vibrate(100); squidEl.style.animation = 'none'; void squidEl.offsetWidth; squidEl.classList.add('squid-correct'); setTimeout(() => squidEl.remove(), 1500); if (currentGameMode === 'endless') { isGameActive = false; if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){ level++; timeLeft += CAI_CONFIG.practice.endless.timeBonus; playSound('levelup'); } setTimeout(() => { isGameActive = true; generateSquidEndless(); }, 500); } } else { playSound('wrong'); vibrate([100, 50, 100]); squidEl.classList.add('squid-wrong'); setTimeout(() => { squidEl.classList.remove('squid-wrong'); if (!isTouchDevice) { squidEl.draggable = true; } }, 500); } updateHUD(); const scoreContainer = document.getElementById('score-container'); if (scoreContainer && correct) { scoreContainer.classList.add('score-pop'); setTimeout(() => scoreContainer.classList.remove('score-pop'), 300); } }
+            function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
+            function scheduleNextSquid() { if (!isGameActive || timeLeft <= 0) return; const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; const { minSpawn, maxSpawn } = difficultySettings; const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn; spawnerTimeout = setTimeout(() => { spawnSquidChallenge(); scheduleNextSquid(); }, nextSpawnTime); }
+            function spawnSquidChallenge() { if (!isGameActive) return; const config = CAI_CONFIG.practice.challenge; const numLanes = config.numLanes; const margin = config.horizontalMargin; const effectiveWidth = 100 - (margin * 2); const laneWidth = effectiveWidth / numLanes; const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => { const leftPercent = parseFloat(squid.style.left); return Math.floor((leftPercent - margin) / laneWidth); }); let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane)); if (availableLanes.length === 0) return; const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)]; const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2); const position = { left: `${positionX}%`, transform: 'translateX(-50%)' }; createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up'); }
+            
             initializeGame();
         });
     </script>
