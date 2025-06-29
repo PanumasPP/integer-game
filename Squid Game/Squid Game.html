@@ -283,8 +283,7 @@
             function initializeGame() { setTimeout(() => { if (dom.welcomeCreditScreen) dom.welcomeCreditScreen.style.display = 'none'; setupApplication(); }, 4000); }
 
             function setupApplication() {
-                dom.bgm.volume = 0.3;
-                loadProgress();
+                dom.bgm.volume = 0.3; loadProgress();
                 dom.btnLessonMode.addEventListener('click', showLessonSelect);
                 dom.btnEndless.addEventListener('click', () => startGame('endless'));
                 dom.btnChallenge.addEventListener('click', showDifficultySelection);
@@ -296,20 +295,13 @@
                 dom.fullscreenBtn.addEventListener('click', toggleFullScreen);
                 dom.backToLessonsBtn.addEventListener('click', showLessonSelect);
                 dom.btnStartRegister.addEventListener('click', registerPlayer);
-                if (isTouchDevice) {
-                    initializeTouchEvents();
-                } else {
-                    initializeDragDrop();
-                }
+                if (isTouchDevice) { initializeTouchEvents(); } else { initializeDragDrop(); }
                 showRegisterScreen();
             }
 
             // --- FINAL REVISION FOR SMOOTH DRAGGING ---
             function initializeTouchEvents() {
-                let touchDraggedElement = null;
-                let originalParent = null; 
-                let offsetX = 0;
-                let offsetY = 0;
+                let touchDraggedElement = null, originalParent = null, offsetX = 0, offsetY = 0;
 
                 dom.gameContainer.addEventListener('touchstart', (e) => {
                     if (!isGameActive) return;
@@ -319,7 +311,6 @@
                         if (targetSquid.classList.contains('float-up')) {
                             targetSquid.style.animation = 'none';
                         }
-                        
                         e.preventDefault(); 
                         touchDraggedElement = targetSquid;
                         originalParent = targetSquid.parentNode;
@@ -346,15 +337,10 @@
                         e.preventDefault();
                         moveElementWithTouch(e);
                         touchDraggedElement.style.visibility = 'hidden';
-                        const touch = e.touches[0];
-                        const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const elementUnderTouch = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
                         touchDraggedElement.style.visibility = 'visible';
                         [dom.grill1, dom.grill2].forEach(grill => {
-                            if (grill === elementUnderTouch || grill.contains(elementUnderTouch)) {
-                                grill.classList.add('drag-over');
-                            } else {
-                                grill.classList.remove('drag-over');
-                            }
+                            grill.classList.toggle('drag-over', grill === elementUnderTouch || grill.contains(elementUnderTouch));
                         });
                     }
                 }, { passive: false });
@@ -362,18 +348,10 @@
                 dom.gameContainer.addEventListener('touchend', (e) => {
                     if (!touchDraggedElement) return;
                     e.preventDefault();
-                    
                     touchDraggedElement.style.visibility = 'hidden';
-                    const touch = e.changedTouches[0];
-                    const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const elementUnderTouch = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
                     touchDraggedElement.style.visibility = 'visible';
-                    
-                    let droppedOnGrill = null;
-                    if (dom.grill1.contains(elementUnderTouch)) {
-                        droppedOnGrill = dom.grill1;
-                    } else if (dom.grill2.contains(elementUnderTouch)) {
-                        droppedOnGrill = dom.grill2;
-                    }
+                    let droppedOnGrill = [dom.grill1, dom.grill2].find(g => g === elementUnderTouch || g.contains(elementUnderTouch));
 
                     [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
                     touchDraggedElement.classList.remove('dragging');
@@ -385,22 +363,15 @@
                     if (originalParent && !originalParent.contains(touchDraggedElement)) {
                        originalParent.appendChild(touchDraggedElement);
                     }
-                    
                     if (droppedOnGrill) {
-                        if (currentGameMode === 'lesson') {
-                            handleAnswer(touchDraggedElement, droppedOnGrill.id);
-                        } else {
-                            handlePracticeAnswer(touchDraggedElement, droppedOnGrill.id);
-                        }
+                        const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
+                        handler(touchDraggedElement, droppedOnGrill.id);
                     } else {
                         touchDraggedElement.remove();
                     }
-                    
                     touchDraggedElement = null;
-                    originalParent = null;
                 });
 
-                // --- ฟังก์ชันสำหรับย้ายตำแหน่งหมึกโดยใช้ Offset ที่คำนวณไว้ ---
                 function moveElementWithTouch(e) {
                     const touch = e.touches[0];
                     touchDraggedElement.style.left = (touch.clientX - offsetX) + 'px';
@@ -413,20 +384,15 @@
                     grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); });
                     grill.addEventListener('dragleave', () => grill.classList.remove('drag-over'));
                     grill.addEventListener('drop', e => {
-                        e.preventDefault();
-                        if (!draggedElement || !isGameActive) return;
+                        e.preventDefault(); if (!draggedElement || !isGameActive) return;
                         grill.classList.remove('drag-over');
-                        if (currentGameMode === 'lesson') {
-                            handleAnswer(draggedElement, e.currentTarget.id);
-                        } else {
-                            handlePracticeAnswer(draggedElement, e.currentTarget.id);
-                        }
+                        const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
+                        handler(draggedElement, e.currentTarget.id);
                         draggedElement = null;
                     });
                 });
             }
             
-            // The rest of the functions are unchanged from the previous version.
             function showRegisterScreen() { const savedName = localStorage.getItem('squid_player_name'); if (savedName) { currentPlayerName = savedName; dom.playerNameInput.value = savedName; if (!isMuted) { dom.bgm.play().catch(()=>{}); } showMainMenu(); } else { showScreen('register-screen'); } }
             function registerPlayer() { const name = dom.playerNameInput.value.trim(); if (name === '') { alert('กรุณาใส่ชื่อของคุณ!'); return; } currentPlayerName = name; localStorage.setItem('squid_player_name', name); if (!isMuted) dom.bgm.play().catch(()=>{}); showMainMenu(); }
             function loadProgress() { const saved = localStorage.getItem('squid_cai_progress_p2'); userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} }; }
@@ -460,7 +426,7 @@
             function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
             function scheduleNextSquid() { if (!isGameActive || timeLeft <= 0) return; const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; const { minSpawn, maxSpawn } = difficultySettings; const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn; spawnerTimeout = setTimeout(() => { spawnSquidChallenge(); scheduleNextSquid(); }, nextSpawnTime); }
             function spawnSquidChallenge() { if (!isGameActive) return; const config = CAI_CONFIG.practice.challenge; const numLanes = config.numLanes; const margin = config.horizontalMargin; const effectiveWidth = 100 - (margin * 2); const laneWidth = effectiveWidth / numLanes; const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => { const leftPercent = parseFloat(squid.style.left); return Math.floor((leftPercent - margin) / laneWidth); }); let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane)); if (availableLanes.length === 0) return; const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)]; const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2); const position = { left: `${positionX}%`, transform: 'translateX(-50%)' }; createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up'); }
-
+            
             initializeGame();
         });
     </script>
