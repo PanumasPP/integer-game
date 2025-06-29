@@ -404,49 +404,58 @@
                 }, delay); 
             }
             
-            // --- REFACTORED AND FINALIZED FUNCTION ---
+            // --- REFACTORED AND FINALIZED FUNCTION (FIXED) ---
             function handlePracticeAnswer(squidEl, grillId) {
                 if (!isGameActive) return;
-                isGameActive = false; // Lock game state
+                isGameActive = false; // ล็อกการควบคุมชั่วคราวเพื่อป้องกันการกดซ้ำ
 
                 const num = parseInt(squidEl.dataset.number);
-                const correct = (num % 2 === 0 && grillId === 'grill-1') || ((num % 2 !== 0) && grillId === 'grill-2');
-                let delay = 500;
+                const isCorrect = (num % 2 === 0 && grillId === 'grill-1') || ((num % 2 !== 0) && grillId === 'grill-2');
+                let animationDelay = 500; // Delay พื้นฐานสำหรับอนิเมชัน (ตอนตอบผิด)
 
-                if (correct) {
-                    delay = 1500;
+                if (isCorrect) {
+                    animationDelay = 1500; // Delay ตอนตอบถูกจะนานกว่า เพื่อให้เห็นอนิเมชันปิ้งหมึก
                     score++;
                     playSound('correct');
                     vibrate(100);
-                    updateHUD(); // Update score display immediately
+                    updateHUD(); // อัปเดตคะแนนบนหน้าจอทันที
+                    
                     const scoreContainer = document.getElementById('score-container');
                     if (scoreContainer) {
                         scoreContainer.classList.add('score-pop');
                         setTimeout(() => scoreContainer.classList.remove('score-pop'), 300);
                     }
                     squidEl.classList.add('squid-correct');
+
+                    // ตรวจสอบการเลื่อนระดับในโหมด Endless
+                    if (currentGameMode === 'endless' && score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0) {
+                        level++;
+                        timeLeft += CAI_CONFIG.practice.endless.timeBonus;
+                        playSound('levelup');
+                        updateHUD(); // อัปเดต HUD อีกครั้งเพื่อแสดงเวลาที่เพิ่มขึ้น
+                    }
                 } else {
                     playSound('wrong');
                     vibrate([100, 50, 100]);
                     squidEl.classList.add('squid-wrong');
                 }
                 
+                // ส่วนที่จะทำงานหลังจากอนิเมชัน (ปิ้งหมึก หรือ ส่ายหัว) แสดงผลจบ
                 setTimeout(() => {
-                    squidEl.remove(); // Always remove squid after animation
-                    
-                    if (correct && currentGameMode === 'endless') {
-                        if(score > 0 && score % CAI_CONFIG.practice.endless.levelUpScore === 0){
-                            level++;
-                            timeLeft += CAI_CONFIG.practice.endless.timeBonus;
-                            playSound('levelup');
-                            updateHUD();
-                        }
+                    squidEl.remove(); // นำปลาหมึกตัวที่ตอบแล้วออกไปเสมอ
+
+                    // --- จุดที่แก้ไขหลัก ---
+                    // หากเป็นโหมด Endless (ปกติ) ให้สร้างปลาหมึกตัวใหม่ขึ้นมากลางจอ
+                    if (currentGameMode === 'endless') {
                         generateSquidEndless();
                     }
-                    
-                    isGameActive = true; // Unlock game state
+                    // หากเป็นโหมด Challenge (ท้าทาย) ไม่ต้องทำอะไร
+                    // เพราะเกมจะสร้างปลาหมึกตัวใหม่ตามเวลาที่กำหนดไว้อยู่แล้ว
 
-                }, delay);
+                    // ปลดล็อกการควบคุมเพื่อให้ผู้เล่นสามารถเล่นต่อได้
+                    isGameActive = true; 
+
+                }, animationDelay);
             }
 
             function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
