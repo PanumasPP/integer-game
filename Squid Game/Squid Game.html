@@ -315,7 +315,7 @@
                     if (!isGameActive) return;
                     const targetSquid = e.target.closest('.squid');
                     if (targetSquid && !targetSquid.classList.contains('squid-correct')) {
-                        
+                        // --- 1. หยุดการเลื่อนขึ้นของหมึกทันที ---
                         if (targetSquid.classList.contains('float-up')) {
                             targetSquid.style.animation = 'none';
                         }
@@ -324,19 +324,19 @@
                         touchDraggedElement = targetSquid;
                         originalParent = targetSquid.parentNode;
                         
+                        // --- 2. คำนวณตำแหน่งที่แตะ เพื่อให้หมึกติดตามนิ้วทันที ไม่กระโดด ---
                         const rect = touchDraggedElement.getBoundingClientRect();
                         const touch = e.touches[0];
-
-                        // --- NEW: Calculate the offset from the touch point to the element's corner ---
                         offsetX = touch.clientX - rect.left;
                         offsetY = touch.clientY - rect.top;
 
+                        // 3. ย้ายปลาหมึกและเริ่มการลาก
                         document.body.appendChild(touchDraggedElement);
                         touchDraggedElement.style.position = 'absolute';
                         touchDraggedElement.style.zIndex = '1000';
                         touchDraggedElement.classList.add('dragging');
 
-                        // Move once immediately to the correct starting position without snapping
+                        // 4. ย้ายตำแหน่งหมึกครั้งแรกทันทีให้ตรงกับนิ้ว
                         moveElementWithTouch(e);
                     }
                 }, { passive: false });
@@ -400,7 +400,7 @@
                     originalParent = null;
                 });
 
-                // --- NEW: The updated move function using the offset ---
+                // --- ฟังก์ชันสำหรับย้ายตำแหน่งหมึกโดยใช้ Offset ที่คำนวณไว้ ---
                 function moveElementWithTouch(e) {
                     const touch = e.touches[0];
                     touchDraggedElement.style.left = (touch.clientX - offsetX) + 'px';
@@ -425,7 +425,8 @@
                     });
                 });
             }
-
+            
+            // The rest of the functions are unchanged from the previous version.
             function showRegisterScreen() { const savedName = localStorage.getItem('squid_player_name'); if (savedName) { currentPlayerName = savedName; dom.playerNameInput.value = savedName; if (!isMuted) { dom.bgm.play().catch(()=>{}); } showMainMenu(); } else { showScreen('register-screen'); } }
             function registerPlayer() { const name = dom.playerNameInput.value.trim(); if (name === '') { alert('กรุณาใส่ชื่อของคุณ!'); return; } currentPlayerName = name; localStorage.setItem('squid_player_name', name); if (!isMuted) dom.bgm.play().catch(()=>{}); showMainMenu(); }
             function loadProgress() { const saved = localStorage.getItem('squid_cai_progress_p2'); userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} }; }
@@ -459,7 +460,7 @@
             function generateSquidEndless() { if (!isGameActive) return; dom.squidArea.innerHTML = ''; const number = Math.floor(Math.random() * (20 * Math.pow(level, 2))) + 1; createSquid(number); }
             function scheduleNextSquid() { if (!isGameActive || timeLeft <= 0) return; const difficultySettings = CAI_CONFIG.practice.challenge.difficulties[currentDifficulty]; const { minSpawn, maxSpawn } = difficultySettings; const nextSpawnTime = Math.random() * (maxSpawn - minSpawn) + minSpawn; spawnerTimeout = setTimeout(() => { spawnSquidChallenge(); scheduleNextSquid(); }, nextSpawnTime); }
             function spawnSquidChallenge() { if (!isGameActive) return; const config = CAI_CONFIG.practice.challenge; const numLanes = config.numLanes; const margin = config.horizontalMargin; const effectiveWidth = 100 - (margin * 2); const laneWidth = effectiveWidth / numLanes; const occupiedLanes = Array.from(dom.squidArea.querySelectorAll('.squid-absolute')).map(squid => { const leftPercent = parseFloat(squid.style.left); return Math.floor((leftPercent - margin) / laneWidth); }); let availableLanes = Array.from({ length: numLanes }, (_, i) => i).filter(lane => !occupiedLanes.includes(lane)); if (availableLanes.length === 0) return; const chosenLane = availableLanes[Math.floor(Math.random() * availableLanes.length)]; const positionX = margin + (chosenLane * laneWidth) + (laneWidth / 2); const position = { left: `${positionX}%`, transform: 'translateX(-50%)' }; createSquid(Math.floor(Math.random() * 1000) + 1, position, 'squid-absolute float-up'); }
-            
+
             initializeGame();
         });
     </script>
