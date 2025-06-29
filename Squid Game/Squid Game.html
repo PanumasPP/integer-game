@@ -18,7 +18,6 @@
         html, body {
             height: 100%; width: 100%; margin: 0; padding: 0;
             overflow: hidden; font-family: 'Mitr', sans-serif; background-color: #000;
-            /* --- IMPROVEMENT: ทำให้รู้สึกเหมือนแอปมากขึ้นโดยป้องกันการเลือกข้อความ --- */
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -28,7 +27,6 @@
         #game-container {
             display: flex; flex-direction: column; justify-content: space-between;
             height: 100%; width: 100%; padding: 15px; box-sizing: border-box;
-            /* --- NOTE: ใส่ URL รูปภาพแบบ Base64 ที่นี่เพื่อประสิทธิภาพสูงสุด --- */
             background-image: url('BG.png'); 
             background-size: cover; background-position: center;
             color: white; text-shadow: 1px 1px 3px rgba(0,0,0,0.6); visibility: hidden;
@@ -55,9 +53,8 @@
             width: 40px; height: 40px; background: rgba(0,0,0,0.4);
             border: 2px solid white; border-radius: 50%; cursor: pointer;
             display: flex; justify-content: center; align-items: center;
-            transition: transform 0.1s ease-out; /* --- IMPROVEMENT: เพิ่ม transition สำหรับการกด --- */
+            transition: transform 0.1s ease-out;
         }
-        /* --- IMPROVEMENT: เพิ่ม Feedback การกดปุ่ม --- */
         .control-btn:hover { transform: scale(1.1); }
         .control-btn:active { transform: scale(0.95); }
 
@@ -68,7 +65,6 @@
         #mute-btn .unmuted-icon, #mute-btn.muted .muted-icon { display: block; }
         #mute-btn.muted .unmuted-icon, #mute-btn .muted-icon { display: none; }
         
-        /* --- IMPROVEMENT: ไอคอนสำหรับสลับโหมดเต็มจอ --- */
         #fullscreen-btn .fs-enter-icon, #fullscreen-btn.fs-exit .fs-exit-icon { display: block; }
         #fullscreen-btn.fs-exit .fs-enter-icon, #fullscreen-btn .fs-exit-icon { display: none; }
 
@@ -96,7 +92,6 @@
             width: 280px; max-width: 90%;
         }
         .selection-group button:hover, .action-button:hover { transform: scale(1.05); }
-        /* --- IMPROVEMENT: เพิ่ม Feedback การกดปุ่ม --- */
         .selection-group button:active, .action-button:active { transform: scale(0.98); }
 
         #lesson-list {
@@ -154,13 +149,12 @@
         }
         .squid {
             width: var(--squid-size); height: calc(var(--squid-size) * 1.5);
-            background-image: url('squid.png'); /* --- NOTE: ใส่ Base64 ที่นี่ --- */
+            background-image: url('squid.png');
             background-size: contain; background-repeat: no-repeat;
             background-position: center; cursor: grab; display: flex;
             justify-content: center; align-items: flex-start;
             transition: opacity 0.3s, transform 0.3s;
             touch-action: none; 
-            /* --- PERFORMANCE: บอกเบราว์เซอร์ให้เตรียมพร้อมสำหรับแอนิเมชัน --- */
             will-change: transform, opacity;
         }
         .squid-absolute { position: absolute; }
@@ -193,8 +187,8 @@
             position: absolute; bottom: -40px; left: 50%;
             transform: translateX(-50%); font-size: 1.2em; width: 100%;
         }
-        #grill-1 { background-image: url('grill-1.png'); } /* --- NOTE: ใส่ Base64 ที่นี่ --- */
-        #grill-2 { background-image: url('grill-2.png'); } /* --- NOTE: ใส่ Base64 ที่นี่ --- */
+        #grill-1 { background-image: url('grill-1.png'); }
+        #grill-2 { background-image: url('grill-2.png'); }
 
         .drag-over { background-color: rgba(163, 228, 215, 0.5); border-style: solid; border-color: rgba(255,255,255,0.7); }
         .dragging { cursor: grabbing; opacity: 0.7; transform: scale(1.1) rotate(5deg); z-index: 50; }
@@ -214,7 +208,6 @@
         .squid-wrong { animation: shake-it 0.5s; }
         @keyframes shake-it { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-15px) rotate(-5deg); } 40% { transform: translateX(15px) rotate(5deg); } 60% { transform: translateX(-10px) rotate(-3deg); } 80% { transform: translateX(10px) rotate(3deg); } }
         
-        /* --- IMPROVEMENT: ทำให้ Responsive ดีขึ้นสำหรับจอเล็ก --- */
         @media (max-width: 768px) {
             :root { --squid-size: 175px; --number-margin-top: 90px; }
             h1, .overlay-title { font-size: 1.8em; }
@@ -222,18 +215,8 @@
             .selection-group button, .action-button { width: 80%; font-size: 1.1em; }
         }
         
-        /* --- NEW: สำหรับมือถือแนวตั้งที่แคบมากๆ --- */
-        @media (max-width: 480px) {
-            #grill-section {
-                flex-direction: column; /* เรียงเตาในแนวตั้ง */
-                gap: 45px; /* เพิ่มระยะห่างระหว่างเตา */
-                margin-bottom: 30px;
-            }
-            .grill {
-                width: 50vw; max-width: 200px; 
-                height: 50vw; max-height: 200px; 
-            }
-        }
+        /* --- REMOVED: ลบ media query ที่ทำให้เตาย่างเรียงแนวตั้งออกไป --- */
+
     </style>
 </head>
 <body>
@@ -250,7 +233,7 @@
                 <svg class="muted-icon" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
             </button>
             <button id="fullscreen-btn" class="control-btn" title="โหมดเต็มหน้าจอ">
-                 <svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                <svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
                 <svg class="fs-exit-icon" style="display: none;" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
             </button>
         </div>
@@ -350,7 +333,6 @@
     <audio id="bgm" src="sound/background.mp3" loop preload="auto"></audio>
     
     <script>
-        // --- NOTE: แก้ไขโค้ดส่วนนี้เพียงเล็กน้อย แต่ส่วนใหญ่จะเหมือนเดิม ---
         const imagesToLoad = ['BG.png', 'squid.png', 'grill-1.png', 'grill-2.png'];
         let imagesLoaded = 0;
         if (imagesToLoad.length === 0) {
@@ -363,7 +345,6 @@
                 const processLoad = () => {
                     imagesLoaded++;
                     if (imagesLoaded === imagesToLoad.length) {
-                        // --- IMPROVEMENT: หน่วงเวลาเล็กน้อยเพื่อให้ดู smooth ขึ้น ---
                         setTimeout(() => {
                             document.getElementById('loading-screen').style.display = 'none';
                             document.getElementById('game-container').style.visibility = 'visible';
@@ -512,12 +493,12 @@
                 dom.btnStartRegister.addEventListener('click', registerPlayer);
                 
                 initializeDragDrop();
-                initializeTouchEvents(); // --- THE CRITICAL FIX FOR MOBILE ---
+                initializeTouchEvents(); // Call the corrected touch handler
 
                 showRegisterScreen();
             }
 
-            // ===== REVISED AND IMPROVED FUNCTION FOR TOUCH EVENTS =====
+            // --- BUG FIX: แก้ไขฟังก์ชัน Touch Events ให้ทำงานถูกต้องและไม่ค้าง ---
             function initializeTouchEvents() {
                 let touchDraggedElement = null;
                 let originalParent = null; 
@@ -558,45 +539,49 @@
                 }, { passive: false });
 
                 dom.gameContainer.addEventListener('touchend', (e) => {
-                    if (touchDraggedElement) {
-                        e.preventDefault();
-                        
-                        touchDraggedElement.style.visibility = 'hidden';
-                        const touch = e.changedTouches[0];
-                        const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
-                        touchDraggedElement.style.visibility = 'visible';
-                        
-                        let droppedOnGrill = null;
-                        if (dom.grill1.contains(elementUnderTouch)) {
-                            droppedOnGrill = dom.grill1;
-                        } else if (dom.grill2.contains(elementUnderTouch)) {
-                            droppedOnGrill = dom.grill2;
-                        }
+                    if (!touchDraggedElement) return;
 
-                        [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
-                        touchDraggedElement.classList.remove('dragging');
-                        touchDraggedElement.style.position = '';
-                        touchDraggedElement.style.zIndex = '';
-                        touchDraggedElement.style.left = '';
-                        touchDraggedElement.style.top = '';
-                        
-                        originalParent.appendChild(touchDraggedElement);
-                        
-                        if (droppedOnGrill) {
-                            if (currentGameMode === 'lesson') {
-                                handleAnswer(touchDraggedElement, droppedOnGrill.id);
-                            } else {
-                                handlePracticeAnswer(touchDraggedElement, droppedOnGrill.id);
-                            }
-                        } else {
-                            if (currentGameMode !== 'lesson') {
-                                 touchDraggedElement.remove();
-                            }
-                        }
-                        
-                        touchDraggedElement = null;
-                        originalParent = null;
+                    e.preventDefault();
+                    
+                    // --- REVISED LOGIC TO PREVENT BUG ---
+                    // 1. Find what's under the touch point
+                    touchDraggedElement.style.visibility = 'hidden';
+                    const touch = e.changedTouches[0];
+                    const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+                    touchDraggedElement.style.visibility = 'visible';
+                    
+                    let droppedOnGrill = null;
+                    if (dom.grill1.contains(elementUnderTouch)) {
+                        droppedOnGrill = dom.grill1;
+                    } else if (dom.grill2.contains(elementUnderTouch)) {
+                        droppedOnGrill = dom.grill2;
                     }
+
+                    // 2. Clean up all dragging styles and states
+                    [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
+                    touchDraggedElement.classList.remove('dragging');
+                    touchDraggedElement.style.position = '';
+                    touchDraggedElement.style.zIndex = '';
+                    touchDraggedElement.style.left = '';
+                    touchDraggedElement.style.top = '';
+                    
+                    // 3. ALWAYS return the element to its original parent first. This prevents it from getting stuck.
+                    if (originalParent) {
+                        originalParent.appendChild(touchDraggedElement);
+                    }
+                    
+                    // 4. NOW, handle the game logic
+                    if (droppedOnGrill) {
+                        if (currentGameMode === 'lesson') {
+                            handleAnswer(touchDraggedElement, droppedOnGrill.id);
+                        } else {
+                            handlePracticeAnswer(touchDraggedElement, droppedOnGrill.id);
+                        }
+                    }
+                    
+                    // 5. Reset variables for the next touch
+                    touchDraggedElement = null;
+                    originalParent = null;
                 });
 
                 function moveElementWithTouch(e) {
@@ -726,7 +711,6 @@
                 }
             };
 
-            // --- NEW: Event listener to sync fullscreen button state ---
             document.addEventListener('fullscreenchange', () => {
                 const isFullscreen = !!document.fullscreenElement;
                 dom.fullscreenBtn.classList.toggle('fs-exit', isFullscreen);
@@ -754,7 +738,7 @@
                 
                 const updateAndShow = () => {
                     dom.countdownDisplay.classList.remove('countdown-pop');
-                    void dom.countdownDisplay.offsetWidth; // Force reflow
+                    void dom.countdownDisplay.offsetWidth;
                     if (count > 0) {
                         dom.countdownDisplay.textContent = count;
                         playSound('combo');
