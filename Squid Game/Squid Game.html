@@ -145,6 +145,8 @@
             background-position: center; cursor: grab; display: flex;
             justify-content: center; align-items: flex-start;
             transition: opacity 0.3s, transform 0.3s;
+            /* For touch events, prevent system gestures */
+            touch-action: none; 
         }
         .squid-absolute { position: absolute; }
         .number-display {
@@ -406,6 +408,7 @@
             };
 
             const dom = {
+                gameContainer: document.getElementById('game-container'),
                 squidArea: document.getElementById('squid-area'),
                 feedback: document.getElementById('feedback'),
                 grill1: document.getElementById('grill-1'),
@@ -462,20 +465,16 @@
             const playSound = (key) => { if (!isMuted && sounds[key]) { sounds[key].currentTime = 0; sounds[key].play().catch(() => {}); } };
             const vibrate = (pattern) => { if (navigator.vibrate) navigator.vibrate(pattern); };
             
-            // ===== โครงสร้างการเริ่มต้นเกมที่แก้ไขใหม่ =====
             function initializeGame() {
-                // 1. แสดงหน้าต้อนรับและรอ 4 วินาที
                 setTimeout(() => {
                     setupApplication();
                 }, 4000);
             }
 
             function setupApplication() {
-                // 2. ตั้งค่าหลักของแอปพลิเคชันทั้งหมดในครั้งเดียว
                 dom.bgm.volume = 0.3;
                 loadProgress();
                 
-                // ตั้งค่า Event Listeners ทั้งหมด
                 dom.btnLessonMode.addEventListener('click', showLessonSelect);
                 dom.btnEndless.addEventListener('click', () => startGame('endless'));
                 dom.btnChallenge.addEventListener('click', showDifficultySelection);
@@ -489,10 +488,97 @@
                 dom.btnStartRegister.addEventListener('click', registerPlayer);
                 
                 initializeDragDrop();
+                initializeTouchEvents(); // <-- เพิ่มการเรียกใช้ฟังก์ชันสำหรับ Touch
 
-                // 3. ไปยังหน้าจอลงทะเบียน
                 showRegisterScreen();
             }
+
+            // ===== ฟังก์ชันใหม่สำหรับ Touch Events =====
+            function initializeTouchEvents() {
+                let touchDraggedElement = null;
+                let originalParent = null;
+
+                dom.gameContainer.addEventListener('touchstart', (e) => {
+                    if (!isGameActive) return;
+                    const targetSquid = e.target.closest('.squid');
+                    if (targetSquid && !targetSquid.classList.contains('squid-correct')) {
+                        e.preventDefault();
+                        
+                        touchDraggedElement = targetSquid;
+                        originalParent = targetSquid.parentNode;
+                        
+                        // ย้าย element มาที่ body เพื่อให้ลากได้ทั่วจอ
+                        document.body.appendChild(touchDraggedElement);
+                        touchDraggedElement.style.position = 'absolute';
+                        touchDraggedElement.style.zIndex = '1000';
+                        touchDraggedElement.classList.add('dragging');
+                        
+                        moveElementWithTouch(e);
+                    }
+                }, { passive: false });
+
+                dom.gameContainer.addEventListener('touchmove', (e) => {
+                    if (touchDraggedElement) {
+                        e.preventDefault();
+                        moveElementWithTouch(e);
+                        
+                        // Highlight grill on touch over
+                        const touch = e.touches[0];
+                        const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+                        
+                        [dom.grill1, dom.grill2].forEach(grill => {
+                            if (grill === elementUnderTouch || grill.contains(elementUnderTouch)) {
+                                grill.classList.add('drag-over');
+                            } else {
+                                grill.classList.remove('drag-over');
+                            }
+                        });
+                    }
+                }, { passive: false });
+
+                dom.gameContainer.addEventListener('touchend', (e) => {
+                    if (touchDraggedElement) {
+                        e.preventDefault();
+                        
+                        const touch = e.changedTouches[0];
+                        const elementUnderTouch = document.elementFromPoint(touch.clientX, touch.clientY);
+                        
+                        let droppedOnGrill = null;
+                        if (dom.grill1 === elementUnderTouch || dom.grill1.contains(elementUnderTouch)) {
+                            droppedOnGrill = dom.grill1;
+                        } else if (dom.grill2 === elementUnderTouch || dom.grill2.contains(elementUnderTouch)) {
+                            droppedOnGrill = dom.grill2;
+                        }
+                        
+                        if (droppedOnGrill) {
+                            if (currentGameMode === 'lesson') {
+                                handleAnswer(touchDraggedElement, droppedOnGrill.id);
+                            } else {
+                                handlePracticeAnswer(touchDraggedElement, droppedOnGrill.id);
+                            }
+                        } else {
+                           // ถ้าไม่ได้ปล่อยบนเตา ก็แค่เอากลับไปที่เดิมหรือลบทิ้ง
+                           touchDraggedElement.remove();
+                        }
+                        
+                        // Cleanup
+                        [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
+                        touchDraggedElement.classList.remove('dragging');
+                        touchDraggedElement.style.position = '';
+                        touchDraggedElement.style.zIndex = '';
+                        touchDraggedElement.style.left = '';
+                        touchDraggedElement.style.top = '';
+                        touchDraggedElement = null;
+                    }
+                });
+
+                function moveElementWithTouch(e) {
+                    const touch = e.touches[0];
+                    touchDraggedElement.style.left = (touch.clientX - touchDraggedElement.offsetWidth / 2) + 'px';
+                    touchDraggedElement.style.top = (touch.clientY - touchDraggedElement.offsetHeight / 2) + 'px';
+                }
+            }
+
 
             function showRegisterScreen() {
                 const savedName = localStorage.getItem('squid_player_name');
@@ -873,6 +959,10 @@
                         nextQuestion();
                     } else {
                         squidEl.classList.remove('squid-wrong');
+                        // For touch, re-append to original parent
+                        if (squidEl.parentNode !== dom.squidArea) {
+                            dom.squidArea.appendChild(squidEl);
+                        }
                         isGameActive = true; 
                     }
                 }, delay);
@@ -914,6 +1004,9 @@
                     squidEl.classList.add('squid-wrong');
                     setTimeout(() => {
                         squidEl.classList.remove('squid-wrong');
+                         if (squidEl.parentNode !== dom.squidArea) {
+                            dom.squidArea.appendChild(squidEl);
+                        }
                         squidEl.draggable = true;
                     }, 500);
                 }
