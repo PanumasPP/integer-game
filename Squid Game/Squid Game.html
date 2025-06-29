@@ -211,29 +211,13 @@
             #info-bar, .overlay-text { font-size: 1em; }
             .selection-group button, .action-button { width: 80%; font-size: 1.1em; }
         }
-
     </style>
 </head>
 <body>
     <div id="loading-screen"><div class="spinner"></div><p>กำลังโหลด...</p></div>
 
     <div id="game-container">
-        <div id="countdown-display"></div>
-        <div class="control-btn-group">
-            <button id="home-btn" class="control-btn" title="กลับหน้าหลัก"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></button>
-            <button id="mute-btn" class="control-btn" title="ปิด/เปิดเสียง"><svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg><svg class="muted-icon" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg></button>
-            <button id="fullscreen-btn" class="control-btn" title="โหมดเต็มหน้าจอ"><svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg><svg class="fs-exit-icon" style="display: none;" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg></button>
-        </div>
-        <div id="welcome-credit-screen" class="screen-overlay active"><div class="overlay-content" style="text-align: center;"><h2 class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><p style="font-size: 1.2em; margin-top: 40px;">จัดทำโดย</p><h3 style="font-size: 1.8em; color: #ffeb3b; margin: 10px 0;">นางสาวกฤษณา แกล้วกล้า</h3><p style="font-size: 1.2em;">ครูโรงเรียนสวนป่าอุปถัมภ์</p><p style="margin-top: 50px; color: #ccc;">กำลังเข้าสู่เกมในอีกสักครู่...</p></div></div>
-        <div id="register-screen" class="screen-overlay"><div class="overlay-content"><h2 class="overlay-title">ลงทะเบียน</h2><div class="selection-group"><p style="font-size: 1.1em; margin-bottom: 15px;">กรุณาใส่ชื่อของคุณเพื่อเริ่มเล่นและเก็บคะแนน</p><input type="text" id="player-name-input" placeholder="ใส่ชื่อที่นี่..." style="font-family: 'Mitr', sans-serif; font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #3498db; width: 280px; max-width: 80%; text-align: center;"><button id="btn-start-register" class="action-button btn-green" style="margin-top: 15px;">เริ่มเล่น</button></div></div></div>
-        <div id="main-menu-screen" class="screen-overlay"><div class="overlay-content"><h2 id="main-menu-title" class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><div class="selection-group"><button id="btn-lesson-mode">โหมดบทเรียน</button><button id="btn-endless">โหมดฝึกฝน (ปกติ)</button><button id="btn-challenge">โหมดฝึกฝน (ท้าทาย)</button></div></div></div>
-        <div id="lesson-select-screen" class="screen-overlay"><div class="overlay-content"><h2 id="lesson-select-title" class="overlay-title">เลือกบทเรียน</h2><ul id="lesson-list"></ul></div></div>
-        <div id="difficulty-selection-screen" class="screen-overlay"><div class="overlay-content"><h2 id="difficulty-select-title" class="overlay-title">เลือกระดับความยาก</h2><div id="difficulty-selection" class="selection-group"><button id="btn-easy">ง่าย</button><button id="btn-medium">ปานกลาง</button><button id="btn-hard">ยาก</button></div></div></div>
-        <div id="tutorial-screen" class="screen-overlay"><div class="overlay-content tutorial-box"><h2 id="tutorial-title" class="overlay-title"></h2><div id="tutorial-body" class="overlay-text"></div><button id="start-lesson-btn" class="action-button btn-green">เข้าใจแล้ว เริ่มเลย!</button></div></div>
-        <div id="lesson-complete-screen" class="screen-overlay"><div class="overlay-content summary-box"><h2 id="summary-title" class="overlay-title"></h2><p id="summary-accuracy" class="overlay-text"></p><div id="summary-stars" class="summary-stars"></div><p id="summary-feedback" class="overlay-text"></p><div class="selection-group" id="summary-buttons"><button id="retry-lesson-btn" class="action-button">ลองอีกครั้ง</button><button id="next-lesson-btn" class="action-button btn-green">บทเรียนถัดไป</button><button id="back-to-lessons-btn" class="action-button">กลับไปหน้าเลือกบทเรียน</button></div></div></div>
-        <header><h1></h1><div id="info-bar"></div></header>
-        <main id="squid-area"></main>
-        <footer><div id="feedback"></div><div id="grill-section"><div id="grill-1" class="grill"><span class="grill-label"></span></div><div id="grill-2" class="grill"><span class="grill-label"></span></div></div></footer>
+        <div id="countdown-display"></div><div class="control-btn-group"><button id="home-btn" class="control-btn" title="กลับหน้าหลัก"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg></button><button id="mute-btn" class="control-btn" title="ปิด/เปิดเสียง"><svg class="unmuted-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg><svg class="muted-icon" style="display: none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg></button><button id="fullscreen-btn" class="control-btn" title="โหมดเต็มหน้าจอ"><svg class="fs-enter-icon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg><svg class="fs-exit-icon" style="display: none;" viewBox="0 0 24 24"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg></button></div><div id="welcome-credit-screen" class="screen-overlay active"><div class="overlay-content" style="text-align: center;"><h2 class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><p style="font-size: 1.2em; margin-top: 40px;">จัดทำโดย</p><h3 style="font-size: 1.8em; color: #ffeb3b; margin: 10px 0;">นางสาวกฤษณา แกล้วกล้า</h3><p style="font-size: 1.2em;">ครูโรงเรียนสวนป่าอุปถัมภ์</p><p style="margin-top: 50px; color: #ccc;">กำลังเข้าสู่เกมในอีกสักครู่...</p></div></div><div id="register-screen" class="screen-overlay"><div class="overlay-content"><h2 class="overlay-title">ลงทะเบียน</h2><div class="selection-group"><p style="font-size: 1.1em; margin-bottom: 15px;">กรุณาใส่ชื่อของคุณเพื่อเริ่มเล่นและเก็บคะแนน</p><input type="text" id="player-name-input" placeholder="ใส่ชื่อที่นี่..." style="font-family: 'Mitr', sans-serif; font-size: 1.2em; padding: 10px; border-radius: 10px; border: 2px solid #3498db; width: 280px; max-width: 80%; text-align: center;"><button id="btn-start-register" class="action-button btn-green" style="margin-top: 15px;">เริ่มเล่น</button></div></div></div><div id="main-menu-screen" class="screen-overlay"><div class="overlay-content"><h2 id="main-menu-title" class="overlay-title">โปรแกรมช่วยสอน: ปิ้งหมึกหรรษา</h2><div class="selection-group"><button id="btn-lesson-mode">โหมดบทเรียน</button><button id="btn-endless">โหมดฝึกฝน (ปกติ)</button><button id="btn-challenge">โหมดฝึกฝน (ท้าทาย)</button></div></div></div><div id="lesson-select-screen" class="screen-overlay"><div class="overlay-content"><h2 id="lesson-select-title" class="overlay-title">เลือกบทเรียน</h2><ul id="lesson-list"></ul></div></div><div id="difficulty-selection-screen" class="screen-overlay"><div class="overlay-content"><h2 id="difficulty-select-title" class="overlay-title">เลือกระดับความยาก</h2><div id="difficulty-selection" class="selection-group"><button id="btn-easy">ง่าย</button><button id="btn-medium">ปานกลาง</button><button id="btn-hard">ยาก</button></div></div></div><div id="tutorial-screen" class="screen-overlay"><div class="overlay-content tutorial-box"><h2 id="tutorial-title" class="overlay-title"></h2><div id="tutorial-body" class="overlay-text"></div><button id="start-lesson-btn" class="action-button btn-green">เข้าใจแล้ว เริ่มเลย!</button></div></div><div id="lesson-complete-screen" class="screen-overlay"><div class="overlay-content summary-box"><h2 id="summary-title" class="overlay-title"></h2><p id="summary-accuracy" class="overlay-text"></p><div id="summary-stars" class="summary-stars"></div><p id="summary-feedback" class="overlay-text"></p><div class="selection-group" id="summary-buttons"><button id="retry-lesson-btn" class="action-button">ลองอีกครั้ง</button><button id="next-lesson-btn" class="action-button btn-green">บทเรียนถัดไป</button><button id="back-to-lessons-btn" class="action-button">กลับไปหน้าเลือกบทเรียน</button></div></div></div><header><h1></h1><div id="info-bar"></div></header><main id="squid-area"></main><footer><div id="feedback"></div><div id="grill-section"><div id="grill-1" class="grill"><span class="grill-label"></span></div><div id="grill-2" class="grill"><span class="grill-label"></span></div></div></footer>
     </div>
     
     <audio id="sfx-correct" src="sound/correct.mp3" preload="auto"></audio>
@@ -276,12 +260,10 @@
             const CAI_CONFIG = { lessons: [ { id: 'L01', title: 'บทที่ 1: เลขคู่-คี่ (1 หลัก)', questionsTotal: 10, passThreshold: 8, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<h5 style="color: #5dade2; text-align: center;">🔵 จำนวนคู่ คืออะไร?</h5><p>จำนวนคู่ คือ จำนวนที่สามารถแบ่งเป็น 2 ส่วนเท่า ๆ กันได้พอดี โดยไม่เหลือเศษเลย</p><p><strong>🟢 ลองนึกภาพดูสิ...</strong></p><p style="margin: 5px 0;">ถ้ามีลูกอม 4 เม็ด แล้วเราแบ่งให้เพื่อน 2 คน คนละเท่า ๆ กัน เพื่อนแต่ละคนจะได้ 2 เม็ด ไม่มีเหลือเลย!</p><hr><h5 style="color: #f1c40f; text-align: center;">🔴 จำนวนคี่ คืออะไร?</h5><p>จำนวนคี่ คือ จำนวนที่เมื่อแบ่งเป็น 2 ส่วนเท่า ๆ กัน จะเหลือ 1 เสมอ</p><p><strong>🟡 ลองนึกภาพอีกที...</strong></p><p style="margin: 5px 0;">ถ้ามีลูกอม 5 เม็ด แล้วจะแบ่งให้เพื่อน 2 คน คนละเท่า ๆ กัน จะได้ไปคนละ 2 เม็ด... แล้วจะเหลือลูกอม 1 เม็ด!</p><hr><div style="background-color: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 15px;"><h5 style="margin-top:0; text-align: center;">✋ วิธีจำง่าย ๆ</h5><p style="margin-bottom: 5px;"><strong>จำนวนคู่</strong> คือจำนวนที่ลงท้ายด้วย <strong>0, 2, 4, 6, 8</strong></p><p style="margin-bottom: 0;"><strong>จำนวนคี่</strong> คือจำนวนที่ลงท้ายด้วย <strong>1, 3, 5, 7, 9</strong></p></div>`, problemGenerator: () => Math.floor(Math.random() * 10), checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; return `<strong>${num}</strong> เป็น <strong>${type}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } }, { id: 'L02', title: 'บทที่ 2: เลขคู่-คี่ (2 หลัก)', questionsTotal: 10, passThreshold: 8, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<p>เก่งมาก! ต่อไปเรามาลองกับเลข 2 หลักกัน</p><p>จำไว้ว่า... เราดูแค่ <strong>เลขตัวสุดท้าย</strong> เท่านั้น!</p>`, problemGenerator: () => Math.floor(Math.random() * 90) + 10, checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; const lastDigit = num % 10; return `<strong>${num}</strong> เป็น <strong>${type}</strong> เพราะลงท้ายด้วยเลข <strong>${lastDigit}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } }, { id: 'L03', title: 'บทที่ 3: เลขคู่-คี่ (3 หลัก)', questionsTotal: 10, passThreshold: 9, grillLabels: { one: 'เลขคู่', two: 'เลขคี่' }, tutorialHTML: `<p>ด่านสุดท้ายแล้ว! เลขจะเยอะขึ้น แต่หลักการยังเหมือนเดิม</p><p>ไม่ต้องกลัวนะ... ดูแค่ <strong>เลขตัวสุดท้าย</strong> ก็พอ!</p>`, problemGenerator: () => Math.floor(Math.random() * 900) + 100, checkAnswer: (num, grillId) => (num % 2 === 0 && grillId === 'grill-1') || (num % 2 !== 0 && grillId === 'grill-2'), getExplanation: (num, isCorrect) => { const type = num % 2 === 0 ? 'เลขคู่' : 'เลขคี่'; const lastDigit = num % 10; return `<strong>${num}</strong> เป็น <strong>${type}</strong> เพราะลงท้ายด้วยเลข <strong>${lastDigit}</strong>` + (isCorrect ? ' ถูกต้อง!' : ' นะ'); } } ], practice: { endless: { title: "โหมดปกติ", initialTime: 60, levelUpScore: 10, timeBonus: 5 }, challenge: { title: "โหมดท้าทาย", duration: 60, numLanes: 4, horizontalMargin: 10, difficulties: { easy: { name: "ง่าย", minSpawn: 1800, maxSpawn: 2500, floatDuration: 10 }, medium: { name: "ปานกลาง", minSpawn: 1200, maxSpawn: 2000, floatDuration: 8 }, hard: { name: "ยาก", minSpawn: 800, maxSpawn: 1500, floatDuration: 6.5 } } } } };
             const dom = { gameContainer: document.getElementById('game-container'), squidArea: document.getElementById('squid-area'), feedback: document.getElementById('feedback'), grill1: document.getElementById('grill-1'), grill2: document.getElementById('grill-2'), grill1Label: document.querySelector('#grill-1 .grill-label'), grill2Label: document.querySelector('#grill-2 .grill-label'), welcomeCreditScreen: document.getElementById('welcome-credit-screen'), registerScreen: document.getElementById('register-screen'), playerNameInput: document.getElementById('player-name-input'), btnStartRegister: document.getElementById('btn-start-register'), mainMenuScreen: document.getElementById('main-menu-screen'), mainMenuTitle: document.getElementById('main-menu-title'), lessonSelectTitle: document.getElementById('lesson-select-title'), difficultySelectTitle: document.getElementById('difficulty-select-title'), btnLessonMode: document.getElementById('btn-lesson-mode'), btnEndless: document.getElementById('btn-endless'), btnChallenge: document.getElementById('btn-challenge'), lessonSelectScreen: document.getElementById('lesson-select-screen'), lessonList: document.getElementById('lesson-list'), difficultySelectionScreen: document.getElementById('difficulty-selection-screen'), btnEasy: document.getElementById('btn-easy'), btnMedium: document.getElementById('btn-medium'), btnHard: document.getElementById('btn-hard'), tutorialScreen: document.getElementById('tutorial-screen'), tutorialTitle: document.getElementById('tutorial-title'), tutorialBody: document.getElementById('tutorial-body'), startLessonBtn: document.getElementById('start-lesson-btn'), lessonCompleteScreen: document.getElementById('lesson-complete-screen'), summaryTitle: document.getElementById('summary-title'), summaryAccuracy: document.getElementById('summary-accuracy'), summaryStars: document.getElementById('summary-stars'), summaryFeedback: document.getElementById('summary-feedback'), retryLessonBtn: document.getElementById('retry-lesson-btn'), nextLessonBtn: document.getElementById('next-lesson-btn'), backToLessonsBtn: document.getElementById('back-to-lessons-btn'), homeBtn: document.getElementById('home-btn'), muteBtn: document.getElementById('mute-btn'), fullscreenBtn: document.getElementById('fullscreen-btn'), title: document.querySelector('h1'), infoBar: document.getElementById('info-bar'), countdownDisplay: document.getElementById('countdown-display'), bgm: document.getElementById('bgm'), };
             let userProgress = {}, score, level, timeLeft, gameTimer, isMuted = false, draggedElement = null, isGameActive = false, currentGameMode = null, currentLesson = null, currentDifficulty = null, currentQuestion, correctAnswers, spawnerTimeout, currentPlayerName = '';
-            
             const playSound = (key) => { if (!isMuted && sounds[key]) { sounds[key].currentTime = 0; sounds[key].play().catch(() => {}); } };
             const vibrate = (pattern) => { if (navigator.vibrate) navigator.vibrate(pattern); };
             
             function initializeGame() { setTimeout(() => { if (dom.welcomeCreditScreen) dom.welcomeCreditScreen.style.display = 'none'; setupApplication(); }, 4000); }
-
             function setupApplication() {
                 dom.bgm.volume = 0.3; loadProgress();
                 dom.btnLessonMode.addEventListener('click', showLessonSelect);
@@ -299,100 +281,97 @@
                 showRegisterScreen();
             }
 
-            // --- FINAL REVISION FOR SMOOTH DRAGGING ---
+            // =======================================================================
+            // FINALIZED TOUCH EVENT HANDLER USING CLONING METHOD
+            // =======================================================================
             function initializeTouchEvents() {
-                let touchDraggedElement = null, originalParent = null, offsetX = 0, offsetY = 0;
+                let originalSquid = null;
+                let draggedClone = null;
+                let offsetX = 0;
+                let offsetY = 0;
 
                 dom.gameContainer.addEventListener('touchstart', (e) => {
                     if (!isGameActive) return;
-                    const targetSquid = e.target.closest('.squid');
-                    if (targetSquid && !targetSquid.classList.contains('squid-correct')) {
-                        // --- 1. หยุดการเลื่อนขึ้นของหมึกทันที ---
-                        if (targetSquid.classList.contains('float-up')) {
-                            targetSquid.style.animation = 'none';
-                        }
-                        e.preventDefault(); 
-                        touchDraggedElement = targetSquid;
-                        originalParent = targetSquid.parentNode;
-                        
-                        // --- 2. คำนวณตำแหน่งที่แตะ เพื่อให้หมึกติดตามนิ้วทันที ไม่กระโดด ---
-                        const rect = touchDraggedElement.getBoundingClientRect();
-                        const touch = e.touches[0];
-                        offsetX = touch.clientX - rect.left;
-                        offsetY = touch.clientY - rect.top;
+                    const target = e.target.closest('.squid');
+                    if (!target || target.classList.contains('squid-correct')) return;
+                    
+                    e.preventDefault();
+                    originalSquid = target;
 
-                        // 3. ย้ายปลาหมึกและเริ่มการลาก
-                        document.body.appendChild(touchDraggedElement);
-                        touchDraggedElement.style.position = 'absolute';
-                        touchDraggedElement.style.zIndex = '1000';
-                        touchDraggedElement.classList.add('dragging');
+                    // 1. หยุดแอนิเมชันตัวจริง
+                    originalSquid.style.animation = 'none';
 
-                        // 4. ย้ายตำแหน่งหมึกครั้งแรกทันทีให้ตรงกับนิ้ว
-                        moveElementWithTouch(e);
-                    }
+                    // 2. สร้างร่างโคลนเพื่อใช้ลาก
+                    draggedClone = originalSquid.cloneNode(true);
+                    draggedClone.style.transition = 'none'; // ปิด transition ตอนลาก
+                    draggedClone.classList.add('dragging');
+                    
+                    // 3. ซ่อนตัวจริง
+                    originalSquid.style.visibility = 'hidden';
+
+                    // 4. คำนวณ offset เพื่อให้ลากได้ไม่กระตุก
+                    const rect = originalSquid.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    offsetX = touch.clientX - rect.left;
+                    offsetY = touch.clientY - rect.top;
+
+                    // 5. นำร่างโคลนไปแปะไว้ใน body และกำหนดตำแหน่งเริ่มต้น
+                    document.body.appendChild(draggedClone);
+                    draggedClone.style.position = 'absolute';
+                    draggedClone.style.zIndex = '1000';
+                    moveCloneWithTouch(e);
+
                 }, { passive: false });
 
                 dom.gameContainer.addEventListener('touchmove', (e) => {
-                    if (touchDraggedElement) {
-                        e.preventDefault();
-                        moveElementWithTouch(e);
-                        touchDraggedElement.style.visibility = 'hidden';
-                        const elementUnderTouch = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-                        touchDraggedElement.style.visibility = 'visible';
-                        [dom.grill1, dom.grill2].forEach(grill => {
-                            grill.classList.toggle('drag-over', grill === elementUnderTouch || grill.contains(elementUnderTouch));
-                        });
-                    }
+                    if (!draggedClone) return;
+                    e.preventDefault();
+                    moveCloneWithTouch(e);
+
+                    draggedClone.style.visibility = 'hidden';
+                    const elementUnderTouch = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                    draggedClone.style.visibility = 'visible';
+                    [dom.grill1, dom.grill2].forEach(grill => {
+                        grill.classList.toggle('drag-over', grill === elementUnderTouch || grill.contains(elementUnderTouch));
+                    });
+
                 }, { passive: false });
 
                 dom.gameContainer.addEventListener('touchend', (e) => {
-                    if (!touchDraggedElement) return;
+                    if (!draggedClone) return;
                     e.preventDefault();
-                    touchDraggedElement.style.visibility = 'hidden';
+
+                    draggedClone.style.visibility = 'hidden';
                     const elementUnderTouch = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-                    touchDraggedElement.style.visibility = 'visible';
+                    draggedClone.style.visibility = 'visible';
                     let droppedOnGrill = [dom.grill1, dom.grill2].find(g => g === elementUnderTouch || g.contains(elementUnderTouch));
 
-                    [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
-                    touchDraggedElement.classList.remove('dragging');
-                    touchDraggedElement.style.position = '';
-                    touchDraggedElement.style.zIndex = '';
-                    touchDraggedElement.style.left = '';
-                    touchDraggedElement.style.top = '';
-                    
-                    if (originalParent && !originalParent.contains(touchDraggedElement)) {
-                       originalParent.appendChild(touchDraggedElement);
-                    }
+                    // 6. จัดการเมื่อปล่อยนิ้ว
                     if (droppedOnGrill) {
+                        // ถ้าปล่อยบนเตา, จัดการกับตัวจริง และลบร่างโคลน
                         const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
-                        handler(touchDraggedElement, droppedOnGrill.id);
+                        handler(originalSquid, droppedOnGrill.id);
                     } else {
-                        touchDraggedElement.remove();
+                        // ถ้าปล่อยนอกเตา, ลบตัวจริงทิ้ง (ถือว่าพลาด)
+                        originalSquid.remove();
                     }
-                    touchDraggedElement = null;
+
+                    // 7. ลบร่างโคลนเสมอ และรีเซ็ตค่า
+                    draggedClone.remove();
+                    [dom.grill1, dom.grill2].forEach(g => g.classList.remove('drag-over'));
+                    draggedClone = null;
+                    originalSquid = null;
                 });
 
-                function moveElementWithTouch(e) {
+                function moveCloneWithTouch(e) {
                     const touch = e.touches[0];
-                    touchDraggedElement.style.left = (touch.clientX - offsetX) + 'px';
-                    touchDraggedElement.style.top = (touch.clientY - offsetY) + 'px';
+                    draggedClone.style.left = (touch.clientX - offsetX) + 'px';
+                    draggedClone.style.top = (touch.clientY - offsetY) + 'px';
                 }
             }
-
-            function initializeDragDrop() {
-                [dom.grill1, dom.grill2].forEach(grill => {
-                    grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); });
-                    grill.addEventListener('dragleave', () => grill.classList.remove('drag-over'));
-                    grill.addEventListener('drop', e => {
-                        e.preventDefault(); if (!draggedElement || !isGameActive) return;
-                        grill.classList.remove('drag-over');
-                        const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer;
-                        handler(draggedElement, e.currentTarget.id);
-                        draggedElement = null;
-                    });
-                });
-            }
             
+            // Unchanged functions below this point
+            function initializeDragDrop() { [dom.grill1, dom.grill2].forEach(grill => { grill.addEventListener('dragover', e => { e.preventDefault(); if(isGameActive) grill.classList.add('drag-over'); }); grill.addEventListener('dragleave', () => grill.classList.remove('drag-over')); grill.addEventListener('drop', e => { e.preventDefault(); if (!draggedElement || !isGameActive) return; grill.classList.remove('drag-over'); const handler = (currentGameMode === 'lesson') ? handleAnswer : handlePracticeAnswer; handler(draggedElement, e.currentTarget.id); draggedElement = null; }); }); }
             function showRegisterScreen() { const savedName = localStorage.getItem('squid_player_name'); if (savedName) { currentPlayerName = savedName; dom.playerNameInput.value = savedName; if (!isMuted) { dom.bgm.play().catch(()=>{}); } showMainMenu(); } else { showScreen('register-screen'); } }
             function registerPlayer() { const name = dom.playerNameInput.value.trim(); if (name === '') { alert('กรุณาใส่ชื่อของคุณ!'); return; } currentPlayerName = name; localStorage.setItem('squid_player_name', name); if (!isMuted) dom.bgm.play().catch(()=>{}); showMainMenu(); }
             function loadProgress() { const saved = localStorage.getItem('squid_cai_progress_p2'); userProgress = saved ? JSON.parse(saved) : { unlockedLessons: ['L01'], highScores: {} }; }
