@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมฝึกอ่านและทดสอบ</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap');
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #f39c12;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+            --bg-gradient: linear-gradient(135deg, #6dd5ed, #2193b0);
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--dark-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        h1, h2, h3 { color: var(--dark-color); font-weight: 700; }
+        h1 { font-size: 2.5em; }
+        h2 { font-size: 1.8em; border-bottom: 2px solid var(--light-color); padding-bottom: 10px; margin-bottom: 20px;}
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.2em;
+            font-family: 'Sarabun', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            flex-grow: 1;
+            flex-basis: 200px;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.1); }
+        .btn:disabled { cursor: not-allowed; background-color: #bdc3c7; }
+
+        .btn-large { padding: 20px 40px; font-size: 1.5em; }
+        .btn-secondary { background-color: var(--secondary-color); }
+        .btn-back { background-color: #95a5a6; }
+        .btn-correct { background-color: var(--success-color); }
+        .btn-incorrect { background-color: var(--danger-color); }
+        
+        .menu-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+        .menu-section { background: var(--light-color); padding: 20px; border-radius: 15px; margin-top: 20px; }
+
+        #display-area {
+            font-size: 8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            background-color: var(--light-color);
+            padding: 40px 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            min-height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .game-header { display: flex; justify-content: space-between; font-size: 1.2em; font-weight: 600; }
+        .teacher-controls .btn { border-radius: 50%; width: 100px; height: 100px; font-size: 3rem; padding: 0; }
+        
+        #choices-area .btn { flex-basis: calc(50% - 20px); font-size: 1.5em; }
+        .choice-btn.correct { background-color: var(--success-color); transform: scale(1.05); }
+        .choice-btn.incorrect { background-color: var(--danger-color); }
+
+        #final-score { font-size: 3em; font-weight: 700; color: var(--primary-color); margin: 20px 0; }
+        
+        @media (max-width: 600px) {
+            #display-area { font-size: 6rem; min-height: 100px; }
+            .teacher-controls .btn { width: 80px; height: 80px; font-size: 2.5rem; }
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            .btn { font-size: 1em; }
+            #choices-area .btn { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+    <audio id="correct-sound" src="https://actions.google.com/sounds/v1/positive/bell_toll_positive.ogg" preload="auto"></audio>
+    <audio id="incorrect-sound" src="https://actions.google.com/sounds/v1/negative/negative_beeps.ogg" preload="auto"></audio>
+
+    <div class="container">
+        </div>
+
+    <script>
+        // --- DATA & MAPPINGS ---
+        const DATA = {
+            THAI_ALPHABET: 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ'.split(''),
+            ENG_UPPER: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''),
+            ENG_LOWER: 'abcdefghijklmnopqrstuvwxyz'.split(''),
+            THAI_NUMERALS: '๐๑๒๓๔๕๖๗๘๙'.split(''),
+            THAI_ALPHABET_NAMES: {'ก':'กอ ไก่','ข':'ขอ ไข่','ฃ':'ฃอ ขวด','ค':'คอ ควาย','ฅ':'ฅอ คน','ฆ':'ฆอ ระฆัง','ง':'งอ งู','จ':'จอ จาน','ฉ':'ฉอ ฉิ่ง','ช':'ชอ ช้าง','ซ':'ซอ โซ่','ฌ':'ฌอ เฌอ','ญ':'ยอ หญิง','ฎ':'ฎอ ชฎา','ฏ':'ฏอ ปฏัก','ฐ':'ฐอ ฐาน','ฑ':'ฑอ มณโฑ','ฒ':'ฒอ ผู้เฒ่า','ณ':'ณอ เณร','ด':'ดอ เด็ก','ต':'ตอ เต่า','ถ':'ถอ ถุง','ท':'ทอ ทหาร','ธ':'ธอ ธง','น':'นอ หนู','บ':'บอ ใบไม้','ป':'ปอ ปลา','ผ':'ผอ ผึ้ง','ฝ':'ฝอ ฝา','พ':'พอ พาน','ฟ':'ฟอ ฟัน','ภ':'ภอ สำเภา','ม':'มอ ม้า','ย':'ยอ ยักษ์','ร':'รอ เรือ','ล':'ลอ ลิง','ว':'วอ แหวน','ศ':'ศอ ศาลา','ษ':'ษอ ฤาษี','ส':'สอ เสือ','ห':'หอ หีบ','ฬ':'ฬอ จุฬา','อ':'ออ อ่าง','ฮ':'ฮอ นกฮูก'},
+            ENG_ALPHABET_NAMES: {'A':'เอ','B':'บี','C':'ซี','D':'ดี','E':'อี','F':'เอฟ','G':'จี','H':'เอช','I':'ไอ','J':'เจ','K':'เค','L':'แอล','M':'เอ็ม','N':'เอ็น','O':'โอ','P':'พี','Q':'คิว','R':'อาร์','S':'เอส','T':'ที','U':'ยู','V':'วี','W':'ดับเบิลยู','X':'เอ็กซ์','Y':'วาย','Z':'แซด'}
+        };
+        let DOM = {}; 
+        let state = { gameItems: [], score: 0, currentIndex: 0, totalQuestions: 0, returnScreen: '', isSelfTest: false, sourceData: [] };
+
+        // --- HELPER FUNCTIONS ---
+        const toThaiNumerals = num => String(num).split('').map(d => DATA.THAI_NUMERALS[parseInt(d, 10)]).join('');
+        
+        function fromThaiNumerals(thaiNumStr) {
+            const thaiDigits = '๐๑๒๓๔๕๖๗๘๙';
+            const arabicDigits = '0123456789';
+            let arabicStr = '';
+            for (const char of thaiNumStr) {
+                const index = thaiDigits.indexOf(char);
+                if (index > -1) {
+                    arabicStr += arabicDigits[index];
+                } else {
+                    return NaN; 
+                }
+            }
+            return parseInt(arabicStr, 10);
+        }
+
+        function thaiNumberToWord(numStr) {
+            const units = ["ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า"];
+            const tens = ["", "สิบ", "ยี่สิบ", "สามสิบ", "สี่สิบ", "ห้าสิบ", "หกสิบ", "เจ็ดสิบ", "แปดสิบ", "เก้าสิบ"];
+            const num = parseInt(numStr, 10);
+            if (isNaN(num) || num > 1000) return numStr;
+            if (num > 100) return num.toLocaleString(); // Handle numbers > 100 simply
+            if (num === 100) return "หนึ่งร้อย";
+
+            let word = '';
+            if (num >= 10) {
+                const tenVal = Math.floor(num / 10);
+                const unitVal = num % 10;
+                word += tens[tenVal];
+                if (unitVal > 0) {
+                    word += (unitVal === 1) ? "เอ็ด" : units[unitVal];
+                }
+            } else {
+                word = units[num];
+            }
+            return word;
+        }
+        
+        function toWord(item) {
+            if (!isNaN(parseInt(item, 10))) return thaiNumberToWord(item);
+            const numFromThai = fromThaiNumerals(item);
+            if (!isNaN(numFromThai)) return thaiNumberToWord(String(numFromThai));
+            
+            if (DATA.THAI_ALPHABET_NAMES[item]) return DATA.THAI_ALPHABET_NAMES[item];
+            const upperItem = item.toUpperCase();
+            if (DATA.ENG_ALPHABET_NAMES[upperItem]) return DATA.ENG_ALPHABET_NAMES[upperItem];
+            
+            return item; // Fallback
+        }
+
+        const shuffleArray = arr => arr.sort(() => Math.random() - 0.5);
+        function playSound(sound) { sound.currentTime = 0; sound.play(); }
+
+        // --- CORE GAME LOGIC ---
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function setupGame(items, returnScreen, isSelfTest, sourceData) {
+            Object.assign(state, { items, returnScreen, isSelfTest, sourceData, score: 0, currentIndex: 0, totalQuestions: items.length });
+            DOM.teacherControls.style.display = isSelfTest ? 'none' : 'flex';
+            DOM.choicesArea.style.display = isSelfTest ? 'flex' : 'none';
+            DOM.endGameBtn.onclick = () => showGameOver();
+            loadNextQuestion();
+            showScreen('game-area');
+        }
+
+        function loadNextQuestion() {
+            if (state.currentIndex >= state.totalQuestions) {
+                setTimeout(showGameOver, 500);
+                return;
+            }
+            DOM.progressText.textContent = `ข้อที่ ${state.currentIndex + 1} / ${state.totalQuestions}`;
+            DOM.scoreText.textContent = `คะแนน: ${state.score}`;
+            const currentItem = state.items[state.currentIndex];
+            DOM.displayArea.textContent = currentItem;
+
+            if (state.isSelfTest) {
+                generateChoices(currentItem);
+            }
+        }
+
+        function showGameOver() {
+            DOM.finalScore.textContent = `คะแนนรวม: ${state.score} / ${state.totalQuestions}`;
+            DOM.backToMenuBtn.onclick = () => showScreen(state.returnScreen);
+            showScreen('game-over-screen');
+        }
+
+        // --- Self-Test Mode ---
+        function generateChoices(correctItem) {
+            DOM.choicesArea.innerHTML = '';
+            const correctWord = toWord(correctItem);
+            let choiceWords = new Set([correctWord]);
+            while (choiceWords.size < 4 && choiceWords.size < state.sourceData.length) {
+                const randomItem = state.sourceData[Math.floor(Math.random() * state.sourceData.length)];
+                choiceWords.add(toWord(randomItem));
+            }
+
+            shuffleArray(Array.from(choiceWords)).forEach(word => {
+                const btn = document.createElement('button');
+                btn.className = 'btn choice-btn';
+                btn.textContent = word;
+                btn.onclick = () => handleStudentAnswer(word, correctItem, btn);
+                DOM.choicesArea.appendChild(btn);
+            });
+        }
+        
+        function handleStudentAnswer(selectedWord, correctItem, btn) {
+            const correctWord = toWord(correctItem);
+            document.querySelectorAll('.choice-btn').forEach(b => b.disabled = true);
+            
+            if (selectedWord === correctWord) {
+                state.score++;
+                btn.classList.add('correct');
+                playSound(DOM.correctSound);
+            } else {
+                btn.classList.add('incorrect');
+                playSound(DOM.incorrectSound);
+                document.querySelectorAll('.choice-btn').forEach(b => {
+                    if (b.textContent === correctWord) b.classList.add('correct');
+                });
+            }
+            setTimeout(() => {
+                state.currentIndex++;
+                loadNextQuestion();
+            }, 1800);
+        }
+
+        // --- Teacher-led Mode ---
+        function handleTeacherAnswer(isCorrect) {
+            if (isCorrect) state.score++;
+            state.currentIndex++;
+            loadNextQuestion();
+        }
+
+        // --- MENU BUTTON FUNCTIONS ---
+        function generateGameData(type, count = 10) {
+            let items = [], source = [], max = 0;
+            const [game, format, level] = type.split('-');
+            
+            switch(game) {
+                case 'num':
+                    max = parseInt(level);
+                    source = Array.from({length: max}, (_, i) => i + 1);
+                    items = shuffleArray([...source]).slice(0, count);
+                    if (format === 'th') { 
+                        source = source.map(toThaiNumerals);
+                        items = items.map(toThaiNumerals); 
+                    }
+                    break;
+                case 'thai':
+                    source = DATA.THAI_ALPHABET;
+                    items = shuffleArray([...source]).slice(0, parseInt(format));
+                    break;
+                case 'eng':
+                    source = (format === 'upper') ? DATA.ENG_UPPER : DATA.ENG_LOWER;
+                    items = shuffleArray([...source]);
+                    break;
+            }
+            return { items, source };
+        }
+        
+        function startSelfTest(type) {
+            const { items, source } = generateGameData(type);
+            setupGame(items, 'self-test-menu-screen', true, source);
+        }
+        function startPractice(type) {
+            const { items, source } = generateGameData(type);
+            setupGame(items, 'practice-menu-screen', false, source);
+        }
+        function startLearning(type) {
+             let items = [];
+             switch(type) {
+                case 'num-ar-10': items = Array.from({length: 10}, (_, i) => i + 1); break;
+                case 'num-th-10': items = Array.from({length: 10}, (_, i) => toThaiNumerals(i + 1)); break;
+                case 'thai-alphabet': items = DATA.THAI_ALPHABET; break;
+                case 'eng-upper': items = DATA.ENG_UPPER; break;
+                case 'eng-lower': items = DATA.ENG_LOWER; break;
+            }
+            setupGame(items, 'learning-menu-screen', false, []);
+        }
+
+        // --- PAGE INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div id="welcome-screen" class="screen active"><h1>โปรแกรมฝึกและทดสอบ</h1><p>เครื่องมือสำหรับช่วยสอนและทดสอบการอ่าน</p><br><button class="btn btn-large btn-secondary" onclick="showScreen('main-menu-screen')">ตกลง</button></div>
+                <div id="main-menu-screen" class="screen"><h2>เมนูหลัก</h2><div class="menu-grid"><button class="btn btn-large" onclick="showScreen('learning-menu-screen')">1. โหมดเรียนรู้</button><button class="btn btn-large" onclick="showScreen('practice-menu-screen')">2. โหมดฝึกฝน (ครูตรวจ)</button><button class="btn btn-large btn-secondary" onclick="showScreen('self-test-menu-screen')">3. โหมดทดสอบ (นักเรียนตอบ)</button></div></div>
+                <div id="learning-menu-screen" class="screen"><h2>โหมดเรียนรู้ (เรียงลำดับ)</h2><div class="menu-section"><h3>ตัวเลข (1-10)</h3><div class="menu-grid"><button class="btn" onclick="startLearning('num-ar-10')">เลขอารบิก (1-10)</button><button class="btn" onclick="startLearning('num-th-10')">เลขไทย (๑-๑๐)</button></div></div><div class="menu-section"><h3>พยัญชนะไทย</h3><div class="menu-grid"><button class="btn" onclick="startLearning('thai-alphabet')">ก - ฮ</button></div></div><div class="menu-section"><h3>พยัญชนะภาษาอังกฤษ</h3><div class="menu-grid"><button class="btn" onclick="startLearning('eng-upper')">ตัวพิมพ์ใหญ่ (A-Z)</button><button class="btn" onclick="startLearning('eng-lower')">ตัวพิมพ์เล็ก (a-z)</button></div></div><br><button class="btn btn-back" onclick="showScreen('main-menu-screen')">กลับเมนูหลัก</button></div>
+                <div id="practice-menu-screen" class="screen"><h2>โหมดฝึกฝน (ครูตรวจ)</h2><div class="menu-section"><h3>ตัวเลข (สุ่ม 10 ตัว)</h3><div class="menu-grid"><button class="btn" onclick="startPractice('num-ar-10')">ง่าย (1-10)</button><button class="btn" onclick="startPractice('num-th-10')">ง่าย (๑-๑๐)</button><button class="btn" onclick="startPractice('num-ar-100')">ปานกลาง (1-100)</button><button class="btn" onclick="startPractice('num-th-100')">ปานกลาง (๑-๑๐๐)</button><button class="btn" onclick="startPractice('num-ar-1000')">ยาก (1-1000)</button><button class="btn" onclick="startPractice('num-th-1000')">ยาก (๑-๑๐๐๐)</button></div></div><div class="menu-section"><h3>พยัญชนะไทย (สุ่ม)</h3><div class="menu-grid"><button class="btn" onclick="startPractice('thai-20')">สุ่ม 20 ตัว</button><button class="btn" onclick="startPractice('thai-44')">สุ่ม 44 ตัว</button></div></div><div class="menu-section"><h3>พยัญชนะภาษาอังกฤษ (สุ่ม)</h3><div class="menu-grid"><button class="btn" onclick="startPractice('eng-upper')">A-Z (26 ตัว)</button><button class="btn" onclick="startPractice('eng-lower')">a-z (26 ตัว)</button></div></div><br><button class="btn btn-back" onclick="showScreen('main-menu-screen')">กลับเมนูหลัก</button></div>
+                <div id="self-test-menu-screen" class="screen"><h2>โหมดทดสอบด้วยตัวเอง</h2><div class="menu-section"><h3>ตัวเลข (สุ่ม 10 ตัว)</h3><div class="menu-grid"><button class="btn" onclick="startSelfTest('num-ar-10')">ง่าย (1-10)</button><button class="btn" onclick="startSelfTest('num-th-10')">ง่าย (๑-๑๐)</button><button class="btn" onclick="startSelfTest('num-ar-100')">ปานกลาง (1-100)</button><button class="btn" onclick="startSelfTest('num-th-100')">ปานกลาง (๑-๑๐๐)</button></div></div><div class="menu-section"><h3>พยัญชนะไทย (สุ่ม)</h3><div class="menu-grid"><button class="btn" onclick="startSelfTest('thai-20')">สุ่ม 20 ตัว</button><button class="btn" onclick="startSelfTest('thai-44')">สุ่ม 44 ตัว</button></div></div><div class="menu-section"><h3>พยัญชนะภาษาอังกฤษ (สุ่ม)</h3><div class="menu-grid"><button class="btn" onclick="startSelfTest('eng-upper')">A-Z (26 ตัว)</button><button class="btn" onclick="startSelfTest('eng-lower')">a-z (26 ตัว)</button></div></div><br><button class="btn btn-back" onclick="showScreen('main-menu-screen')">กลับเมนูหลัก</button></div>
+                <div id="game-area" class="screen"><div class="game-header"><span id="progress-text"></span><span id="score-text"></span></div><div id="display-area"></div><div id="choices-area" class="menu-grid"></div><div id="teacher-controls" class="menu-grid"><button class="btn btn-correct" onclick="handleTeacherAnswer(true)">✔</button><button class="btn btn-incorrect" onclick="handleTeacherAnswer(false)">✖</button></div><br><button id="end-game-btn" class="btn btn-back" onclick="">จบเกม</button></div>
+                <div id="game-over-screen" class="screen"><h2>จบเกม!</h2><p id="final-score"></p><button id="back-to-menu-btn" class="btn btn-secondary" onclick="">กลับไปที่เมนู</button></div>`;
+            
+            DOM = {
+                correctSound: document.getElementById('correct-sound'), incorrectSound: document.getElementById('incorrect-sound'),
+                screens: document.querySelectorAll('.screen'), displayArea: document.getElementById('display-area'),
+                choicesArea: document.getElementById('choices-area'), teacherControls: document.getElementById('teacher-controls'),
+                progressText: document.getElementById('progress-text'), scoreText: document.getElementById('score-text'),
+                finalScore: document.getElementById('final-score'), endGameBtn: document.getElementById('end-game-btn'),
+                backToMenuBtn: document.getElementById('back-to-menu-btn')
+            };
+        });
+    </script>
+</body>
+</html>
