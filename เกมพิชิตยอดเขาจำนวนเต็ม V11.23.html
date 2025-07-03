@@ -131,9 +131,29 @@
         .central-message-content { max-width: 600px; padding: 30px; text-align: center; }
         .card-selection-content { max-width: 650px; padding: 30px; text-align: center; }
         .prank-modal-content { max-width: 500px; padding: 30px; text-align: center; }
-        .dice-animation-content { max-width: 350px; padding: 40px; text-align: center; background-color: #374151; color: white; border-radius: 20px; }
-        .dice-animation-value { font-size: 6rem; font-weight: bold; line-height: 1; margin-bottom: 1.5rem; color: #fcd34d; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        @keyframes modalAppear { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+/* สไตล์สำหรับลูกเต๋า 3 มิติ */
+.dice-animation-content { max-width: 350px; padding: 40px; text-align: center; background: none; color: white; border-radius: 20px; box-shadow: none; }
+.scene { width: 100px; height: 100px; perspective: 600px; margin: 2rem auto; }
+.cube { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s; }
+.cube.spinning { animation: spin-dice 2s linear infinite; }
+.cube-face {
+    position: absolute; width: 100px; height: 100px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #333;
+    font-size: 4rem; color: #333; font-weight: bold;
+    display: flex; justify-content: center; align-items: center;
+}
+.face-1 { transform: rotateY(0deg) translateZ(50px); }
+.face-2 { transform: rotateY(90deg) translateZ(50px); }
+.face-3 { transform: rotateY(180deg) translateZ(50px); }
+.face-4 { transform: rotateY(-90deg) translateZ(50px); }
+.face-5 { transform: rotateX(90deg) translateZ(50px); }
+.face-6 { transform: rotateX(-90deg) translateZ(50px); }
+
+@keyframes spin-dice {
+    from { transform: rotateX(0deg) rotateY(0deg); }
+    to { transform: rotateX(360deg) rotateY(720deg); }
+}        @keyframes modalAppear { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); gap: 12px; margin-top: 20px; }
         .emoji-btn { font-size: 26px; padding: 6px; border-radius: 10px; cursor: pointer; transition: background-color 0.2s, transform 0.2s; border: 1px solid #d1d5db; }
         .emoji-btn:hover { background-color: #e0f2fe; transform: scale(1.1); }
@@ -320,13 +340,21 @@
         <div id="centralMessageContent" class="central-message-content"></div>
     </div>
 
-    <div id="diceAnimationOverlay" class="dice-animation-overlay">
-        <div class="dice-animation-content">
-            <p id="diceAnimationText" class="text-2xl mb-4">กำลังทอยลูกเต๋า...</p>
-            <div id="diceAnimationValue" class="dice-animation-value">?</div>
+<div id="diceAnimationOverlay" class="dice-animation-overlay">
+    <div class="dice-animation-content">
+        <p id="diceAnimationText" class="text-2xl mb-4 text-white font-bold text-shadow-lg">กำลังทอยลูกเต๋า...</p>
+        <div class="scene">
+            <div class="cube" id="diceCube">
+                <div class="cube-face face-1">1</div>
+                <div class="cube-face face-2">2</div>
+                <div class="cube-face face-3">3</div>
+                <div class="cube-face face-4">4</div>
+                <div class="cube-face face-5">5</div>
+                <div class="cube-face face-6">6</div>
+            </div>
         </div>
     </div>
-
+</div>
 
     <div id="cardSelectionModal" class="card-selection-modal">
         <div class="card-selection-content">
@@ -1548,36 +1576,44 @@
         }
 
 
-        function rollMainGameDie() { return getRandomInt(-3, 9); }
+        function rollMainGameDie() { return getRandomInt(1, 6); }
         function getRandomInt(min, max) { min = Math.ceil(min); max = Math.floor(max); return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-        async function animateDiceRoll(finalRollFunction, duration = 1500, intervalTime = 100) {
-            playSound('diceRoll');
-            diceAnimationOverlay.style.display = 'flex';
-            diceAnimationText.textContent = "กำลังทอยลูกเต๋า...";
-            diceAnimationValue.textContent = '?';
+// ฟังก์ชันควบคุมลูกเต๋า 3 มิติ
+async function animateDiceRoll(finalRollFunction, duration = 2000) {
+    playSound('diceRoll');
+    const diceCube = document.getElementById('diceCube');
+    diceAnimationOverlay.style.display = 'flex';
+    diceAnimationText.textContent = "กำลังทอยลูกเต๋า...";
+    diceCube.classList.add('spinning');
 
-            return new Promise(resolve => {
-                let rollCount = 0;
-                const maxRolls = Math.floor(duration / intervalTime);
-                const animationInterval = setInterval(() => {
-                    diceAnimationValue.textContent = getRandomInt(-3, 9);
-                    rollCount++;
-                    if (rollCount >= maxRolls) {
-                        clearInterval(animationInterval);
-                        const finalValue = finalRollFunction();
-                        diceAnimationText.textContent = "คุณทอยได้:";
-                        diceAnimationValue.textContent = finalValue;
-                        movementDieValueDisplay.textContent = finalValue;
-                        setTimeout(() => {
-                           diceAnimationOverlay.style.display = 'none';
-                        }, 1500);
-                        resolve(finalValue);
-                    }
-                }, intervalTime);
-            });
-        }
-        rollDiceButton.addEventListener('click', async () => {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            const finalValue = finalRollFunction();
+            diceCube.classList.remove('spinning');
+
+            // หมุนลูกเต๋าไปแสดงหน้าที่ถูกต้อง (สุ่มหน้า 1-6 สำหรับการแสดงผล)
+            const displayFace = Math.min(6, Math.max(1, finalValue > 0 ? finalValue : (Math.floor(Math.random() * 6) + 1)));
+            const rotations = {
+                1: 'rotateY(0deg) rotateX(0deg)',
+                2: 'rotateY(-90deg) rotateX(0deg)',
+                3: 'rotateY(-180deg) rotateX(0deg)',
+                4: 'rotateY(90deg) rotateX(0deg)',
+                5: 'rotateX(-90deg) rotateY(0deg)',
+                6: 'rotateX(90deg) rotateY(0deg)'
+            };
+            diceCube.style.transform = rotations[displayFace];
+
+            diceAnimationText.innerHTML = `คุณทอยได้: <span class="text-yellow-300 text-5xl">${finalValue}</span>`;
+            movementDieValueDisplay.textContent = finalValue;
+
+            setTimeout(() => {
+               diceAnimationOverlay.style.display = 'none';
+               resolve(finalValue);
+            }, 1500); // รอแสดงผล 1.5 วินาที
+        }, duration); // ระยะเวลาที่หมุน
+    });
+}        rollDiceButton.addEventListener('click', async () => {
             if (!gameActive || modal.style.display === 'flex' || cardSelectionModal.style.display === 'flex' || prankModal.style.display === 'flex' || !players[currentPlayerIndex]) return;
             playSound('buttonClick');
             rollDiceButton.disabled = true;
