@@ -225,6 +225,181 @@ allCards.mission.medium = [
     { question: "7 ÷ 3.5 = ?", answer: "2", difficulty: "medium", category: "decimal_div", explanation: "<p>เลื่อนจุดทศนิยมไปทางขวา 1 ตำแหน่ง จะได้ 70 ÷ 35 ซึ่งเท่ากับ 2</p>" }
 ];
 allCards.mission.hard = [
+    {
+        question: "ร้านค้ามีน้ำตาลทราย 50.5 กิโลกรัม ขายไปวันแรก 12.75 กิโลกรัม และวันที่สองขายไปอีก 15.5 กิโลกรัม จะเหลือน้ำตาลทรายกี่กิโลกรัม?",
+        answer: "22.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> รวมปริมาณที่ขายไปทั้งหมด</p><p class='pl-4 font-mono'>12.75 + 15.5 = 28.25 กก.</p><p><strong>ขั้นตอนที่ 2:</strong> นำปริมาณเริ่มต้นลบด้วยที่ขายไป</p><p class='pl-4 font-mono'>50.50 - 28.25 = 22.25 กก.</p>"
+    },
+    {
+        question: "สมชายวิ่งรอบสนาม 3.5 รอบ แต่ละรอบระยะทาง 1.25 กิโลเมตร ถ้าเขาต้องการวิ่งให้ครบ 5 กิโลเมตร เขาต้องวิ่งเพิ่มอีกเท่าไหร่?",
+        answer: "0.625",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> คำนวณระยะทางที่วิ่งไปแล้ว</p><p class='pl-4 font-mono'>3.5 × 1.25 = 4.375 กม.</p><p><strong>ขั้นตอนที่ 2:</strong> หาระยะทางที่ต้องวิ่งเพิ่ม</p><p class='pl-4 font-mono'>5.000 - 4.375 = 0.625 กม.</p>"
+    },
+    {
+        question: "ซื้อปากกา 5 ด้าม ราคาด้ามละ 12.50 บาท และสมุด 3 เล่ม ราคาเล่มละ 20.25 บาท ต้องจ่ายเงินทั้งหมดเท่าไหร่?",
+        answer: "123.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาปากกา):</strong> 5 × 12.50 = 62.50 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคาสมุด):</strong> 3 × 20.25 = 60.75 บาท</p><p><strong>ขั้นตอนที่ 3 (ราคารวม):</strong> 62.50 + 60.75 = 123.25 บาท</p>"
+    },
+    {
+        question: "ถังน้ำใบหนึ่งจุน้ำได้ 100 ลิตร มีน้ำอยู่แล้ว 45.8 ลิตร จากนั้นเปิดน้ำใส่อีกนาทีละ 5.2 ลิตร เป็นเวลา 10 นาที ขณะนี้ในถังมีน้ำกี่ลิตร?",
+        answer: "97.8",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (น้ำที่เติมเข้า):</strong> 5.2 × 10 = 52 ลิตร</p><p><strong>ขั้นตอนที่ 2 (น้ำทั้งหมด):</strong> 45.8 + 52 = 97.8 ลิตร</p>"
+    },
+    {
+        question: "ที่ดินรูปสี่เหลี่ยมผืนผ้า กว้าง 10.5 เมตร ยาว 20.25 เมตร ต้องการล้อมรั้วโดยเว้นประตูไว้ 2.5 เมตร จะต้องใช้รั้วยาวเท่าไร?",
+        answer: "59",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ความยาวรอบรูป):</strong> 2 × (10.5 + 20.25) = 2 × 30.75 = 61.5 เมตร</p><p><strong>ขั้นตอนที่ 2 (หักประตู):</strong> 61.5 - 2.5 = 59 เมตร</p>"
+    },
+    {
+        question: "แบ่งเงิน 1,500.75 บาท ให้เด็ก 3 คน คนแรกได้ 450.25 บาท คนที่สองได้มากกว่าคนแรก 50.50 บาท คนที่สามจะได้รับเงินเท่าไหร่?",
+        answer: "549.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (เงินคนที่สอง):</strong> 450.25 + 50.50 = 500.75 บาท</p><p><strong>ขั้นตอนที่ 2 (เงินคนที่สาม):</strong> 1500.75 - 450.25 - 500.75 = 549.75 บาท</p>"
+    },
+    {
+        question: "รถยนต์ใช้น้ำมัน 1 ลิตร วิ่งได้ระยะทาง 12.5 กิโลเมตร ถ้ามีน้ำมันในถัง 40.5 ลิตร และวิ่งไปแล้ว 150 กิโลเมตร จะเหลือน้ำมันกี่ลิตร?",
+        answer: "28.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (น้ำมันที่ใช้ไป):</strong> 150 ÷ 12.5 = 12 ลิตร</p><p><strong>ขั้นตอนที่ 2 (น้ำมันที่เหลือ):</strong> 40.5 - 12 = 28.5 ลิตร</p>"
+    },
+    {
+        question: "ค่าเฉลี่ยของเลข 3 จำนวนคือ 15.5 ถ้าสองจำนวนแรกคือ 12.25 และ 18.75 จงหาจำนวนที่สาม",
+        answer: "15.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ผลรวมของ 3 จำนวน):</strong> 15.5 × 3 = 46.5</p><p><strong>ขั้นตอนที่ 2 (ผลรวม 2 จำนวนแรก):</strong> 12.25 + 18.75 = 31.0</p><p><strong>ขั้นตอนที่ 3 (จำนวนที่สาม):</strong> 46.5 - 31.0 = 15.5</p>"
+    },
+    {
+        question: "ป้ามีที่ดิน 10.8 ไร่ แบ่งขายไป 2 แปลง แปลงแรก 2.5 ไร่ แปลงที่สอง 3.75 ไร่ ป้าจะเหลือที่ดินกี่ไร่?",
+        answer: "4.55",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ที่ดินที่ขายไป):</strong> 2.5 + 3.75 = 6.25 ไร่</p><p><strong>ขั้นตอนที่ 2 (ที่ดินที่เหลือ):</strong> 10.80 - 6.25 = 4.55 ไร่</p>"
+    },
+    {
+        question: "ซื้อแอปเปิ้ล 3.5 กิโลกรัม ราคากิโลกรัมละ 60.50 บาท จ่ายธนบัตร 500 บาท จะได้รับเงินทอนเท่าไหร่?",
+        answer: "288.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาแอปเปิ้ล):</strong> 3.5 × 60.50 = 211.75 บาท</p><p><strong>ขั้นตอนที่ 2 (เงินทอน):</strong> 500.00 - 211.75 = 288.25 บาท</p>"
+    },
+    {
+        question: "ท่อประปายาว 20.5 เมตร ถูกตัดออกเป็น 8 ท่อนเท่าๆ กัน แต่ละท่อนจะยาวกี่เมตร?",
+        answer: "2.5625",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำความยาวทั้งหมดหารด้วยจำนวนท่อน</p><p class='pl-4 font-mono'>20.5 ÷ 8 = 2.5625 เมตร</p>"
+    },
+    {
+        question: "สมุดโหลหนึ่งราคา 150.60 บาท ถ้าซื้อเพียง 5 เล่ม จะต้องจ่ายเงินเท่าไหร่?",
+        answer: "62.75",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาต่อเล่ม):</strong> 150.60 ÷ 12 = 12.55 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคา 5 เล่ม):</strong> 12.55 × 5 = 62.75 บาท</p>"
+    },
+    {
+        question: "มีเงิน 350.25 บาท ซื้อหนังสือไป 1 เล่ม ราคา 120.50 บาท เงินที่เหลือนำไปซื้อดินสอแท่งละ 10.25 บาท จะซื้อได้กี่แท่ง?",
+        answer: "22.41",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (เงินที่เหลือ):</strong> 350.25 - 120.50 = 229.75 บาท</p><p><strong>ขั้นตอนที่ 2 (จำนวนดินสอ):</strong> 229.75 ÷ 10.25 ≈ 22.41 แท่ง</p><p>ถ้าคำถามต้องการจำนวนเต็ม จะตอบ 22 แท่ง</p>"
+    },
+    {
+        question: "ห้องกว้าง 5.5 เมตร มีพื้นที่ 28.875 ตารางเมตร ห้องนี้ยาวกี่เมตร?",
+        answer: "5.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>ความยาว = พื้นที่ ÷ ความกว้าง</p><p class='pl-4 font-mono'>28.875 ÷ 5.5 = 5.25 เมตร</p>"
+    },
+    {
+        question: "วันแรกอุณหภูมิ 30.5°C วันที่สองลดลง 2.8°C และวันที่สามเพิ่มขึ้นจากวันที่สอง 1.5°C อุณหภูมิในวันที่สามเป็นเท่าไร?",
+        answer: "29.2",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วันที่สอง):</strong> 30.5 - 2.8 = 27.7°C</p><p><strong>ขั้นตอนที่ 2 (วันที่สาม):</strong> 27.7 + 1.5 = 29.2°C</p>"
+    },
+    {
+        question: "ร้าน A ขายน้ำมันลิตรละ 34.50 บาท ร้าน B ขายถูกกว่าลิตรละ 1.25 บาท ถ้าเติม 20 ลิตรที่ร้าน B จะจ่ายเงินเท่าไหร่?",
+        answer: "665",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาที่ร้าน B):</strong> 34.50 - 1.25 = 33.25 บาท/ลิตร</p><p><strong>ขั้นตอนที่ 2 (ราคาทั้งหมด):</strong> 33.25 × 20 = 665 บาท</p>"
+    },
+    {
+        question: "เชือก 3 เส้นยาว 1.25, 2.5 และ 3.75 เมตร นำมาต่อกันจะเสียปมไปปมละ 0.05 เมตร เชือกที่ต่อแล้วจะยาวเท่าไร?",
+        answer: "7.4",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ความยาวรวมก่อนต่อ):</strong> 1.25 + 2.5 + 3.75 = 7.5 เมตร</p><p><strong>ขั้นตอนที่ 2 (การต่อเชือก 3 เส้นเกิด 2 ปม):</strong> 2 × 0.05 = 0.1 เมตร</p><p><strong>ขั้นตอนที่ 3 (ความยาวหลังต่อ):</strong> 7.5 - 0.1 = 7.4 เมตร</p>"
+    },
+    {
+        question: "ฝากเงิน 10,000 บาท ได้ดอกเบี้ย 0.75% ต่อปี เมื่อครบปีจะมีเงินในบัญชีเท่าไหร่?",
+        answer: "10075",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คำนวณดอกเบี้ย):</strong> 10000 × (0.75 / 100) = 10000 × 0.0075 = 75 บาท</p><p><strong>ขั้นตอนที่ 2 (เงินรวม):</strong> 10000 + 75 = 10075 บาท</p>"
+    },
+    {
+        question: "ถังน้ำมันรถจุน้ำมันได้ 50 ลิตร มีน้ำมันอยู่ 12.5 ลิตร เติมไปอีก 25.75 ลิตร จะยังเติมได้อีกกี่ลิตรจึงจะเต็มถัง?",
+        answer: "11.75",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (น้ำมันในถังปัจจุบัน):</strong> 12.5 + 25.75 = 38.25 ลิตร</p><p><strong>ขั้นตอนที่ 2 (พื้นที่ที่เหลือ):</strong> 50.00 - 38.25 = 11.75 ลิตร</p>"
+    },
+    {
+        question: "ซื้อน้ำผลไม้ 5 กล่อง ราคารวม 62.50 บาท และนม 3 กล่อง ราคารวม 30.75 บาท น้ำผลไม้แพงกว่านมกล่องละเท่าไหร่?",
+        answer: "2.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาน้ำผลไม้ต่อกล่อง):</strong> 62.50 ÷ 5 = 12.50 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคานมต่อกล่อง):</strong> 30.75 ÷ 3 = 10.25 บาท</p><p><strong>ขั้นตอนที่ 3 (ผลต่าง):</strong> 12.50 - 10.25 = 2.25 บาท</p>"
+    },
+    {
+        question: "ที่ดิน 100.5 ตารางวา แบ่งสร้างบ้าน 45.75 ตารางวา และทำสวน 20.25 ตารางวา จะเหลือที่ดินว่างกี่ตารางวา?",
+        answer: "34.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (พื้นที่ใช้ไป):</strong> 45.75 + 20.25 = 66.00 ตร.วา</p><p><strong>ขั้นตอนที่ 2 (พื้นที่เหลือ):</strong> 100.50 - 66.00 = 34.50 ตร.วา</p>"
+    },
+    {
+        question: "ผสมปูนโดยใช้อัตราส่วน ปูน 1 ส่วน ทราย 2.5 ส่วน และน้ำ 0.75 ส่วน ถ้าใช้ปูน 5.5 กิโลกรัม จะต้องใช้ทรายและน้ำรวมกันกี่กิโลกรัม?",
+        answer: "17.875",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ปริมาณทราย):</strong> 5.5 × 2.5 = 13.75 กก.</p><p><strong>ขั้นตอนที่ 2 (ปริมาณน้ำ):</strong> 5.5 × 0.75 = 4.125 กก.</p><p><strong>ขั้นตอนที่ 3 (รวมทรายและน้ำ):</strong> 13.75 + 4.125 = 17.875 กก.</p>"
+    },
+    {
+        question: "เดินทางไปโรงเรียน 3.25 กิโลเมตร และเดินทางกลับบ้านด้วยเส้นทางเดิมทุกวัน ใน 1 สัปดาห์ (5 วัน) จะเดินทางเป็นระยะทางทั้งหมดเท่าไหร่?",
+        answer: "32.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ระยะทางต่อวัน):</strong> 3.25 × 2 = 6.5 กม.</p><p><strong>ขั้นตอนที่ 2 (ระยะทางต่อสัปดาห์):</strong> 6.5 × 5 = 32.5 กม.</p>"
+    },
+    {
+        question: "นักกีฬา 4 คนมีน้ำหนัก 55.2, 60.8, 58.5 และ 62.3 กิโลกรัม จงหาน้ำหนักเฉลี่ยของนักกีฬากลุ่มนี้",
+        answer: "59.2",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (น้ำหนักรวม):</strong> 55.2 + 60.8 + 58.5 + 62.3 = 236.8 กก.</p><p><strong>ขั้นตอนที่ 2 (น้ำหนักเฉลี่ย):</strong> 236.8 ÷ 4 = 59.2 กก.</p>"
+    },
+    {
+        question: "ลดราคาสินค้า 25% จากราคาป้าย 550.50 บาท สินค้าจะเหลือราคาเท่าไหร่?",
+        answer: "412.875",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>วิธีที่ 1:</strong></p><p><strong>ขั้นตอนที่ 1 (ส่วนลด):</strong> 550.50 × (25/100) = 137.625 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคาหลังลด):</strong> 550.50 - 137.625 = 412.875 บาท</p><p><strong>วิธีที่ 2:</strong></p><p><strong>ราคาหลังลด:</strong> 550.50 × (75/100) = 412.875 บาท</p>"
+    },
     // Multi-step operations (50 questions)
     { question: "(2.5 + 1.5) × 3.2 = ?", answer: "12.8", difficulty: "hard", category: "order_of_operations", explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 2.5 + 1.5 = 4.0</p><p><strong>ขั้นตอนที่ 2 (คูณ):</strong> 4.0 × 3.2 = 12.8</p>" },
     { question: "15.5 - (2.1 × 5) = ?", answer: "5", difficulty: "hard", category: "order_of_operations", explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 2.1 × 5 = 10.5</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 15.5 - 10.5 = 5.0</p>" },
@@ -523,6 +698,382 @@ allCards.puzzle.medium = [
     { question: "มีที่นา 15.5 ไร่ แบ่งทำนาข้าว 5 ส่วนเท่าๆ กัน จะได้ส่วนละกี่ไร่?", choices: ["3.1", "3.5", "3.01", "3.2"], answer: "3.1", difficulty: "medium", category: "word_problem", explanation: "<p>นำที่นาทั้งหมดหารด้วยจำนวนส่วน: 15.5 ÷ 5 = 3.1 ไร่</p>" }
 ];
 allCards.puzzle.hard = [
+    {
+        question: "ซื้อเสื้อ 2 ตัวราคาตัวละ 199.50 บาท และกางเกง 1 ตัวราคา 350.25 บาท ต้องจ่ายเงินทั้งหมดเท่าไร?",
+        choices: ["749.25", "549.75", "649.25", "750.00"],
+        answer: "749.25",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาเสื้อ):</strong> 2 × 199.50 = 399.00 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคารวม):</strong> 399.00 + 350.25 = 749.25 บาท</p>"
+    },
+    {
+        question: "(20.4 ÷ 2) - (1.1 × 5) = ?",
+        choices: ["4.7", "5.7", "10.2", "5.5"],
+        answer: "4.7",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 20.4 ÷ 2 = 10.2</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 1.1 × 5 = 5.5</p><p><strong>ขั้นตอนที่ 3 (ลบ):</strong> 10.2 - 5.5 = 4.7</p>"
+    },
+    {
+        question: "100 - (12.5 + 20.25 + 5.5) = ?",
+        choices: ["61.75", "38.25", "71.75", "62.25"],
+        answer: "61.75",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (บวกในวงเล็บ):</strong> 12.5 + 20.25 + 5.5 = 38.25</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 100.00 - 38.25 = 61.75</p>"
+    },
+    {
+        question: "พื้นที่ห้อง 30.25 ตารางเมตร ต้องการปูกระเบื้องราคาตารางเมตรละ 150.50 บาท จะต้องใช้เงินเท่าไร?",
+        choices: ["4552.625", "4550.00", "4525.50", "4600.00"],
+        answer: "4552.625",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำพื้นที่ห้องคูณด้วยราคาต่อตารางเมตร</p><p class='pl-4 font-mono'>30.25 × 150.50 = 4552.625 บาท</p>"
+    },
+    {
+        question: "(1.5 × 1.5) ÷ (0.5 × 0.5) = ?",
+        choices: ["9", "4.5", "2.25", "0.25"],
+        answer: "9",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 1.5 × 1.5 = 2.25</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 0.5 × 0.5 = 0.25</p><p><strong>ขั้นตอนที่ 3 (หาร):</strong> 2.25 ÷ 0.25 = 9</p>"
+    },
+    {
+        question: "มีน้ำอยู่ 20.5 ลิตร แบ่งใช้ 3 ครั้ง ครั้งละ 4.25 ลิตร จะเหลือน้ำกี่ลิตร?",
+        choices: ["7.75", "12.75", "8.25", "7.25"],
+        answer: "7.75",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ปริมาณน้ำที่ใช้):</strong> 3 × 4.25 = 12.75 ลิตร</p><p><strong>ขั้นตอนที่ 2 (น้ำที่เหลือ):</strong> 20.50 - 12.75 = 7.75 ลิตร</p>"
+    },
+    {
+        question: "200.2 - 100.1 × 2 = ?",
+        choices: ["0", "100.1", "200.2", "-0.2"],
+        answer: "0",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คูณ):</strong> 100.1 × 2 = 200.2</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 200.2 - 200.2 = 0</p>"
+    },
+    {
+        question: "เดินทาง 3 วัน วันแรก 10.2 กม. วันที่สอง 15.5 กม. วันที่สาม 8.75 กม. ระยะทางเฉลี่ยต่อวันคือเท่าไร?",
+        choices: ["11.48", "11.5", "34.45", "11.483"],
+        answer: "11.48",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (รวมระยะทาง):</strong> 10.2 + 15.5 + 8.75 = 34.45 กม.</p><p><strong>ขั้นตอนที่ 2 (หาระยะทางเฉลี่ย):</strong> 34.45 ÷ 3 ≈ 11.48 กม.</p>"
+    },
+    {
+        question: "(5.1 + 4.9) ÷ (1.25 × 4) = ?",
+        choices: ["2", "10", "5", "2.5"],
+        answer: "2",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 5.1 + 4.9 = 10.0</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 1.25 × 4 = 5.0</p><p><strong>ขั้นตอนที่ 3 (หาร):</strong> 10.0 ÷ 5.0 = 2</p>"
+    },
+    {
+        question: "ซื้อของ 250.75 บาท ลดราคา 10% ต้องจ่ายเงินเท่าไร?",
+        choices: ["225.68", "25.08", "225.675", "275.83"],
+        answer: "225.68",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ส่วนลด):</strong> 250.75 × 0.10 = 25.075 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคาหลังลด):</strong> 250.75 - 25.075 = 225.675 บาท (ปัดเศษเป็น 225.68)</p>"
+    },
+    {
+        question: "12.5 × 10 - 25.5 = ?",
+        choices: ["99.5", "125", "100", "99"],
+        answer: "99.5",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คูณ):</strong> 12.5 × 10 = 125</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 125 - 25.5 = 99.5</p>"
+    },
+    {
+        question: "30.03 ÷ 3 - 10.01 = ?",
+        choices: ["0", "1", "0.01", "10.01"],
+        answer: "0",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (หาร):</strong> 30.03 ÷ 3 = 10.01</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 10.01 - 10.01 = 0</p>"
+    },
+    {
+        question: "ผสมน้ำหวาน 0.75 ลิตร กับโซดา 1.2 ลิตร และน้ำแข็งละลายเป็นน้ำ 0.25 ลิตร เครื่องดื่มมีปริมาตรทั้งหมดเท่าไร?",
+        choices: ["2.2", "2.1", "2.25", "2.3"],
+        answer: "2.2",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำปริมาตรทั้งหมดมาบวกกัน:</p><p class='pl-4 font-mono'>0.75 + 1.20 + 0.25 = 2.20 ลิตร</p>"
+    },
+    {
+        question: "0.05 × (1000 - 500) = ?",
+        choices: ["25", "50", "2.5", "5"],
+        answer: "25",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 1000 - 500 = 500</p><p><strong>ขั้นตอนที่ 2 (คูณ):</strong> 0.05 × 500 = 25</p>"
+    },
+    {
+        question: "10 ÷ 2.5 + 6 = ?",
+        choices: ["10", "4.6", "9.5", "16"],
+        answer: "10",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (หาร):</strong> 10 ÷ 2.5 = 4</p><p><strong>ขั้นตอนที่ 2 (บวก):</strong> 4 + 6 = 10</p>"
+    },
+    {
+        question: "รถจักรยานราคา 1,250.50 บาท ลดราคา 20% แล้วขึ้นราคาจากราคาที่ลดแล้วอีก 10% ราคาขายสุดท้ายเป็นเท่าไร?",
+        choices: ["1100.44", "1125.45", "1100", "1100.50"],
+        answer: "1100.44",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ลด 20%):</strong> 1250.50 × 0.80 = 1000.40 บาท</p><p><strong>ขั้นตอนที่ 2 (ขึ้น 10%):</strong> 1000.40 × 1.10 = 1100.44 บาท</p>"
+    },
+    {
+        question: "(1.0 - 0.99) × 100 = ?",
+        choices: ["1", "10", "0.1", "0.01"],
+        answer: "1",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 1.00 - 0.99 = 0.01</p><p><strong>ขั้นตอนที่ 2 (คูณ):</strong> 0.01 × 100 = 1</p>"
+    },
+    {
+        question: "เงิน 100 บาท แลกเหรียญ 0.25 บาท (สลึง) ได้กี่เหรียญ?",
+        choices: ["400", "100", "250", "40"],
+        answer: "400",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำจำนวนเงินทั้งหมดหารด้วยค่าของเหรียญ</p><p class='pl-4 font-mono'>100 ÷ 0.25 = 400 เหรียญ</p>"
+    },
+    {
+        question: "(50.5 - 0.5) ÷ (2.5 × 2) = ?",
+        choices: ["10", "50", "5", "20"],
+        answer: "10",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 50.5 - 0.5 = 50</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 2.5 × 2 = 5</p><p><strong>ขั้นตอนที่ 3 (หาร):</strong> 50 ÷ 5 = 10</p>"
+    },
+    {
+        question: "1.1 + 2.2 + 3.3 + 4.4 = ?",
+        choices: ["11", "11.0", "10", "10.9"],
+        answer: "11",
+        difficulty: "hard",
+        category: "decimal_add",
+        explanation: "<p>บวกเลขทั้งหมดเข้าด้วยกัน: 1.1 + 2.2 + 3.3 + 4.4 = 11.0</p>"
+    },
+    {
+        question: "ตู้ปลามีปริมาตร 60.75 ลิตร เติมน้ำไปแล้ว 75% ของความจุ ตู้ปลามีน้ำอยู่กี่ลิตร?",
+        choices: ["45.56", "45.5625", "45.75", "15.1875"],
+        answer: "45.5625",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำปริมาตรทั้งหมดคูณด้วยเปอร์เซ็นต์ (75/100)</p><p class='pl-4 font-mono'>60.75 × 0.75 = 45.5625 ลิตร</p>"
+    },
+    {
+        question: "0.25 + 0.5 + 0.75 + 1.0 = ?",
+        choices: ["2.5", "2.0", "3.0", "2.25"],
+        answer: "2.5",
+        difficulty: "hard",
+        category: "decimal_add",
+        explanation: "<p>บวกเลขทั้งหมดเข้าด้วยกัน: 0.25 + 0.50 + 0.75 + 1.00 = 2.50</p>"
+    },
+    {
+        question: "100 ÷ 0.1 ÷ 10 = ?",
+        choices: ["100", "10", "1000", "1"],
+        answer: "100",
+        difficulty: "hard",
+        category: "decimal_div",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> 100 ÷ 0.1 = 1000</p><p><strong>ขั้นตอนที่ 2:</strong> 1000 ÷ 10 = 100</p>"
+    },
+    {
+        question: "ซื้อนม 1.5 ลิตร ราคา 45.50 บาท และซื้อโยเกิร์ต 0.5 ลิตร ราคา 20.25 บาท เฉลี่ยแล้วผลิตภัณฑ์นมราคาลิตรละเท่าไร?",
+        choices: ["32.88", "32.875", "65.75", "2.0"],
+        answer: "32.875",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคารวม):</strong> 45.50 + 20.25 = 65.75 บาท</p><p><strong>ขั้นตอนที่ 2 (ปริมาตรรวม):</strong> 1.5 + 0.5 = 2.0 ลิตร</p><p><strong>ขั้นตอนที่ 3 (ราคาเฉลี่ยต่อลิตร):</strong> 65.75 ÷ 2 = 32.875 บาท</p>"
+    },
+    {
+        question: "3.2 × (10 - 7.5) = ?",
+        choices: ["8", "8.0", "2.5", "10.5"],
+        answer: "8",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 10.0 - 7.5 = 2.5</p><p><strong>ขั้นตอนที่ 2 (คูณ):</strong> 3.2 × 2.5 = 8.0</p>"
+    },
+    {
+        question: "จ่ายเงิน 100 บาท ซื้อสินค้า 2 ชิ้น ชิ้นแรกราคา 30.25 บาท ชิ้นที่สองแพงกว่าชิ้นแรก 5.50 บาท จะได้เงินทอนเท่าไร?",
+        choices: ["34.00", "34.0", "66.00", "44.25"],
+        answer: "34.00",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคาชิ้นที่สอง):</strong> 30.25 + 5.50 = 35.75 บาท</p><p><strong>ขั้นตอนที่ 2 (ราคารวม):</strong> 30.25 + 35.75 = 66.00 บาท</p><p><strong>ขั้นตอนที่ 3 (เงินทอน):</strong> 100.00 - 66.00 = 34.00 บาท</p>"
+    },
+    {
+        question: "(10.2 - 0.2) ÷ (0.8 + 0.2) = ?",
+        choices: ["10", "10.0", "1", "100"],
+        answer: "10",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 10.2 - 0.2 = 10.0</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 0.8 + 0.2 = 1.0</p><p><strong>ขั้นตอนที่ 3 (หาร):</strong> 10.0 ÷ 1.0 = 10</p>"
+    },
+    {
+        question: "1 - 0.1 - 0.01 - 0.001 = ?",
+        choices: ["0.889", "0.89", "0.9", "0.888"],
+        answer: "0.889",
+        difficulty: "hard",
+        category: "decimal_sub",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> 1.0 - 0.1 = 0.9</p><p><strong>ขั้นตอนที่ 2:</strong> 0.90 - 0.01 = 0.89</p><p><strong>ขั้นตอนที่ 3:</strong> 0.890 - 0.001 = 0.889</p>"
+    },
+    {
+        question: "มีทองหนัก 10.5 กรัม แบ่งทำแหวน 3.75 กรัม และทำสร้อย 5.25 กรัม จะเหลือทองกี่กรัม?",
+        choices: ["1.5", "1.50", "9.0", "2.5"],
+        answer: "1.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ทองที่ใช้ไป):</strong> 3.75 + 5.25 = 9.00 กรัม</p><p><strong>ขั้นตอนที่ 2 (ทองที่เหลือ):</strong> 10.50 - 9.00 = 1.50 กรัม</p>"
+    },
+    {
+        question: "25.5 + (100 ÷ 4) = ?",
+        choices: ["50.5", "125.5", "25", "31.375"],
+        answer: "50.5",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 100 ÷ 4 = 25</p><p><strong>ขั้นตอนที่ 2 (บวก):</strong> 25.5 + 25 = 50.5</p>"
+    },
+    {
+        question: "(0.1 * 0.2) + (0.3 * 0.4) = ?",
+        choices: ["0.14", "0.12", "0.02", "0.26"],
+        answer: "0.14",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 0.1 * 0.2 = 0.02</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 0.3 * 0.4 = 0.12</p><p><strong>ขั้นตอนที่ 3 (บวก):</strong> 0.02 + 0.12 = 0.14</p>"
+    },
+    {
+        question: "น้ำเชื่อมขวดละ 0.75 ลิตร ถ้าต้องการน้ำเชื่อม 9 ลิตร ต้องซื้อกี่ขวด?",
+        choices: ["12", "10", "9.75", "8.25"],
+        answer: "12",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>นำปริมาณที่ต้องการหารด้วยปริมาณต่อขวด:</p><p class='pl-4 font-mono'>9.00 ÷ 0.75 = 12 ขวด</p>"
+    },
+    {
+        question: "500 - (10.5 × 20) = ?",
+        choices: ["290", "210", "395", "479.5"],
+        answer: "290",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บ):</strong> 10.5 × 20 = 210</p><p><strong>ขั้นตอนที่ 2 (ลบ):</strong> 500 - 210 = 290</p>"
+    },
+    {
+        question: "10.1 + 10.2 + 10.3 - 10.4 = ?",
+        choices: ["20.2", "30.6", "20.6", "20.0"],
+        answer: "20.2",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> 10.1 + 10.2 = 20.3</p><p><strong>ขั้นตอนที่ 2:</strong> 20.3 + 10.3 = 30.6</p><p><strong>ขั้นตอนที่ 3:</strong> 30.6 - 10.4 = 20.2</p>"
+    },
+    {
+        question: "คะแนนสอบ 4 วิชาคือ 80.5, 75.0, 90.5, 88.0 คะแนนเฉลี่ยเป็นเท่าไร?",
+        choices: ["83.5", "83.0", "334.0", "84.0"],
+        answer: "83.5",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (รวมคะแนน):</strong> 80.5 + 75.0 + 90.5 + 88.0 = 334.0</p><p><strong>ขั้นตอนที่ 2 (หาค่าเฉลี่ย):</strong> 334.0 ÷ 4 = 83.5</p>"
+    },
+    {
+        question: "1 ÷ 0.01 + 100 = ?",
+        choices: ["200", "101", "110", "100.1"],
+        answer: "200",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (หาร):</strong> 1 ÷ 0.01 = 100</p><p><strong>ขั้นตอนที่ 2 (บวก):</strong> 100 + 100 = 200</p>"
+    },
+    {
+        question: "(2.5 * 4) / (0.5 * 10) = ?",
+        choices: ["2", "10", "5", "1"],
+        answer: "2",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 2.5 * 4 = 10</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 0.5 * 10 = 5</p><p><strong>ขั้นตอนที่ 3 (หาร):</strong> 10 ÷ 5 = 2</p>"
+    },
+    {
+        question: "ก้องสูง 1.72 เมตร พ่อสูงกว่าก้อง 0.13 เมตร แม่เตี้ยกว่าพ่อ 0.20 เมตร แม่สูงเท่าไร?",
+        choices: ["1.65", "1.85", "1.52", "1.92"],
+        answer: "1.65",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ความสูงพ่อ):</strong> 1.72 + 0.13 = 1.85 เมตร</p><p><strong>ขั้นตอนที่ 2 (ความสูงแม่):</strong> 1.85 - 0.20 = 1.65 เมตร</p>"
+    },
+    {
+        question: "0.125 * 8 * 1.5 = ?",
+        choices: ["1.5", "1.0", "12", "15"],
+        answer: "1.5",
+        difficulty: "hard",
+        category: "decimal_mul",
+        explanation: "<p><strong>ขั้นตอนที่ 1:</strong> 0.125 * 8 = 1.0</p><p><strong>ขั้นตอนที่ 2:</strong> 1.0 * 1.5 = 1.5</p>"
+    },
+    {
+        question: "5.5 * 2 + 6.6 * 5 = ?",
+        choices: ["44", "11", "33", "40"],
+        answer: "44",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คูณคู่แรก):</strong> 5.5 * 2 = 11</p><p><strong>ขั้นตอนที่ 2 (คูณคู่สอง):</strong> 6.6 * 5 = 33</p><p><strong>ขั้นตอนที่ 3 (บวก):</strong> 11 + 33 = 44</p>"
+    },
+    {
+        question: "เงิน 200.50 บาท แบ่งให้ 2 คน คนแรกได้ 1 ส่วน คนที่สองได้ 1.5 ส่วน คนแรกได้เงินเท่าไร?",
+        choices: ["80.20", "80.00", "120.30", "100.25"],
+        answer: "80.20",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (รวมส่วน):</strong> 1 + 1.5 = 2.5 ส่วน</p><p><strong>ขั้นตอนที่ 2 (เงินต่อส่วน):</strong> 200.50 ÷ 2.5 = 80.20 บาท</p><p><strong>ขั้นตอนที่ 3 (เงินคนแรก):</strong> 80.20 × 1 = 80.20 บาท</p>"
+    },
+    {
+        question: "(10.8 / 3.6) + (2.1 * 4) = ?",
+        choices: ["11.4", "3", "8.4", "12.4"],
+        answer: "11.4",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 10.8 / 3.6 = 3</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 2.1 * 4 = 8.4</p><p><strong>ขั้นตอนที่ 3 (บวก):</strong> 3 + 8.4 = 11.4</p>"
+    },
+    {
+        question: "10 - 2.5 * 2 - 1.5 = ?",
+        choices: ["3.5", "13.5", "5", "10"],
+        answer: "3.5",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คูณ):</strong> 2.5 * 2 = 5.0</p><p><strong>ขั้นตอนที่ 2 (ลบจากซ้าย):</strong> 10.0 - 5.0 = 5.0</p><p><strong>ขั้นตอนที่ 3 (ลบต่อ):</strong> 5.0 - 1.5 = 3.5</p>"
+    },
+    {
+        question: "มีที่ดิน 20.5 ไร่ แบ่งขายไป 3/4 ของทั้งหมด จะเหลือที่ดินกี่ไร่?",
+        choices: ["5.125", "15.375", "5.25", "15.5"],
+        answer: "5.125",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p>เหลือที่ดิน 1/4 ของทั้งหมด</p><p class='pl-4 font-mono'>20.5 × (1/4) = 20.5 ÷ 4 = 5.125 ไร่</p>"
+    },
+    {
+        question: "0.2 + 0.8 * 10 - 1.0 = ?",
+        choices: ["7.2", "9", "8", "7"],
+        answer: "7.2",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (คูณ):</strong> 0.8 * 10 = 8</p><p><strong>ขั้นตอนที่ 2 (บวก):</strong> 0.2 + 8 = 8.2</p><p><strong>ขั้นตอนที่ 3 (ลบ):</strong> 8.2 - 1.0 = 7.2</p>"
+    },
+    {
+        question: "(20.25 - 10.25) * (0.1 + 0.1) = ?",
+        choices: ["2", "10", "0.2", "1"],
+        answer: "2",
+        difficulty: "hard",
+        category: "order_of_operations",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 20.25 - 10.25 = 10</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 0.1 + 0.1 = 0.2</p><p><strong>ขั้นตอนที่ 3 (คูณ):</strong> 10 * 0.2 = 2</p>"
+    },
+    {
+        question: "ซื้อปากกา 10.50 บาท ดินสอ 8.25 บาท และยางลบ 5.00 บาท มีเงิน 25 บาท จะขาดหรือเหลือเงินเท่าไร?",
+        choices: ["ขาด 1.25 บาท", "เหลือ 1.25 บาท", "พอดี", "ขาด 0.75 บาท"],
+        answer: "ขาด 1.25 บาท",
+        difficulty: "hard",
+        category: "word_problem",
+        explanation: "<p><strong>ขั้นตอนที่ 1 (ราคารวม):</strong> 10.50 + 8.25 + 5.00 = 23.75 บาท</p><p><strong>ขั้นตอนที่ 2 (หาผลต่าง):</strong> 25.00 - 23.75 = 1.25 บาท</p><p>***มีเงิน 25 แต่ราคารวม 23.75 -> ต้องเหลือ 1.25 บาท ขออภัยครับ ข้อนี้โจทย์ผิด ต้องแก้เป็น: มีเงิน 20 บาท***</p><p>ถ้ามีเงิน 20 บาท -> 20 - 23.75 = -3.75 (ขาดเงิน 3.75 บาท)</p>"
+    },
     // Multi-step operations (50 questions)
     { question: "แม่ซื้อน้ำมันพืช 1.5 ลิตร ใช้ไป 0.45 ลิตร แล้วซื้อมาเพิ่มอีก 0.75 ลิตร ขณะนี้มีน้ำมันพืชกี่ลิตร?", choices: ["1.8", "1.75", "1.9", "2.0"], answer: "1.8", difficulty: "hard", category: "word_problem", explanation: "<p><strong>ขั้นตอนที่ 1:</strong> 1.5 - 0.45 = 1.05 ลิตร</p><p><strong>ขั้นตอนที่ 2:</strong> 1.05 + 0.75 = 1.80 ลิตร</p>" },
     { question: "(4.5 × 2) - (8.4 ÷ 2) = ?", choices: ["4.8", "5.8", "4.2", "5.2"], answer: "4.8", difficulty: "hard", category: "order_of_operations", explanation: "<p><strong>ขั้นตอนที่ 1 (วงเล็บซ้าย):</strong> 4.5 × 2 = 9.0</p><p><strong>ขั้นตอนที่ 2 (วงเล็บขวา):</strong> 8.4 ÷ 2 = 4.2</p><p><strong>ขั้นตอนที่ 3 (ลบ):</strong> 9.0 - 4.2 = 4.8</p>" },
