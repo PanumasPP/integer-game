@@ -243,7 +243,7 @@ let cardsForSelection = [];
 let currentEffectCards = [];
 let questionTimerInterval = null;
 let timeLeft = 0;
-const QUESTION_TIME_LIMIT = 30;
+const QUESTION_TIME_LIMIT = 120;
 
 // --- Event Listeners & Setup ---
 document.getElementById('mainMenuStartGameBtn').addEventListener('click', () => {
