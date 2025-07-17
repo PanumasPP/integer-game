@@ -1,3 +1,131 @@
+/* ADDED FOR LEARNING HUB V2 */
+.learning-content-body {
+    max-height: 40vh;
+    overflow-y: auto;
+    text-align: left;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.learning-content-body h3 {
+    font-size: 1.5rem;
+    color: #4f46e5;
+    margin-bottom: 0.75rem;
+    margin-top: 1rem;
+}
+
+.learning-content-body p {
+    margin-bottom: 0.5rem;
+}
+
+.learning-content-body .explanation-box {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+    border-left: 4px solid #4f46e5;
+    border-radius: 4px;
+}
+
+/* PREVIOUSLY ADDED CSS FOR LEARNING HUB */
+.learning-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.learning-topic-btn {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.learning-topic-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.learning-topic-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+    color: #6b7280 !important;
+    transform: none;
+    box-shadow: none;
+}
+
+.learning-topic-btn:disabled::after {
+    content: '✔️ ทดสอบแล้ว';
+    font-size: 1rem;
+    font-weight: normal;
+    color: #16a34a;
+    margin-top: 0.5rem;
+}
+
+
+.quiz-choice-btn {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border: 2px solid #d1d5db;
+    border-radius: 0.75rem;
+    background-color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.quiz-choice-btn:hover:not(:disabled) {
+    background-color: #e0f2fe;
+    border-color: #3b82f6;
+    transform: scale(1.03);
+}
+
+.quiz-choice-btn.correct {
+    background-color: #dcfce7;
+    border-color: #22c55e;
+    color: #15803d;
+    font-weight: bold;
+}
+
+.quiz-choice-btn.incorrect {
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    color: #b91c1c;
+    font-weight: bold;
+}
+
+.quiz-choice-btn:disabled {
+    cursor: not-allowed;
+}
+
+.summary-display {
+    background-color: #f9fafb;
+    border-radius: 1rem;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    text-align: center;
+    box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05);
+}
+
+.summary-display p {
+    font-size: 1.5rem;
+    color: #4b5563;
+}
+
+/* Original CSS remains unchanged below... */
 body {
     font-family: 'Kanit', sans-serif;
     color: #374151;
@@ -61,7 +189,11 @@ body::before {
     text-align: center;
 }
 
-/* NEW: Added style for explanationModal to match other modals */
+/* IMPORTANT FIX: Higher z-index for explanation modal to appear above other modals */
+#explanationModal {
+    z-index: 200;
+}
+
 #explanationModal .modal-content {
     max-width: 580px;
     padding:35px;
@@ -121,7 +253,7 @@ body::before {
 .player-piece { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.35); display: flex; justify-content: center; align-items: center; font-size: 16px; color: white; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 10; background-color: transparent !important; }
 @keyframes pieceLandAnimation { 0% { transform: scale(0.8); opacity: 0.7; } 50% { transform: scale(1.4) translateY(-6px); opacity: 1; box-shadow: 0 6px 12px rgba(0,0,0,0.3); } 100% { transform: scale(1); opacity: 1; } }
 .player-piece-landed { animation: pieceLandAnimation 0.7s ease-out; }
-.modal, .emoji-picker-modal, .victory-overlay, .central-message-overlay, .card-selection-modal, .prank-modal, .dice-animation-overlay, #explanationModal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
+.modal, .emoji-picker-modal, .victory-overlay, .central-message-overlay, .card-selection-modal, .prank-modal, .dice-animation-overlay { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center; }
 .modal-content, .emoji-picker-content, .central-message-content, .card-selection-content, .prank-modal-content, .dice-animation-content { background-color: #ffffff; margin: auto; padding: 25px; border: none; width: 90%; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); animation: modalAppear 0.4s ease-out; }
 .modal-content { max-width: 580px; padding:35px; }
 .emoji-picker-content { max-width: 340px; padding: 20px; }

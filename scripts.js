@@ -1,8 +1,10 @@
 // --- Game Configuration ---
 const NUM_SQUARES = 50;
 let players = [];
-// NEW: State for single player mode
 let isSinglePlayerMode = false;
+
+// ===== PASTE YOUR WEB APP URL HERE =====
+const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzyjDwBdLRcnJJr15Kc6jM4QMVvoxvHwBq8SIvmzYOHOVd1tqfpc6x2pxnvHBfaYoV2/exec'; // <--- วาง URL ที่คัดลอกมาตรงนี้
 
 const defaultPlayerEmojis = ['🚀', '🌟', '🐢', '🦊', '😀', '😂', '😍', '🥳', '🍔', '🍕', '⚽️', '🎨', '💡', '💖', '👍', '💯'];
 const commonEmojisForPicker = [
@@ -24,13 +26,26 @@ let isAnsweringSetbackSave = false;
 let isAnsweringFinalQuestion = false;
 let isSoundEnabled = true;
 
+const learningState = {
+    studentName: null, // To store student's name
+    currentTopic: null,
+    currentQuestionIndex: 0,
+    correctAnswers: 0,
+    totalQuestions: 0,
+    quizQuestions: [],
+    completedTopics: [],
+    overallCorrect: 0,
+    overallTotal: 0,
+};
+const QUIZ_LENGTH = 5;
+
 const boardConfig = [
     { type: 'start', text: 'เริ่มต้น', icon: 'fas fa-mountain', instruction: 'จุดเริ่มต้นการผจญภัย!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
-    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' }, // Event 1
+    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' },
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เผชิญหน้ากับอุปสรรค!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
@@ -39,7 +54,7 @@ const boardConfig = [
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เผชิญหน้ากับอุปสรรค!' },
-    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' }, // Event 2
+    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-arrow-up', instruction: 'ตอบถูกเพื่อรับพลัง!' },
@@ -48,7 +63,7 @@ const boardConfig = [
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-wind', instruction: 'ตอบถูกเพื่อรับพลัง!' },
-    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' }, // Event 3
+    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' },
     { type: 'bonus', text: 'โบนัส', icon: 'fas fa-star', instruction: 'ตอบถูกเพื่อรับโบนัส!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-skull-crossbones', instruction: 'เผชิญหน้ากับอุปสรรค!' },
@@ -57,7 +72,7 @@ const boardConfig = [
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เผชิญหน้ากับอุปสรรค!' },
-    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' }, // Event 4
+    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' },
     { type: 'puzzle', text: 'ปริศนา', icon: 'fas fa-question-circle', instruction: 'หยิบการ์ดปริศนา!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-bolt', instruction: 'ตอบถูกเพื่อรับพลัง!' },
@@ -67,7 +82,7 @@ const boardConfig = [
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เผชิญหน้ากับอุปสรรค!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'power-up', text: 'บวกพลัง', icon: 'fas fa-shield-alt', instruction: 'ตอบถูกเพื่อรับพลัง!' },
-    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' }, // Event 5
+    { type: 'event', text: 'อีเวนต์', icon: 'fas fa-users', instruction: 'เกิดเหตุการณ์พิเศษ!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
     { type: 'setback', text: 'อุปสรรค', icon: 'fas fa-arrow-down', instruction: 'เผชิญหน้ากับอุปสรรค!' },
     { type: 'normal', text: 'ภารกิจ', icon: 'fas fa-tasks', instruction: 'หยิบการ์ดภารกิจ!' },
@@ -158,6 +173,55 @@ const groupEvents = [
     }
 ];
 
+const learningContentData = {
+    addition: {
+        title: "ทบทวน: การบวกจำนวนเต็ม",
+        content: `<h3><i class="fas fa-plus-circle text-green-500 mr-2"></i>การบวกจำนวนเต็ม</h3>
+                  <p><b>1. การบวกจำนวนเต็มบวก:</b> นำตัวเลขมาบวกกันตามปกติ ผลลัพธ์จะเป็นจำนวนเต็มบวก</p>
+                  <div class="explanation-box"><b>ตัวอย่าง:</b> 5 + 3 = 8</div>
+                  <p><b>2. การบวกจำนวนเต็มลบ:</b> นำค่าสัมบูรณ์ (ตัวเลขที่ไม่คิดเครื่องหมาย) มาบวกกัน แล้วใส่เครื่องหมายลบที่ผลลัพธ์</p>
+                  <div class="explanation-box"><b>ตัวอย่าง:</b> (-5) + (-3) ให้นำ 5+3 ได้ 8 แล้วตอบเป็นจำนวนลบ คือ -8</div>
+                  <p><b>3. การบวกระหว่างจำนวนเต็มบวกและลบ:</b> ให้นำค่าสัมบูรณ์มาลบกัน และผลลัพธ์จะมีเครื่องหมายตามตัวเลขที่มีค่าสัมบูรณ์มากกว่า</p>
+                  <div class="explanation-box"><b>ตัวอย่าง:</b> (-8) + 5 ให้นำ 8-5 ได้ 3 แต่ -8 มีค่าสัมบูรณ์มากกว่าและเป็นลบ ดังนั้นคำตอบคือ -3</div>`
+    },
+    subtraction: {
+        title: "ทบทวน: การลบจำนวนเต็ม",
+        content: `<h3><i class="fas fa-minus-circle text-red-500 mr-2"></i>การลบจำนวนเต็ม</h3>
+                   <p>หลักการสำคัญของการลบคือการเปลี่ยนการลบให้เป็นการบวกด้วย "จำนวนตรงข้าม" ของตัวลบ</p>
+                   <p><b>หลักการ: ตัวตั้ง - ตัวลบ = ตัวตั้ง + (จำนวนตรงข้ามของตัวลบ)</b></p>
+                   <div class="explanation-box"><b>ตัวอย่าง 1:</b> 10 - 5<br>
+                   = 10 + (-5) = 5</div>
+                   <div class="explanation-box"><b>ตัวอย่าง 2:</b> 7 - (-3)<br>
+                   จำนวนตรงข้ามของ -3 คือ 3<br>
+                   = 7 + 3 = 10</div>
+                   <div class="explanation-box"><b>ตัวอย่าง 3:</b> (-9) - 2<br>
+                   จำนวนตรงข้ามของ 2 คือ -2<br>
+                   = (-9) + (-2) = -11</div>`
+    },
+    multiplication: {
+        title: "ทบทวน: การคูณจำนวนเต็ม",
+        content: `<h3><i class="fas fa-times-circle text-blue-500 mr-2"></i>การคูณจำนวนเต็ม</h3>
+                   <p>การคูณมีหลักการจำง่ายๆ เกี่ยวกับเครื่องหมายดังนี้:</p>
+                   <p><b>1. เครื่องหมายเหมือนกันคูณกัน:</b> ผลลัพธ์จะเป็น <span class="font-bold text-green-600">จำนวนบวก (+)</span> เสมอ</p>
+                   <div class="explanation-box">(บวก) × (บวก) = บวก &nbsp;&nbsp; (เช่น 4 × 5 = 20)<br>
+                                            (ลบ) × (ลบ) = บวก &nbsp;&nbsp; (เช่น (-4) × (-5) = 20)</div>
+                   <p><b>2. เครื่องหมายต่างกันคูณกัน:</b> ผลลัพธ์จะเป็น <span class="font-bold text-red-600">จำนวนลบ (-)</span> เสมอ</p>
+                   <div class="explanation-box">(บวก) × (ลบ) = ลบ &nbsp;&nbsp; (เช่น 4 × (-5) = -20)<br>
+                                            (ลบ) × (บวก) = ลบ &nbsp;&nbsp; (เช่น (-4) × 5 = -20)</div>`
+    },
+    division: {
+        title: "ทบทวน: การหารจำนวนเต็ม",
+        content: `<h3><i class="fas fa-divide text-yellow-500 mr-2"></i>การหารจำนวนเต็ม</h3>
+                   <p>หลักการของการหารจะเหมือนกับการคูณทุกประการ:</p>
+                   <p><b>1. เครื่องหมายเหมือนกันหารกัน:</b> ผลลัพธ์จะเป็น <span class="font-bold text-green-600">จำนวนบวก (+)</span> เสมอ</p>
+                   <div class="explanation-box">(บวก) ÷ (บวก) = บวก &nbsp;&nbsp; (เช่น 20 ÷ 5 = 4)<br>
+                                            (ลบ) ÷ (ลบ) = บวก &nbsp;&nbsp; (เช่น (-20) ÷ (-5) = 4)</div>
+                   <p><b>2. เครื่องหมายต่างกันหารกัน:</b> ผลลัพธ์จะเป็น <span class="font-bold text-red-600">จำนวนลบ (-)</span> เสมอ</p>
+                   <div class="explanation-box">(บวก) ÷ (ลบ) = ลบ &nbsp;&nbsp; (เช่น 20 ÷ (-5) = -4)<br>
+                                            (ลบ) ÷ (บวก) = ลบ &nbsp;&nbsp; (เช่น (-20) ÷ 5 = -4)</div>`
+    }
+};
+
 const gameSounds = {
     diceRoll: new Audio("sounds/dice_roll.mp3"),
     playerMove: new Audio("sounds/player_move.mp3"),
@@ -238,12 +302,28 @@ const explanationModal = document.getElementById('explanationModal');
 const explanationContent = document.getElementById('explanationContent');
 const closeExplanationBtn = document.getElementById('closeExplanationBtn');
 
+const learningHubTopicSelection = document.getElementById('learningHubTopicSelection');
+const learningContentView = document.getElementById('learningContentView');
+const learningContentTitle = document.getElementById('learningContentTitle');
+const learningContentBody = document.getElementById('learningContentBody');
+const backToTopicSelectionBtn = document.getElementById('backToTopicSelectionBtn');
+const goToQuizBtn = document.getElementById('goToQuizBtn');
+const learningQuizContainer = document.getElementById('learningQuizContainer');
+const learningSummaryContainer = document.getElementById('learningSummaryContainer');
+const quizTitle = document.getElementById('quizTitle');
+const quizQuestionNumber = document.getElementById('quizQuestionNumber');
+const quizQuestionText = document.getElementById('quizQuestionText');
+const quizChoices = document.getElementById('quizChoices');
+const quizFeedback = document.getElementById('quizFeedback');
+const nextQuizQuestionBtn = document.getElementById('nextQuizQuestionBtn');
+const backToHubBtn = document.getElementById('backToHubBtn');
+
 let currentCardData = null;
 let cardsForSelection = [];
 let currentEffectCards = [];
 let questionTimerInterval = null;
 let timeLeft = 0;
-const QUESTION_TIME_LIMIT = 120;
+const QUESTION_TIME_LIMIT = 30;
 
 // --- Event Listeners & Setup ---
 document.getElementById('mainMenuStartGameBtn').addEventListener('click', () => {
@@ -263,6 +343,7 @@ document.getElementById('mainMenuSinglePlayerBtn').addEventListener('click', () 
 document.getElementById('mainMenuLearningHubBtn').addEventListener('click', () => {
     playSound('buttonClick');
     mainMenuModal.style.display = 'none';
+    initializeLearningHub();
     learningHubModal.style.display = 'flex';
 });
 
@@ -352,7 +433,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
     boardContainer.classList.add('hidden');
     gameSetupScreen.classList.add('hidden');
     mainMenuModal.style.display = 'flex';
+
+    document.querySelectorAll('.learning-topic-btn').forEach(btn => {
+        btn.addEventListener('click', () => showLearningContent(btn.dataset.category));
+    });
+    nextQuizQuestionBtn.addEventListener('click', nextLearningQuestion);
+    backToHubBtn.addEventListener('click', initializeLearningHub);
+    backToTopicSelectionBtn.addEventListener('click', initializeLearningHub);
+    goToQuizBtn.addEventListener('click', () => startLearningQuiz(learningState.currentTopic));
 });
+
 
 // --- Core Game Functions ---
 
@@ -448,6 +538,11 @@ function resetGame() {
     gameSetupScreen.classList.add('hidden');
     mainMenuModal.style.display = 'flex';
     createPlayerConfigInputs(parseInt(numPlayersSelect.value));
+    
+    learningState.studentName = null;
+    learningState.completedTopics = [];
+    learningState.overallCorrect = 0;
+    learningState.overallTotal = 0;
 }
 
 function initializeBoard() {
@@ -886,44 +981,44 @@ function applyEffectCard(effectCard) {
     }, 1500);
 }
 
-// =================================================================
-// ===== MODIFIED FUNCTIONS FOR DETAILED EXPLANATION =============
-// =================================================================
-
 function showExplanationModal() {
     playSound('incorrectAnswer');
-    
-    // สร้างโค้ด HTML สำหรับการเฉลยแบบละเอียดจากข้อมูลใน currentCardData
+
+    let isLearningQuiz = learningState.currentTopic !== null;
+    let quizCardData = isLearningQuiz ? learningState.quizQuestions[learningState.currentQuestionIndex] : currentCardData;
+
     let detailedExplanationHTML = `
         <div class='text-left w-full'>
             <p class='mb-2 font-semibold text-gray-600'>โจทย์คำถาม:</p>
-            <p class='mb-4 p-3 bg-gray-100 rounded-lg text-lg font-mono'>${currentCardData.question}</p>
+            <p class='mb-4 p-3 bg-gray-100 rounded-lg text-lg font-mono'>${quizCardData.question}</p>
 
             <p class='mb-2 font-semibold text-gray-600'>ขั้นตอนการเฉลย:</p>
             <div class='mb-5 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg space-y-2'>
-                ${currentCardData.explanation || 'ไม่มีคำอธิบายสำหรับข้อนี้'}
+                ${quizCardData.explanation || 'ไม่มีคำอธิบายสำหรับข้อนี้'}
             </div>
 
             <p class='font-semibold text-gray-600'>คำตอบที่ถูกต้องคือ:</p>
-            <p class='text-3xl font-bold text-green-600 text-center p-2'>${currentCardData.answer}</p>
+            <p class='text-3xl font-bold text-green-600 text-center p-2'>${quizCardData.answer}</p>
         </div>
     `;
 
     explanationContent.innerHTML = detailedExplanationHTML;
     explanationModal.style.display = 'flex';
 
-    // เมื่อผู้ใช้กดปุ่ม 'รับทราบ'
     closeExplanationBtn.onclick = () => {
         playSound('buttonClick');
         explanationModal.style.display = 'none';
 
-        // หลังจากปิดหน้าต่างเฉลยแล้ว จึงเริ่มกระบวนการลงโทษ
-        if (isSinglePlayerMode) {
-            applySinglePlayerPunishment();
-        } else if (players.length > 1) {
-            initiatePunishment();
+        if (isLearningQuiz) {
+             nextQuizQuestionBtn.classList.remove('hidden');
         } else {
-            switchTurn();
+            if (isSinglePlayerMode) {
+                applySinglePlayerPunishment();
+            } else if (players.length > 1) {
+                initiatePunishment();
+            } else {
+                switchTurn();
+            }
         }
     };
 }
@@ -947,7 +1042,7 @@ function handleQuestionAnswer(isCorrect, timedOut = false) {
             displayVictory(players[currentPlayerIndex]);
         } else {
             playSound('incorrectAnswer');
-            showExplanationModal(); // แสดงเฉลยละเอียด
+            showExplanationModal();
         }
         return;
     }
@@ -963,7 +1058,7 @@ function handleQuestionAnswer(isCorrect, timedOut = false) {
             setTimeout(switchTurn, 3100);
         } else {
             playSound('incorrectAnswer');
-            showExplanationModal(); // แสดงเฉลยละเอียดก่อนโดนลงโทษ
+            showExplanationModal();
         }
         return;
     }
@@ -979,7 +1074,7 @@ function handleQuestionAnswer(isCorrect, timedOut = false) {
             setTimeout(() => actionToRun(), 2600);
         } else {
             playSound('incorrectAnswer');
-            showExplanationModal(); // แสดงเฉลยละเอียด
+            showExplanationModal();
         }
         return;
     }
@@ -991,7 +1086,7 @@ function handleQuestionAnswer(isCorrect, timedOut = false) {
             showMessage('<p class="text-xl font-semibold">ตอบถูก!</p>', 'success', 2000);
         } else {
             playSound('incorrectAnswer');
-             showExplanationModal(); // แสดงเฉลยละเอียด
+             showExplanationModal();
         }
         setTimeout(switchTurn, 2500);
         return;
@@ -1016,16 +1111,207 @@ function handleQuestionAnswer(isCorrect, timedOut = false) {
             setTimeout(switchTurn, 3100);
         }
     } else {
-        // เมื่อตอบผิด ให้เรียกใช้ Modal เฉลยแบบละเอียด
         showExplanationModal();
     }
 }
 
+// ===== NEW/MODIFIED FUNCTIONS FOR LEARNING HUB & GOOGLE SHEETS =====
 
-// =================================================================
-// ========= The rest of the functions are unchanged =============
-// =================================================================
+async function sendDataToGoogleSheet(data) {
+    if (!GOOGLE_SHEET_URL || GOOGLE_SHEET_URL.includes('xxxxxxxxxx')) {
+        console.warn("Google Sheet URL is not set. Skipping data submission.");
+        return;
+    }
 
+    try {
+        const response = await fetch(GOOGLE_SHEET_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Use no-cors for simple "fire and forget" submissions
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        console.log("Data submission attempted.");
+    } catch (error) {
+        console.error('Error submitting data to Google Sheet:', error);
+    }
+}
+
+
+function initializeLearningHub() {
+    playSound('buttonClick');
+    
+    if (!learningState.studentName) {
+        const name = prompt("กรุณาใส่ชื่อ-สกุลของคุณเพื่อบันทึกคะแนน:", "");
+        if (name) {
+            learningState.studentName = name;
+        } else {
+            // If user cancels or enters nothing, ask again or set a default.
+            // For now, we'll allow them to proceed without a name.
+            learningState.studentName = "ไม่ระบุชื่อ";
+        }
+    }
+
+    learningState.currentTopic = null;
+    learningHubTopicSelection.classList.remove('hidden');
+    learningContentView.classList.add('hidden');
+    learningQuizContainer.classList.add('hidden');
+    learningSummaryContainer.classList.add('hidden');
+
+    document.querySelectorAll('.learning-topic-btn').forEach(btn => {
+        btn.disabled = learningState.completedTopics.includes(btn.dataset.category);
+    });
+}
+
+function showLearningContent(category) {
+    playSound('buttonClick');
+    learningState.currentTopic = category;
+    const content = learningContentData[category];
+    
+    if (content) {
+        learningContentTitle.textContent = content.title;
+        learningContentBody.innerHTML = content.content;
+        learningHubTopicSelection.classList.add('hidden');
+        learningContentView.classList.remove('hidden');
+    }
+}
+
+function startLearningQuiz(category) {
+    playSound('buttonClick');
+    const topicNames = {
+        addition: 'การบวกจำนวนเต็ม',
+        subtraction: 'การลบจำนวนเต็ม',
+        multiplication: 'การคูณจำนวนเต็ม',
+        division: 'การหารจำนวนเต็ม'
+    };
+    
+    const allCategoryQuestions = allCards.puzzle.easy.filter(q => q.category === category);
+    allCategoryQuestions.sort(() => 0.5 - Math.random());
+    const selectedQuestions = allCategoryQuestions.slice(0, QUIZ_LENGTH);
+
+    if (selectedQuestions.length < QUIZ_LENGTH) {
+        alert(`ขออภัย, มีคำถามในหมวดนี้ไม่เพียงพอ (ต้องการ ${QUIZ_LENGTH} ข้อ)`);
+        initializeLearningHub();
+        return;
+    }
+    
+    learningState.quizQuestions = selectedQuestions;
+    learningState.currentQuestionIndex = 0;
+    learningState.correctAnswers = 0;
+    learningState.totalQuestions = selectedQuestions.length;
+
+    learningContentView.classList.add('hidden');
+    learningQuizContainer.classList.remove('hidden');
+    quizTitle.textContent = `แบบทดสอบเรื่อง: ${topicNames[category]}`;
+    
+    displayLearningQuestion();
+}
+
+function displayLearningQuestion() {
+    quizFeedback.innerHTML = '';
+    nextQuizQuestionBtn.classList.add('hidden');
+    
+    const questionData = learningState.quizQuestions[learningState.currentQuestionIndex];
+    quizQuestionNumber.textContent = `ข้อที่ ${learningState.currentQuestionIndex + 1} / ${learningState.totalQuestions}`;
+    quizQuestionText.textContent = questionData.question;
+    
+    quizChoices.innerHTML = '';
+    if (questionData.choices && questionData.choices.length > 0) {
+        const choices = [...questionData.choices].sort(() => 0.5 - Math.random());
+        choices.forEach(choice => {
+            const choiceBtn = document.createElement('button');
+            choiceBtn.className = 'quiz-choice-btn';
+            choiceBtn.textContent = choice;
+            choiceBtn.addEventListener('click', () => handleLearningAnswer(choiceBtn));
+            quizChoices.appendChild(choiceBtn);
+        });
+    } else {
+        quizChoices.innerHTML = '<p class="text-red-500">เกิดข้อผิดพลาด: ไม่พบตัวเลือกสำหรับคำถามนี้</p>';
+    }
+}
+
+function handleLearningAnswer(clickedButton) {
+    playSound('buttonClick');
+    const allChoiceBtns = quizChoices.querySelectorAll('button');
+    allChoiceBtns.forEach(btn => btn.disabled = true);
+
+    const questionData = learningState.quizQuestions[learningState.currentQuestionIndex];
+    const selectedAnswer = clickedButton.textContent;
+    const correctAnswer = questionData.answer.toString();
+
+    if (selectedAnswer === correctAnswer) {
+        playSound('correctAnswer');
+        clickedButton.classList.add('correct');
+        quizFeedback.innerHTML = '<span class="text-green-600">ถูกต้อง!</span>';
+        learningState.correctAnswers++;
+        learningState.overallCorrect++;
+        nextQuizQuestionBtn.classList.remove('hidden');
+    } else {
+        playSound('incorrectAnswer');
+        clickedButton.classList.add('incorrect');
+        allChoiceBtns.forEach(btn => {
+            if(btn.textContent === correctAnswer) {
+                btn.classList.add('correct');
+            }
+        });
+        showExplanationModal();
+    }
+    learningState.overallTotal++;
+}
+
+function nextLearningQuestion() {
+    playSound('buttonClick');
+    learningState.currentQuestionIndex++;
+    if (learningState.currentQuestionIndex < learningState.totalQuestions) {
+        displayLearningQuestion();
+    } else {
+        showLearningSummary();
+    }
+}
+
+function showLearningSummary() {
+    const topicCategory = learningState.currentTopic;
+    learningState.completedTopics.push(topicCategory);
+    
+    const correct = learningState.correctAnswers;
+    const total = learningState.totalQuestions;
+    const incorrect = total - correct;
+    const percentage = total > 0 ? ((correct / total) * 100).toFixed(0) : 0;
+    
+    // --- Data to be sent to Google Sheet ---
+    const scoreData = {
+        name: learningState.studentName,
+        topic: topicCategory,
+        correct: correct,
+        total: total,
+        percentage: `${percentage}%`
+    };
+    sendDataToGoogleSheet(scoreData);
+    // --- End of data sending ---
+
+    document.getElementById('summaryCorrect').textContent = correct;
+    document.getElementById('summaryIncorrect').textContent = incorrect;
+    document.getElementById('summaryPercentage').textContent = `${percentage}%`;
+
+    learningQuizContainer.classList.add('hidden');
+    learningSummaryContainer.classList.remove('hidden');
+
+    if (learningState.completedTopics.length === 4) {
+        const overallCorrect = learningState.overallCorrect;
+        const overallTotal = learningState.overallTotal;
+        const overallIncorrect = overallTotal - overallCorrect;
+        const overallPercentage = overallTotal > 0 ? ((overallCorrect / overallTotal) * 100).toFixed(0) : 0;
+        
+        document.getElementById('finalSummaryMessage').classList.remove('hidden');
+        document.getElementById('summaryCorrect').textContent = overallCorrect;
+        document.getElementById('summaryIncorrect').textContent = overallIncorrect;
+        document.getElementById('summaryPercentage').textContent = `${overallPercentage}%`;
+    } else {
+        document.getElementById('finalSummaryMessage').classList.add('hidden');
+    }
+}
 
 function offerSelfBonus() {
     prankTitle.textContent = "ตอบถูก! เลือกรับโบนัส:";
@@ -1074,7 +1360,7 @@ function offerSelfBonus() {
 function applySinglePlayerPunishment() {
     playSound('setback');
     const player = players[currentPlayerIndex];
-    const penalty = 2; // Fixed penalty
+    const penalty = 2;
     showMessage(`<p class="text-xl">ตอบผิด! คุณต้องถอยหลัง ${penalty} ช่อง</p>`, 'error', 3000);
     setTimeout(() => {
         movePlayer(-penalty, true);
