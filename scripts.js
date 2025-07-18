@@ -720,12 +720,9 @@ async function movePlayer(steps, isBonusMove = false) {
                 if (!isBonusMove) {
                     handleSquareAction(player.position);
                 } else {
-                    if (finalSquare.type === 'normal' || finalSquare.type === 'puzzle' || finalSquare.type === 'finish') {
-                        isHandlingBonusMoveQuestion = true;
-                        handleSquareAction(player.position);
-                    } else {
-                        switchTurn();
-                    }
+                    // การเคลื่อนที่พิเศษ (จากการ์ด, การลงโทษ) จะสลับตาเล่นเลย
+                    // โดยไม่สนใจ Action ของช่องที่ไปลง
+                    switchTurn();
                 }
             }, 500);
         }
