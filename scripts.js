@@ -1006,9 +1006,19 @@ function showExplanationModal() {
         playSound('buttonClick');
         explanationModal.style.display = 'none';
 
-        if (isLearningQuiz) {
+        // --- START: โค้ดที่แก้ไข ---
+        // ตรวจสอบก่อนว่ามีการ์ดอุปสรรคที่รอลงโทษอยู่หรือไม่
+        if (pendingSetbackCard) {
+            const cardToApply = pendingSetbackCard;
+            pendingSetbackCard = null; // เคลียร์ค่าทันทีเพื่อป้องกันการทำงานซ้ำซ้อน
+            applyChosenSetback(cardToApply); // เรียกใช้ฟังก์ชันใหม่เพื่อลงโทษตามการ์ด
+        } 
+        // --- END: โค้ดที่แก้ไข ---
+        
+        else if (isLearningQuiz) {
              nextQuizQuestionBtn.classList.remove('hidden');
         } else {
+            // ถ้าไม่มีการ์ดอุปสรรคค้างอยู่ ให้ใช้การลงโทษแบบทั่วไป
             if (isSinglePlayerMode) {
                 applySinglePlayerPunishment();
             } else if (players.length > 1) {
@@ -1463,6 +1473,30 @@ function initiatePunishment() {
         prankOptionsContainer.appendChild(btn);
     });
     prankModal.style.display = 'flex';
+}
+
+function applyChosenSetback(setbackCard) {
+    const player = players[currentPlayerIndex];
+    showMessage(`<p class="text-xl">ตอบผิด! คุณต้องรับผลของอุปสรรค: ${setbackCard.text}!</p>`, 'error', 3500);
+    playSound('setback');
+
+    setTimeout(() => {
+        switch (setbackCard.action) {
+            case "move_backward":
+                movePlayer(-setbackCard.value, true);
+                break;
+            case "prank_skip_turn":
+                // การลงโทษนี้มีผลกับผู้เล่นปัจจุบัน
+                player.extraTurnsToTake = (player.extraTurnsToTake || 0) - setbackCard.value;
+                showMessage(`<p class='text-xl'>${player.name} ต้องหยุดเดินในตาถัดไป!</p>`, 'error', 3000);
+                updatePlayerInfo();
+                // สลับตาเล่นหลังจากแสดงผลแล้ว
+                setTimeout(switchTurn, 1000); 
+                break;
+            default:
+                switchTurn(); // กรณีฉุกเฉิน
+        }
+    }, 1500);
 }
 
 function applyPunishment(punishmentEffect) {
