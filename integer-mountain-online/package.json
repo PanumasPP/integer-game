@@ -1,0 +1,22 @@
+{
+  "name": "integer-mountain-game",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/state.test.cjs tests/static.test.cjs tests/parity.test.cjs tests/online-features.test.cjs tests/boards.test.cjs",
+    "test:boards": "node --test tests/boards.test.cjs",
+    "test:boards-browser": "node tests/boards-browser.cjs",
+    "test:features": "node --test tests/online-features.test.cjs",
+    "test:features-browser": "node tests/features-browser.cjs",
+    "test:parity": "node --test tests/parity.test.cjs",
+    "test:visual": "node tests/visual-parity.cjs",
+    "test:local-parity": "node tests/local-browser-parity.cjs",
+    "test:browser": "node tests/browser-smoke.cjs",
+    "test:multiplayer": "node tests/multiplayer-browser.cjs",
+    "test:rules": "node --test tests/rules.test.cjs",
+    "rules:generate": "node tools/generate-rules.cjs",
+    "check": "node tools/check-syntax.cjs",
+    "serve": "node tools/serve.cjs"
+  },
+  "devDependencies": { "playwright": "1.56.1", "firebase-tools": "14.17.0" }
+}

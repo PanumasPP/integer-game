@@ -1,1 +1,314 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรแกรมช่วยสอน: พิชิตยอดเขาจำนวนเต็ม (CAI Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="online.css">
+</head>
+<body>
+    <div id="heartbeatOverlay"></div>
 
+    <audio id="backgroundMusic" loop>
+        <source src="sounds/background_music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="mainMenuModal" class="cai-modal" style="display: flex;">
+        <div class="cai-modal-content">
+            <h1 class="text-4xl font-bold text-purple-700 mb-4">ยินดีต้อนรับสู่</h1>
+            <h2 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-8">
+                🏔️ โปรแกรมช่วยสอน: พิชิตยอดเขาจำนวนเต็ม 🎲
+            </h2>
+            <button id="mainMenuSinglePlayerBtn" class="main-menu-button bg-teal-500 hover:bg-teal-600 text-white"><i class="fas fa-user mr-3"></i>โหมดท้าทาย (1 คน)</button>
+            <button id="mainMenuStartGameBtn" class="main-menu-button start-game-btn"><i class="fas fa-users mr-3"></i>เริ่มเกม (หลายคน)</button>
+            <button id="mainMenuOnlineBtn" class="main-menu-button online-menu-button">🌐 เล่นออนไลน์</button>
+            <button id="mainMenuLearningHubBtn" class="main-menu-button learning-hub-btn"><i class="fas fa-book-open mr-3"></i>ศูนย์การเรียนรู้</button>
+            <button id="mainMenuSettingsBtn" class="main-menu-button settings-btn"><i class="fas fa-cog mr-3"></i>ตั้งค่า</button>
+            <p class="creator-credit text-lg mt-10">ผู้จัดทำ: ครูภาณุมาศ แป้นเดช<br>โรงเรียนส่วนป่าอุปถัมภ์</p>
+        </div>
+    </div>
+
+    <section id="onlineScreen" class="online-screen" hidden aria-label="เล่นออนไลน์">
+        <h1>🌐 พิชิตยอดเขาออนไลน์</h1>
+        <p id="onlineNotice" role="status" aria-live="polite"></p>
+        <div id="onlineEntry">
+            <label for="onlineName">ชื่อผู้เล่น</label>
+            <input id="onlineName" class="setup-input" maxlength="48" autocomplete="nickname" placeholder="ชื่อ 1–24 ตัวอักษร">
+            <label for="onlineEmoji">Emoji ของคุณ</label>
+            <select id="onlineEmoji" class="setup-input"></select>
+            <fieldset class="online-room-settings">
+                <legend>ตั้งค่าห้อง · ประเภทโจทย์</legend>
+                <div id="onlineCategoryOptions" class="online-category-options"></div>
+                <div class="online-buttons">
+                    <button id="onlineSelectAllCategories" class="modal-button online-choice" type="button">เลือกทั้งหมด</button>
+                    <button id="onlineClearCategories" class="modal-button online-choice" type="button">ล้างการเลือก</button>
+                </div>
+                <label for="onlineDifficulty">ระดับความยากสูงสุดของห้อง</label>
+                <select id="onlineDifficulty" class="setup-input">
+                    <option value="easy">ง่าย (เฉพาะง่าย)</option>
+                    <option value="medium" selected>ปานกลาง (ง่าย + ปานกลาง)</option>
+                    <option value="hard">ยาก (ง่าย + ปานกลาง + ยาก)</option>
+                </select>
+            </fieldset>
+            <fieldset class="online-room-settings"><legend>ขนาดแผนที่</legend><div id="onlineBoardSizes" class="online-board-sizes"></div></fieldset>
+            <button id="onlineCreateBtn" class="main-menu-button start-game-btn">สร้างห้อง</button>
+            <label for="onlineRoomCode">รหัสห้อง 6 หลัก</label>
+            <input id="onlineRoomCode" class="setup-input online-code-input" type="text" inputmode="numeric" pattern="[1-9][0-9]{5}" maxlength="6" placeholder="527314" autocomplete="off">
+            <label for="onlineJoinRole">รูปแบบการเข้าร่วม</label>
+            <select id="onlineJoinRole" class="setup-input">
+                <option value="player">🎮 ผู้เล่น</option>
+                <option value="spectator">👀 ผู้ชม</option>
+            </select>
+            <button id="onlineJoinBtn" class="main-menu-button online-menu-button">เข้าร่วมห้อง</button>
+            <button id="onlineBackBtn" class="modal-button modal-close-button">กลับเมนูหลัก</button>
+        </div>
+        <div id="onlineLobby" hidden>
+            <h2>🏔️ ห้องเกม <span id="onlinePlayerCount"></span></h2>
+            <p id="onlineRoomCodeDisplay" class="online-room-code"></p>
+            <p id="onlineConnection" role="status"></p>
+            <p id="onlineLobbySettings" class="online-settings-summary"></p>
+            <div id="onlineQr" aria-label="QR เข้าร่วมห้อง"></div>
+            <label for="onlineShareLink">ลิงก์เข้าร่วมห้อง</label>
+            <input id="onlineShareLink" class="setup-input" readonly>
+            <button id="onlineCopyBtn" class="modal-button online-choice">🔗 คัดลอกลิงก์</button>
+            <ul id="onlinePlayers" class="online-players"></ul>
+            <p id="onlineSpectatorCount"></p>
+            <ul id="onlineSpectators" class="online-players"></ul>
+            <p id="onlineWaiting"></p>
+            <div class="online-buttons">
+                <button id="onlineStartBtn" class="main-action-button" hidden>▶ เริ่มเกม</button>
+                <button id="onlineCloseBtn" class="modal-button modal-close-button" hidden>🚪 ปิดห้อง</button>
+                <button id="onlineLeaveBtn" class="modal-button modal-close-button">ออกจากห้อง</button>
+            </div>
+        </div>
+    </section>
+    <div id="learningHubModal" class="cai-modal">
+        <div class="cai-modal-content">
+            <h2 class="text-3xl font-bold text-center mb-6 text-purple-700">ศูนย์การเรียนรู้เรื่องจำนวนเต็ม</h2>
+            <div class="learning-section">
+                <h3><i class="fas fa-plus-circle text-green-500 mr-2"></i>การบวกจำนวนเต็ม</h3>
+                <p>การบวกจำนวนเต็มบวก: ผลลัพธ์เป็นบวก (เช่น 5 + 3 = 8)</p>
+                <p>การบวกจำนวนเต็มลบ: ผลลัพธ์เป็นลบ (เช่น (-5) + (-3) = -8)</p>
+                <p>การบวกระหว่างบวกและลบ: นำค่าสัมบูรณ์มาลบกัน แล้วใช้เครื่องหมายตามตัวเลขที่มากกว่า (เช่น (-8) + 5 = -3)</p>
+            </div>
+            <div class="learning-section">
+                <h3><i class="fas fa-minus-circle text-red-500 mr-2"></i>การลบจำนวนเต็ม</h3>
+                <p>หลักการคือ "ตัวตั้ง + จำนวนตรงข้ามของตัวลบ"</p>
+                <div class="explanation-box">
+                    <strong>ตัวอย่าง:</strong> 7 - (-3)  เปลี่ยนเป็นการบวกด้วยจำนวนตรงข้าม<br>
+                    = 7 + 3 = 10
+                </div>
+            </div>
+            <div class="learning-section">
+                <h3><i class="fas fa-times-circle text-blue-500 mr-2"></i>การคูณและหารจำนวนเต็ม</h3>
+                <p>เครื่องหมายเหมือนกัน (บวกxบวก, ลบxลบ) -> ผลลัพธ์เป็น <span class="font-bold text-green-600">บวก</span></p>
+                <p>เครื่องหมายต่างกัน (บวกxลบ, ลบxบวก) -> ผลลัพธ์เป็น <span class="font-bold text-red-600">ลบ</span></p>
+            </div>
+             <div class="learning-section">
+                <h3><i class="fas fa-sort-numeric-down text-yellow-500 mr-2"></i>ลำดับการดำเนินการ</h3>
+                <p>1. คำนวณในวงเล็บ () ก่อนเสมอ</p>
+                <p>2. ตามด้วยการคูณ (×) และการหาร (÷) (ทำจากซ้ายไปขวา)</p>
+                <p>3. สุดท้ายคือการบวก (+) และการลบ (-) (ทำจากซ้ายไปขวา)</p>
+            </div>
+            <div class="text-center mt-6">
+                 <button id="closeLearningHubBtn" class="modal-button modal-close-button"><i class="fas fa-times mr-2"></i>กลับสู่เมนูหลัก</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="cai-modal">
+        <div class="cai-modal-content" style="max-width: 400px;">
+             <h2 class="text-3xl font-bold text-center mb-6 text-purple-700">ตั้งค่า</h2>
+             <div class="flex justify-between items-center text-xl">
+                <label for="soundToggle">เสียงประกอบ:</label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="soundToggle" class="sr-only peer" checked>
+                  <div class="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-1 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+             </div>
+              <div class="text-center mt-8">
+                 <button id="closeSettingsBtn" class="modal-button modal-close-button"><i class="fas fa-times mr-2"></i>ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reportModal" class="cai-modal">
+        <div class="cai-modal-content">
+            <h2 class="text-3xl font-bold text-center mb-6 text-purple-700">สรุปผลการเรียนรู้</h2>
+            <div id="reportContent" class="text-left overflow-x-auto"></div>
+            <div class="text-center mt-8">
+                 <button id="playAgainFromReportBtn" class="main-menu-button start-game-btn" style="max-width:250px;"><i class="fas fa-redo mr-2"></i>เล่นอีกครั้ง</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="explanationModal" class="modal">
+        <div class="modal-content">
+             <div id="explanationHeader" class="flex justify-between items-center mb-4">
+                <h3 id="explanationTitle" class="text-2xl font-bold text-red-600">ตอบผิด!</h3>
+            </div>
+            <div id="explanationContent" class="mb-6 text-lg text-gray-700">
+                </div>
+            <div class="flex justify-end">
+                <button id="closeExplanationBtn" class="modal-button modal-submit-button bg-blue-500 hover:bg-blue-600"><i class="fas fa-times mr-2"></i>รับทราบ</button>
+            </div>
+        </div>
+    </div>
+    <div id="gameSetupScreen" class="game-setup-screen hidden"> <h1 class="text-3xl font-bold text-center mb-6 text-purple-700">ตั้งค่าเกมพิชิตยอดเขา</h1>
+        <div class="mb-4">
+            <label for="numPlayersSelect" class="block text-lg font-medium text-gray-700">จำนวนผู้เล่น:</label>
+            <select id="numPlayersSelect" class="setup-input mt-1 block w-full">
+                <option value="2" selected>2 คน</option>
+                <option value="3">3 คน</option>
+                <option value="4">4 คน</option>
+                <option value="5">5 คน</option>
+                <option value="6">6 คน</option>
+                <option value="7">7 คน</option>
+                <option value="8">8 คน</option>
+                <option value="9">9 คน</option>
+                <option value="10">10 คน</option>
+            </select>
+        </div>
+        <div id="playerConfigArea" class="mb-6 space-y-4"></div>
+        <p class="creator-credit">ผู้จัดทำ: ครูภาณุมาศ แป้นเดช โรงเรียนส่วนป่าอุปถัมภ์</p>
+        <button id="startGameBtn" class="main-action-button w-full py-3 mt-4"><i class="fas fa-play mr-2"></i>เริ่มเกม!</button>
+    </div>
+
+    <div id="boardContainer" class="board-container hidden">
+        <div id="onlineBoardControls" class="online-board-controls" hidden>
+            <p id="onlineGameNotice" role="status" aria-live="polite"></p>
+            <p id="onlineTimer"></p>
+            <p id="onlineAnswerObservation" role="status" aria-live="polite"></p>
+            <details id="onlineHostControls" class="online-host-controls" hidden>
+                <summary>👑 ควบคุมห้อง</summary>
+                <div class="online-buttons">
+                <button id="onlinePauseBtn" class="modal-button online-choice">⏸ หยุดชั่วคราว</button>
+                <button id="onlineSkipBtn" class="modal-button online-choice">⏭ ข้ามผู้เล่นปัจจุบัน</button>
+                <button id="onlineEndBtn" class="modal-button online-choice">🏁 จบเกม</button>
+                <label for="onlineKickSelect">นำผู้เล่นออก</label><select id="onlineKickSelect" class="setup-input"></select>
+                <button id="onlineKickBtn" class="modal-button online-choice">นำออก</button>
+                <button id="onlineBoardCloseBtn" class="modal-button modal-close-button">🚪 ปิดห้อง</button>
+                </div>
+            </details>
+            <button id="onlineBoardLeaveBtn" class="modal-button modal-close-button">ออกจากห้อง</button>
+        </div>
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                🏔️ พิชิตยอดเขาจำนวนเต็ม 🎲
+            </h1>
+        </header>
+
+        <div class="flex flex-col lg:flex-row lg:space-x-6 items-start">
+            <div id="playersInfoPanelContainer" class="w-full lg:w-1/5 control-panel-item mb-6 lg:mb-0 order-2 lg:order-1">
+                <h2 class="text-2xl font-semibold mb-3 text-gray-800">ข้อมูลผู้เล่น</h2>
+                <div id="playersInfoPanel" class="space-y-2"></div>
+                <p id="roundDisplay" class="mt-4 text-lg font-bold text-gray-600">รอบที่: <span id="currentRoundCounter">1</span></p>
+                <p class="mt-2 text-xl font-bold text-indigo-700">ตาของ: <span id="currentPlayerTurn"></span></p>
+            </div>
+
+            <div id="gameBoardOuterContainer" class="w-full lg:flex-grow order-1 lg:order-2 flex justify-center mb-6 lg:mb-0">
+                 <div id="gameBoard" class="game-board-grid p-4 bg-blue-50 rounded-xl"></div>
+            </div>
+
+            <div id="rightControlPanel" class="w-full lg:w-1/s space-y-6 order-3">
+                <div class="control-panel-item dice-area">
+                    <h2 class="text-2xl font-semibold mb-3 text-gray-800">ผลการทอยลูกเต๋า</h2>
+                    <div id="diceRollDisplay" class="text-center space-y-1">
+                        <p><span class="dice-label">ลูกเต๋าเดินทาง:</span> <span id="movementDieValue" class="dice-value">-</span></p>
+                        </div>
+                </div>
+                <div class="control-panel-item flex flex-col justify-center items-center">
+                     <button id="rollDiceButton" class="main-action-button w-full">
+                        <i class="fas fa-dice-d6 mr-2"></i> ทอยลูกเต๋า!
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="messageArea" class="mt-6 p-5 bg-white text-gray-700 rounded-xl shadow-lg text-center text-lg min-h-[60px]"></div>
+    </div>
+
+    <div id="centralMessageOverlay" class="central-message-overlay">
+        <div id="centralMessageContent" class="central-message-content"></div>
+    </div>
+
+    <div id="diceAnimationOverlay" class="dice-animation-overlay">
+        <div class="dice-animation-content">
+            <p id="diceAnimationText" class="text-2xl mb-4 text-white font-bold text-shadow-lg">กำลังทอยลูกเต๋า...</p>
+            <div class="scene">
+                <div class="cube" id="diceCube">
+                    <div class="cube-face face-1">1</div>
+                    <div class="cube-face face-2">2</div>
+                    <div class="cube-face face-3">3</div>
+                    <div class="cube-face face-4">4</div>
+                    <div class="cube-face face-5">5</div>
+                    <div class="cube-face face-6">6</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cardSelectionModal" class="card-selection-modal">
+        <div class="card-selection-content">
+            <h2 id="cardSelectionTitle" class="text-3xl font-bold text-purple-600 mb-6">เลือกการ์ด 1 ใบ!</h2>
+            <div id="cardSelectionGrid" class="card-selection-grid"></div>
+        </div>
+    </div>
+
+    <div id="questionModal" class="modal">
+        <div class="modal-content">
+             <div id="modalHeader" class="flex justify-between items-center mb-2">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800">คำถาม</h3>
+                <div id="questionTimerDisplay" class="text-xl font-bold text-orange-500"></div>
+            </div>
+            <p id="modalQuestion" class="mb-6 text-lg text-gray-700"></p>
+            <p id="onlineObserverStatus" class="online-observer-status" hidden></p>
+            <input type="text" id="modalAnswerInput" class="border border-gray-300 p-3 w-full rounded-lg mb-4 text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="ใส่คำตอบของคุณ">
+            <div id="modalFeedback" class="mb-4 text-md font-semibold"></div>
+            <div class="flex justify-end space-x-4">
+                <button id="modalSubmitButton" class="modal-button modal-submit-button"><i class="fas fa-check mr-2"></i>ส่งคำตอบ</button>
+                <button id="modalCloseButton" class="modal-button modal-close-button"><i class="fas fa-times mr-2"></i>ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="emojiPickerModal" class="emoji-picker-modal">
+        <div class="emoji-picker-content">
+            <h3 class="text-xl font-bold text-center mb-4 text-gray-700">เลือก Emoji</h3>
+            <div id="emojiGrid" class="emoji-grid"></div>
+            <button id="closeEmojiPickerBtn" class="mt-4 w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg">ปิด</button>
+        </div>
+    </div>
+
+    <div id="victoryOverlay" class="victory-overlay hidden">
+        <div id="fireworksContainer" class="absolute inset-0 overflow-hidden"></div>
+        <div id="winnerNameDisplay" class="text-white text-3xl md:text-4xl lg:text-5xl font-bold p-6 md:p-8 bg-purple-700 bg-opacity-80 rounded-xl shadow-2xl text-center leading-tight">
+            </div>
+        <button id="reportBtn" class="mt-8 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-md transition-transform transform hover:scale-105"><i class="fas fa-chart-bar mr-2"></i> ดูรายงานผล</button>
+        <button id="playAgainBtn" class="mt-8 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-md transition-transform transform hover:scale-105">เล่นอีกครั้ง?</button>
+    </div>
+
+    <div id="prankModal" class="prank-modal">
+        <div class="prank-modal-content">
+            <h3 id="prankTitle" class="text-2xl font-bold mb-6 text-center text-purple-600"></h3>
+            <div id="prankOptionsContainer" class="mb-4">
+                </div>
+            <div id="prankButtonsContainer" class="flex justify-center space-x-4">
+                </div>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="game-rules.js"></script>
+    <script src="scripts.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="online-room.js"></script>
+    <script src="online-state.js"></script>
+    <script src="game-online-adapter.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <script src="online.js"></script>
+</body>
+</html>
