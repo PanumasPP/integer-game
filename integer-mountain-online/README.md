@@ -1,5 +1,7 @@
 # พิชิตยอดเขาจำนวนเต็ม
 
+Smartphone ใช้กระดาน5 visual columns พร้อมplayer strip, room bar, sticky dice/roll และmobile modals Tablet/desktopยัง10columns เกม/state/schemaไม่เปลี่ยน อ่านผล36viewport/board pairs และmobile multiplayerใน [รายงาน Responsive](MOBILE_RESPONSIVE_REPORT.md) โหลด `mobile.css`/`mobile-ui.js` พร้อมruntime filesที่เปลี่ยนเมื่อเผยแพร่static site
+
 Online Host เลือกแผนที่ 20/30/40/50 ช่องได้ (แนะนำ/default30); Single/Local และห้องเก่าใช้50 อ่าน architecture, distributions, schema และผล tests ใน [รายงานขนาดแผนที่](MAP_SIZE_REPORT.md) **ต้อง Publish/Deploy database.rules.json ชุดใหม่** เพื่อรองรับ boardSize
 
 เกมการศึกษา HTML + CSS + Vanilla JavaScript รองรับโหมดท้าทาย 1 คน, หลายคนเครื่องเดียว และออนไลน์สูงสุด 10 ผู้เล่น + 20 ผู้ชมต่อห้อง ผ่าน Firebase Realtime Database + Anonymous Authentication

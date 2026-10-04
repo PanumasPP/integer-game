@@ -1,0 +1,72 @@
+/* Additive presentation, entirely isolated from the Golden Master desktop rules. */
+.mobile-only { display: none; }
+@media (max-width: 899px) {
+    body { min-height: 100vh; min-height: 100dvh; padding: max(.5rem, env(safe-area-inset-top)) .5rem .5rem; }
+    #boardContainer { width: 100%; min-width: 0; padding: .75rem .5rem calc(var(--mobile-controls-height, 104px) + env(safe-area-inset-bottom) + 1rem); border-radius: 18px; }
+    #boardContainer > header { margin: .5rem 0 .75rem; }
+    #boardContainer > header h1 { font-size: 0; line-height: 1.35; }
+    #boardContainer > header h1::after { content: attr(data-mobile-title); color: #7e22ce; font-size: clamp(1.1rem, 4.5vw, 1.5rem); }
+    #boardContainer > .flex { display: flex; flex-direction: column; gap: 0; }
+    #gameBoardOuterContainer, .online-mode #gameBoardOuterContainer { width: 100%; min-width: 0; max-width: 100%; margin: 0; overflow: visible; justify-content: center; order: 2; }
+    #gameBoard { width: 100%; min-width: 0; box-sizing: border-box; padding: 6px; gap: 4px; grid-template-columns: repeat(var(--visual-board-columns, 5), minmax(0, 1fr)); }
+    #gameBoard .board-square { box-sizing: border-box; width: 100%; min-width: 0; height: auto; aspect-ratio: 1; padding: 3px; border-radius: 9px; border-width: 1.5px; overflow: hidden; scroll-margin-top: 4rem; scroll-margin-bottom: calc(var(--mobile-controls-height, 104px) + 1rem); }
+    #gameBoard .board-square:hover { transform: none; }
+    #gameBoard .square-number { font-size: clamp(.75rem, 2.6vw, .8rem); padding: 0 3px; line-height: 1.15; z-index: 1; }
+    #gameBoard .square-icon { font-size: clamp(1rem, 4.3vw, 1.4rem); }
+    #gameBoard .square-text { font-size: clamp(.7rem, 3vw, .8rem); line-height: 1.2; white-space: nowrap; z-index: 1; }
+    #gameBoard .player-slots-container { display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 1px; padding: 10px 2px 9px; pointer-events: none; z-index: 2; }
+    #gameBoard .player-piece { flex: 0 0 auto; width: clamp(16px, 4.4vw, 21px); height: clamp(16px, 4.4vw, 21px); font-size: clamp(11px, 3vw, 15px); border-width: 1px; background-color: #fffd !important; }
+    #gameBoard .player-slots-container:has(.player-piece:nth-child(5)) .player-piece { width: 16px; height: 16px; font-size: 11px; margin: -1px; }
+    #gameBoard .player-slots-container:has(.player-piece:nth-child(9)) .player-piece { width: 14px; height: 14px; font-size: 10px; margin: -1px; }
+    #playersInfoPanelContainer { order: 1; width: 100%; min-width: 0; padding: 8px; margin: 0 0 10px; border-radius: 12px; }
+    #playersInfoPanelContainer h2, #playersInfoPanelContainer > p:last-child { display: none; }
+    #playersInfoPanel { display: flex; gap: 7px; overflow-x: auto; overscroll-behavior-x: contain; padding: 3px 2px 6px; text-align: left; }
+    #playersInfoPanel > div { flex: 0 0 142px; width: 142px; margin: 0; padding: 7px; font-size: .75rem; line-height: 1.45; border-radius: 9px; }
+    #playersInfoPanel > div > div:first-child { font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #playersInfoPanel .mobile-current-player { border: 2px solid #7c3aed; background: #faf5ff; padding: 6px; }
+    #playersInfoPanel .online-player-status { position: static; display: block; font-size: .65rem; border: 0; background: transparent; line-height: 1.3; }
+    #roundDisplay { margin: 4px 0 0; font-size: .75rem; text-align: left; }
+    #rightControlPanel { position: fixed; z-index: 50; left: max(.5rem, env(safe-area-inset-left)); right: max(.5rem, env(safe-area-inset-right)); bottom: 0; width: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); border: 1px solid #ddd6fe; border-radius: 16px 16px 0 0; background: #fff; box-shadow: 0 -4px 16px #0002; }
+    .mobile-only { display: block; }
+    #mobileTurnStatus { flex: 1 0 100%; margin: 0; font-size: .85rem; font-weight: bold; text-align: left; overflow-wrap: anywhere; }
+    #rightControlPanel .control-panel-item { padding: 0; margin: 0; background: none; box-shadow: none; }
+    #rightControlPanel .dice-area { flex: 0 0 44px; }
+    #rightControlPanel .dice-area h2, #rightControlPanel .dice-label { display: none; }
+    #rightControlPanel .dice-area p { margin: 0; }
+    #rightControlPanel .dice-value { font-size: 1.6rem; }
+    #rightControlPanel > .control-panel-item:last-child { flex: 1; }
+    #rollDiceButton { min-height: 44px; padding: 10px 12px; font-size: 1rem; }
+    #messageArea { margin: 12px 0 0; padding: 12px; font-size: .9rem; min-height: 44px; overflow-wrap: anywhere; }
+    .online-board-controls { position: static; z-index: auto; width: 100%; max-width: none; padding: 4px 6px; margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px; background: #faf5ff; border-radius: 10px; font-size: .7rem; }
+    #onlineGameNotice { flex: 1; min-width: 100px; text-align: left; overflow-wrap: anywhere; }
+    #onlineBoardLeaveBtn { min-height: 44px; padding: 6px 8px; font-size: .7rem; }
+    #onlineTimer, #onlineAnswerObservation { flex: 1 0 100%; margin: 0; text-align: left; }
+    .online-host-controls { position: static; z-index: auto; width: auto; max-width: none; max-height: none; overflow: visible; padding: 0; border: 0; box-shadow: none; }
+    .online-host-controls summary { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; font-size: 0; border: 1px solid #ddd6fe; border-radius: 8px; }
+    .online-host-controls summary::after { content: '⚙️'; font-size: 1.25rem; }
+    .online-host-controls.mobile-modal-controls { position: fixed; z-index: 180; top: max(8px, env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right)); bottom: auto; left: auto; width: 44px; height: 44px; border-radius: 8px; background: white; }
+    .online-host-controls[open] > .online-buttons { position: fixed; z-index: 70; bottom: calc(var(--mobile-controls-height, 104px) + 8px + env(safe-area-inset-bottom)); left: max(12px, env(safe-area-inset-left)); right: max(12px, env(safe-area-inset-right)); max-height: calc(100dvh - var(--mobile-controls-height, 104px) - 70px); overflow-y: auto; padding: 16px; margin: 0; background: #fff; border: 2px solid #c084fc; border-radius: 18px; box-shadow: 0 0 0 100vmax #0005; }
+    .online-host-controls .online-buttons > :is(button,select) { width: 100%; min-height: 44px; margin: 0; }
+    .online-host-controls .online-buttons > label { width: 100%; text-align: left; }
+    .online-screen { padding: 1rem; }
+    .online-screen :is(button,select), .online-screen .online-category-options label, .online-screen .online-board-sizes label { min-height: 44px; }
+    .online-screen h1 { font-size: clamp(1.3rem, 5vw, 1.6rem); }
+    .online-screen .online-category-options { gap: 4px; }
+    .online-screen .online-room-settings { padding: 10px; }
+    .online-screen .online-room-code { font-size: 2.25rem; }
+    .modal, .card-selection-modal, .prank-modal, #explanationModal, .central-message-overlay, .emoji-picker-modal, .cai-modal { padding: max(8px, env(safe-area-inset-top)) 0 max(8px, env(safe-area-inset-bottom)); box-sizing: border-box; }
+    .modal-content, .card-selection-content, .prank-modal-content, #explanationModal .modal-content, .central-message-content, .emoji-picker-content, .cai-modal-content { box-sizing: border-box; width: 94vw; max-width: 650px; max-height: 90vh; max-height: 90dvh; overflow-y: auto; overscroll-behavior-y: contain; padding: 18px; border-radius: 16px; overflow-wrap: anywhere; }
+    #modalHeader { gap: 10px; align-items: flex-start; }
+    #modalTitle, #prankTitle, #cardSelectionTitle { font-size: 1.25rem; line-height: 1.4; }
+    #questionTimerDisplay { flex: 0 0 auto; font-size: 1rem; }
+    #modalQuestion { font-size: 1rem; margin-bottom: 16px; }
+    #modalChoicesContainer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    #modalChoicesContainer button, .modal-button, .prank-target-btn, .prank-effect-btn, .punishment-btn, .setback-choice-btn, .bonus-choice-btn { min-height: 44px; font-size: .95rem; }
+    .card-selection-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+    .card-back { box-sizing: border-box; width: 100%; height: auto; aspect-ratio: 5 / 7; font-size: 2rem; }
+    .card-back:hover { transform: none; }
+    .prank-modal-content button { margin: 4px; max-width: 100%; }
+    #reportContent { overflow-x: auto; }
+    .victory-overlay { box-sizing: border-box; padding: 20px; overflow-y: auto; }
+    #winnerNameDisplay { max-width: 100%; font-size: 1.6rem; }
+}

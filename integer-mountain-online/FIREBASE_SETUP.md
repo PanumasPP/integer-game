@@ -1,5 +1,7 @@
 # ตั้งค่าเกมพิชิตยอดเขาจำนวนเต็มออนไลน์
 
+Responsive update5ตุลาคม2026เพิ่ม `mobile.css` และ `mobile-ui.js` ให้เผยแพร่พร้อมHTML/scripts.js/game-online-adapter.js ส่วนFirebase schema/Rules/configไม่เปลี่ยน รายละเอียดใน [MOBILE_RESPONSIVE_REPORT.md](MOBILE_RESPONSIVE_REPORT.md)
+
 เว็บไซต์เป็น HTML + CSS + Vanilla JavaScript เปิดจาก GitHub Pages ได้โดยไม่ต้อง build หรือมี runtime server โหมดท้าทายและหลายคนเครื่องเดียวยังใช้เกมเดิม ระบบออนไลน์ใช้ Firebase Realtime Database และ Anonymous Authentication เท่านั้น ไม่มี Cloud Functions, Firestore, Analytics, Firebase Hosting หรือข้อบังคับ App Check
 
 ## โปรเจกต์ที่มีอยู่แล้ว

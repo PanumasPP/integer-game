@@ -14,6 +14,7 @@
     function cleanup() {
         animationGeneration++; timers.forEach(clearTimeout); timers.clear();
         activeOnlineBoardSize = 50;
+        window.MobileGameUI?.reset();
         stopQuestionTimer(); hideInteractions(); diceAnimationOverlay.style.display = 'none';
         modalAnswerInput.disabled=false;
         modal.querySelectorAll('button').forEach(button=>button.disabled=false);
@@ -99,7 +100,10 @@
             if (player.onBoardPosition !== move.to) {
                 player.onBoardPosition += Math.sign(move.to-player.onBoardPosition);
                 renderPlayerPieces(); later(step,350);
-            } else movingId='';
+            } else {
+                movingId='';
+                window.MobileGameUI?.movementFinished(move.actionId, player.position, move.playerId);
+            }
         }
         later(step,Math.max(0,(move.startedAt || serverNow)-serverNow));
     }
@@ -183,6 +187,7 @@
             if (s.winnerId && s.players[s.winnerId]) displayVictory(s.players[s.winnerId]);
             else { generateAndShowReport(); }
         }
+        window.MobileGameUI?.refresh({uid, hostId, role, currentPlayerId:s.currentPlayerId, actorId:s.interaction?.actorId, phase:s.phase});
     }
     function updateClock(state, now) {
         const remaining = state?.deadlineAt ? Math.max(0, Math.ceil((state.deadlineAt - now) / 1000)) : null;

@@ -1,5 +1,7 @@
 # แผนทดสอบ Multiplayer
 
+ล่าสุด Responsive UI: `npm run test:mobile` ตรวจ36size/viewport pairs และmodals/resize/hostsheet; `npm run test:boards-browser` ใช้Host390/Player375/Desktop1366/Spectator390และยืนยันcanonical stateเดิมหลังorientation อ่านผลและon-deviceข้อจำกัดใน [MOBILE_RESPONSIVE_REPORT.md](MOBILE_RESPONSIVE_REPORT.md) เพิ่มassetsmobile.css/mobile-ui.jsตอนpublishstaticfiles Rulesไม่เปลี่ยน
+
 ใช้ GitHub Pages HTTPS หลัง publish `database.rules.json` แล้ว มีอย่างน้อย 2–3 อุปกรณ์หรือ browser profile คนละ UID โหมดปกติสอง tab ของ browser เดียวกันใช้ anonymous UID เดียวกัน
 
 ## ผล automated tests

@@ -439,6 +439,20 @@ function resetGame() {
     createPlayerConfigInputs(parseInt(numPlayersSelect.value));
 }
 
+function getVisualBoardColumns() { return window.innerWidth < 700 ? 5 : 10; }
+function layoutBoardSquares() {
+    const columns = getVisualBoardColumns(), rows = gameBoard.children.length / columns;
+    if (!rows) return;
+    gameBoard.style.setProperty('--visual-board-columns', columns);
+    gameBoard.style.gridTemplateRows = `repeat(${rows}, ${window.innerWidth < 900 ? 'auto' : '75px'})`;
+    gameBoard.dataset.visualColumns = String(columns);
+    gameBoard.dataset.visualWidth = String(window.innerWidth);
+    Array.from(gameBoard.children).forEach((square, index) => {
+        const row = Math.floor(index / columns);
+        square.style.gridRowStart = rows - row;
+        square.style.gridColumnStart = (row % 2 ? columns - 1 - index % columns : index % columns) + 1;
+    });
+}
 function initializeBoard() {
     gameBoard.innerHTML = '';
     const activeBoard = getActiveBoardConfig();
@@ -470,6 +484,7 @@ function initializeBoard() {
         `;
         gameBoard.appendChild(squareDiv);
     }
+    layoutBoardSquares();
     renderPlayerPieces();
 }
 
@@ -526,6 +541,7 @@ function updatePlayerInfo() {
         currentPlayerTurnDisplay.textContent = "-";
     }
     currentRoundCounterDisplay.textContent = currentRound;
+    window.MobileGameUI?.refresh();
 }
 
 function showMessage(msg, type = 'info', duration = 3500) {
@@ -608,6 +624,7 @@ async function movePlayer(steps, isBonusMove = false) {
             OriginalGameRules.commitMovement(player, targetPosition);
             renderPlayerPieces();
             updatePlayerInfo();
+            window.MobileGameUI?.movementFinished(null, player.position);
             setTimeout(() => {
                 const finalSquare = boardConfig[player.position];
                 if (!isBonusMove) {

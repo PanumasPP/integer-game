@@ -1,4 +1,6 @@
-# ผลตรวจสอบล่าสุด — Online map sizes
+# ผลตรวจสอบล่าสุด — Smartphone responsive UI
+
+5ตุลาคม2026: mobile presentation36board/viewport pairs PASS, smartphone5columns/tablet-desktop10columns, nohorizontaloverflow, resizeรักษาnode/state, modal/hostsheet/pawn10ตัว PASS DesktopGoldenvisualและgameplay41cases PASS รวมunit/static106และRules16 PASS Firebase SDK mobileHost/Player/Spectator+desktopPlayerทุกขนาด PASS อ่าน [MOBILE_RESPONSIVE_REPORT.md](MOBILE_RESPONSIVE_REPORT.md) Rules/schema/engine/controllerไม่แก้ รายการด้านล่างเป็นผลก่อนปรับResponsive
 
 รอบล่าสุดเพิ่ม map20/30/40/50 และแก้ renderer ใน scripts.js; game-rules.js/styles.css/questions.js ยังเดิม Unit/static/parity/features/boards106 PASS, Rules16 PASS, Golden visual/Local parity/Single smoke PASS, map SDK matrix ทุกsize/viewport/refresh PASS และ existing features/multiplayer browser suites PASS อ่าน matrix และ Rules ที่ต้อง Publish ใน [MAP_SIZE_REPORT.md](MAP_SIZE_REPORT.md) บันทึกด้านล่างเป็นผลรอบ Question Settings/Spectator ก่อนเพิ่ม maps
 
